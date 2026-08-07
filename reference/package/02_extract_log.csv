@@ -1,0 +1,241 @@
+DOMAIN,TABLE_NAME,EXTRACT_TYPE,FILE,STATUS,ROWS_WRITTEN
+Award,AWARD,SAMPLE,reference/package/award/award.csv,OK,"1,000"
+Award,AWARD_AMOUNT_INFO,SAMPLE,reference/package/award/award_amount_info.csv,OK,"1,000"
+Award,AWARD_AMOUNT_TRANSACTION,SAMPLE,reference/package/award/award_amount_transaction.csv,OK,"1,000"
+Award,AWARD_AMT_FNA_DISTRIBUTION,SAMPLE,reference/package/award/award_amt_fna_distribution.csv,OK,"1,000"
+Award,AWARD_APPROVED_EQUIPMENT,FULL,reference/package/award/award_approved_equipment.csv,OK,3
+Award,AWARD_APPROVED_SUBAWARDS,FULL,reference/package/award/award_approved_subawards.csv,OK,"9,336"
+Award,AWARD_ATTACHMENT,SAMPLE,reference/package/award/award_attachment.csv,OK,"1,000"
+Award,AWARD_ATTACHMENT_TYPE,FULL,reference/package/award/award_attachment_type.csv,OK,10
+Award,AWARD_BASIS_OF_PAYMENT,FULL,reference/package/award/award_basis_of_payment.csv,OK,3
+Award,AWARD_BUDGET_DETAILS_EXT,SAMPLE,reference/package/award/award_budget_details_ext.csv,OK,"1,000"
+Award,AWARD_BUDGET_EXT,SAMPLE,reference/package/award/award_budget_ext.csv,OK,"1,000"
+Award,AWARD_BUDGET_LIMIT,SAMPLE,reference/package/award/award_budget_limit.csv,OK,"1,000"
+Award,AWARD_BUDGET_PERIOD_EXT,SAMPLE,reference/package/award/award_budget_period_ext.csv,OK,"1,000"
+Award,AWARD_BUDGET_STATUS,FULL,reference/package/award/award_budget_status.csv,OK,10
+Award,AWARD_BUDGET_TYPE,FULL,reference/package/award/award_budget_type.csv,OK,2
+Award,AWARD_CFDA,SAMPLE,reference/package/award/award_cfda.csv,OK,"1,000"
+Award,AWARD_CGB,SAMPLE,reference/package/award/award_cgb.csv,OK,"1,000"
+Award,AWARD_CLOSEOUT,SAMPLE,reference/package/award/award_closeout.csv,OK,"1,000"
+Award,AWARD_COMMENT,SAMPLE,reference/package/award/award_comment.csv,OK,"1,000"
+Award,AWARD_COST_SHARE,FULL,reference/package/award/award_cost_share.csv,OK,"7,618"
+Award,AWARD_DOCUMENT,SAMPLE,reference/package/award/award_document.csv,OK,"1,000"
+Award,AWARD_EXEMPT_NUMBER,FULL,reference/package/award/award_exempt_number.csv,OK,"2,684"
+Award,AWARD_FUNDING_PROPOSALS,FULL,reference/package/award/award_funding_proposals.csv,OK,"13,658"
+Award,AWARD_HIERARCHY,SAMPLE,reference/package/award/award_hierarchy.csv,OK,"1,000"
+Award,AWARD_IDC_RATE,FULL,reference/package/award/award_idc_rate.csv,OK,10
+Award,AWARD_METHOD_OF_PAYMENT,FULL,reference/package/award/award_method_of_payment.csv,OK,38
+Award,AWARD_NOTEPAD,FULL,reference/package/award/award_notepad.csv,OK,34
+Award,AWARD_NOTIFICATION,FULL,reference/package/award/award_notification.csv,OK,2
+Award,AWARD_PAYMENT_SCHEDULE,FULL,reference/package/award/award_payment_schedule.csv,OK,3
+Award,AWARD_PERSONS,SAMPLE,reference/package/award/award_persons.csv,OK,100
+Award,AWARD_PERSON_CREDIT_SPLITS,SAMPLE,reference/package/award/award_person_credit_splits.csv,OK,"1,000"
+Award,AWARD_PERSON_UNITS,SAMPLE,reference/package/award/award_person_units.csv,OK,"1,000"
+Award,AWARD_PERS_UNIT_CRED_SPLITS,SAMPLE,reference/package/award/award_pers_unit_cred_splits.csv,OK,"1,000"
+Award,AWARD_REPORT_TERMS,SAMPLE,reference/package/award/award_report_terms.csv,OK,"1,000"
+Award,AWARD_REPORT_TRACKING,SAMPLE,reference/package/award/award_report_tracking.csv,OK,"1,000"
+Award,AWARD_SPECIAL_REVIEW,SAMPLE,reference/package/award/award_special_review.csv,OK,"1,000"
+Award,AWARD_SPONSOR_CONTACTS,FULL,reference/package/award/award_sponsor_contacts.csv,OK,16
+Award,AWARD_SPONSOR_TERM,SAMPLE,reference/package/award/award_sponsor_term.csv,OK,"1,000"
+Award,AWARD_STATUS,FULL,reference/package/award/award_status.csv,OK,10
+Award,AWARD_TEMPLATE,FULL,reference/package/award/award_template.csv,OK,29
+Award,AWARD_TEMPLATE_COMMENTS,FULL,reference/package/award/award_template_comments.csv,OK,31
+Award,AWARD_TEMPLATE_REPORT_TERMS,FULL,reference/package/award/award_template_report_terms.csv,OK,135
+Award,AWARD_TEMPLATE_TERMS,FULL,reference/package/award/award_template_terms.csv,OK,528
+Award,AWARD_TRANSACTION_TYPE,FULL,reference/package/award/award_transaction_type.csv,OK,20
+Award,AWARD_TRANSMISSION,SAMPLE,reference/package/award/award_transmission.csv,OK,"1,000"
+Award,AWARD_TRANSMISSION_CHILD,SAMPLE,reference/package/award/award_transmission_child.csv,OK,"1,000"
+Award,AWARD_TYPE,FULL,reference/package/award/award_type.csv,OK,19
+Award,AWARD_UNIT_CONTACTS,SAMPLE,reference/package/award/award_unit_contacts.csv,OK,100
+Award,AWD_BGT_DET_CAL_AMTS_EXT,SAMPLE,reference/package/award/awd_bgt_det_cal_amts_ext.csv,OK,"1,000"
+Award,AWD_BGT_PER_SUM_CALC_AMT,FULL,reference/package/award/awd_bgt_per_sum_calc_amt.csv,OK,3
+Award,PENDING_TRANSACTIONS,SAMPLE,reference/package/award/pending_transactions.csv,OK,"1,000"
+Award,TIME_AND_MONEY_DOCUMENT,SAMPLE,reference/package/award/time_and_money_document.csv,OK,"1,000"
+Award,TRANSACTION_DETAILS,SAMPLE,reference/package/award/transaction_details.csv,OK,"1,000"
+BU custom fields,AWARD_CUSTOM_DATA,SAMPLE,reference/package/bu_custom/award_custom_data.csv,OK,"1,000"
+BU custom fields,AWARD_EXTENSION,SAMPLE,reference/package/bu_custom/award_extension.csv,OK,"1,000"
+BU custom fields,BU_PRIMARY_ACAD_APPT,FULL,reference/package/bu_custom/bu_primary_acad_appt.csv,OK,"7,747"
+BU custom fields,BU_VERSION_LOG,FULL,reference/package/bu_custom/bu_version_log.csv,OK,10
+BU custom fields,CUSTOM_ATTRIBUTE,FULL,reference/package/bu_custom/custom_attribute.csv,OK,107
+BU custom fields,CUSTOM_ATTRIBUTE_DATA_TYPE,FULL,reference/package/bu_custom/custom_attribute_data_type.csv,OK,5
+BU custom fields,CUSTOM_ATTRIBUTE_DOCUMENT,FULL,reference/package/bu_custom/custom_attribute_document.csv,OK,146
+BU custom fields,CUSTOM_ATTRIBUTE_DOC_VALUE,SAMPLE,reference/package/bu_custom/custom_attribute_doc_value.csv,OK,"1,000"
+BU custom fields,NEGOTIATION_CUSTOM_DATA,SAMPLE,reference/package/bu_custom/negotiation_custom_data.csv,OK,"1,000"
+BU custom fields,PENDING_TRANSACTIONS_EXTENSION,SAMPLE,reference/package/bu_custom/pending_transactions_extension.csv,OK,"1,000"
+BU custom fields,PROPOSAL_CUSTOM_DATA,SAMPLE,reference/package/bu_custom/proposal_custom_data.csv,OK,"1,000"
+BU custom fields,PROPOSAL_EXTENSION,SAMPLE,reference/package/bu_custom/proposal_extension.csv,OK,"1,000"
+BU custom fields,PROPOSAL_LOG_EXTENSION,SAMPLE,reference/package/bu_custom/proposal_log_extension.csv,OK,"1,000"
+BU custom fields,SUBAWARD_CUSTOM_DATA,SAMPLE,reference/package/bu_custom/subaward_custom_data.csv,OK,"1,000"
+BU custom fields,SUBAWARD_EXTENSION,SAMPLE,reference/package/bu_custom/subaward_extension.csv,OK,"1,000"
+Institutional Proposal,INSTITUTE_PROPOSAL_DOCUMENT,SAMPLE,reference/package/institutional_proposal/institute_proposal_document.csv,OK,"1,000"
+Institutional Proposal,IP_REVIEW,SAMPLE,reference/package/institutional_proposal/ip_review.csv,OK,"1,000"
+Institutional Proposal,IP_REVIEW_ACTIVITY_TYPE,FULL,reference/package/institutional_proposal/ip_review_activity_type.csv,OK,7
+Institutional Proposal,IP_REVIEW_REQ_TYPE,FULL,reference/package/institutional_proposal/ip_review_req_type.csv,OK,4
+Institutional Proposal,IP_REVIEW_RESULT_TYPE,FULL,reference/package/institutional_proposal/ip_review_result_type.csv,OK,4
+Institutional Proposal,PROPOSAL,SAMPLE,reference/package/institutional_proposal/proposal.csv,OK,"1,000"
+Institutional Proposal,PROPOSAL_ATTACHMENTS,SAMPLE,reference/package/institutional_proposal/proposal_attachments.csv,OK,"1,000"
+Institutional Proposal,PROPOSAL_ATTACHMENT_TYPE,FULL,reference/package/institutional_proposal/proposal_attachment_type.csv,OK,7
+Institutional Proposal,PROPOSAL_CFDA,FULL,reference/package/institutional_proposal/proposal_cfda.csv,OK,22
+Institutional Proposal,PROPOSAL_COMMENTS,SAMPLE,reference/package/institutional_proposal/proposal_comments.csv,OK,"1,000"
+Institutional Proposal,PROPOSAL_COST_SHARING,FULL,reference/package/institutional_proposal/proposal_cost_sharing.csv,OK,"2,524"
+Institutional Proposal,PROPOSAL_EXEMPT_NUMBER,FULL,reference/package/institutional_proposal/proposal_exempt_number.csv,OK,49
+Institutional Proposal,PROPOSAL_IP_REVIEW_JOIN,SAMPLE,reference/package/institutional_proposal/proposal_ip_review_join.csv,OK,"1,000"
+Institutional Proposal,PROPOSAL_LOG,SAMPLE,reference/package/institutional_proposal/proposal_log.csv,OK,"1,000"
+Institutional Proposal,PROPOSAL_LOG_STATUS,FULL,reference/package/institutional_proposal/proposal_log_status.csv,OK,5
+Institutional Proposal,PROPOSAL_LOG_TYPE,FULL,reference/package/institutional_proposal/proposal_log_type.csv,OK,2
+Institutional Proposal,PROPOSAL_NOTEPAD,FULL,reference/package/institutional_proposal/proposal_notepad.csv,OK,"6,954"
+Institutional Proposal,PROPOSAL_PERSONS,SAMPLE,reference/package/institutional_proposal/proposal_persons.csv,OK,100
+Institutional Proposal,PROPOSAL_PERSON_UNITS,SAMPLE,reference/package/institutional_proposal/proposal_person_units.csv,OK,"1,000"
+Institutional Proposal,PROPOSAL_PERS_UNIT_CRED_SPLITS,SAMPLE,reference/package/institutional_proposal/proposal_pers_unit_cred_splits.csv,OK,"1,000"
+Institutional Proposal,PROPOSAL_PER_CREDIT_SPLIT,SAMPLE,reference/package/institutional_proposal/proposal_per_credit_split.csv,OK,"1,000"
+Institutional Proposal,PROPOSAL_SPECIAL_REVIEW,SAMPLE,reference/package/institutional_proposal/proposal_special_review.csv,OK,"1,000"
+Institutional Proposal,PROPOSAL_STATE,FULL,reference/package/institutional_proposal/proposal_state.csv,OK,13
+Institutional Proposal,PROPOSAL_STATUS,FULL,reference/package/institutional_proposal/proposal_status.csv,OK,6
+Institutional Proposal,PROPOSAL_TYPE,FULL,reference/package/institutional_proposal/proposal_type.csv,OK,9
+Institutional Proposal,PROPOSAL_UNIT_CONTACTS,SAMPLE,reference/package/institutional_proposal/proposal_unit_contacts.csv,OK,100
+Negotiation,NEGOTIATION,FULL,reference/package/negotiation/negotiation.csv,OK,"11,842"
+Negotiation,NEGOTIATION_ACTIVITY,SAMPLE,reference/package/negotiation/negotiation_activity.csv,OK,"1,000"
+Negotiation,NEGOTIATION_ACTIVITY_TYPE,FULL,reference/package/negotiation/negotiation_activity_type.csv,OK,20
+Negotiation,NEGOTIATION_AGREEMENT_TYPE,FULL,reference/package/negotiation/negotiation_agreement_type.csv,OK,9
+Negotiation,NEGOTIATION_ASSOCIATION_TYPE,FULL,reference/package/negotiation/negotiation_association_type.csv,OK,5
+Negotiation,NEGOTIATION_ATTACHMENT,SAMPLE,reference/package/negotiation/negotiation_attachment.csv,OK,"1,000"
+Negotiation,NEGOTIATION_DOCUMENT,FULL,reference/package/negotiation/negotiation_document.csv,OK,"11,842"
+Negotiation,NEGOTIATION_LOCATION,FULL,reference/package/negotiation/negotiation_location.csv,OK,12
+Negotiation,NEGOTIATION_STATUS,FULL,reference/package/negotiation/negotiation_status.csv,OK,8
+Negotiation,NEGOTIATION_UNASSOC_DETAIL,FULL,reference/package/negotiation/negotiation_unassoc_detail.csv,OK,"9,270"
+Organization,ORGANIZATION,FULL,reference/package/reference/organization.csv,OK,"7,557"
+Organization,ORGANIZATION_AUDIT_ACC_TYPE,FULL,reference/package/reference/organization_audit_acc_type.csv,OK,4
+Organization,ORGANIZATION_TYPE,FULL,reference/package/reference/organization_type.csv,OK,2
+Organization,ORGANIZATION_TYPE_LIST,FULL,reference/package/reference/organization_type_list.csv,OK,1
+Organization,ORGANIZATION_YNQ,SAMPLE,reference/package/reference/organization_ynq.csv,OK,"1,000"
+Proposal / pre-award,BUDGET,SAMPLE,reference/package/proposal/budget.csv,OK,"1,000"
+Proposal / pre-award,BUDGET_CATEGORY,FULL,reference/package/proposal/budget_category.csv,OK,50
+Proposal / pre-award,BUDGET_CATEGORY_MAPPING,FULL,reference/package/proposal/budget_category_mapping.csv,OK,137
+Proposal / pre-award,BUDGET_CATEGORY_MAPS,FULL,reference/package/proposal/budget_category_maps.csv,OK,77
+Proposal / pre-award,BUDGET_CATEGORY_TYPE,FULL,reference/package/proposal/budget_category_type.csv,OK,7
+Proposal / pre-award,BUDGET_DETAILS,SAMPLE,reference/package/proposal/budget_details.csv,OK,"1,000"
+Proposal / pre-award,BUDGET_DETAILS_CAL_AMTS,SAMPLE,reference/package/proposal/budget_details_cal_amts.csv,OK,"1,000"
+Proposal / pre-award,BUDGET_DOCUMENT,SAMPLE,reference/package/proposal/budget_document.csv,OK,"1,000"
+Proposal / pre-award,BUDGET_PERIODS,SAMPLE,reference/package/proposal/budget_periods.csv,OK,"1,000"
+Proposal / pre-award,BUDGET_PERIOD_TYPE,FULL,reference/package/proposal/budget_period_type.csv,OK,3
+Proposal / pre-award,BUDGET_PERSONS,FULL,reference/package/proposal/budget_persons.csv,OK,"5,230"
+Proposal / pre-award,BUDGET_PERSON_SALARY_DETAILS,FULL,reference/package/proposal/budget_person_salary_details.csv,OK,"1,583"
+Proposal / pre-award,BUDGET_RATE_AND_BASE,SAMPLE,reference/package/proposal/budget_rate_and_base.csv,OK,"1,000"
+Proposal / pre-award,BUDGET_STATUS,FULL,reference/package/proposal/budget_status.csv,OK,2
+Proposal / pre-award,EPS_PROPOSAL,FULL,reference/package/proposal/eps_proposal.csv,OK,1
+Proposal / pre-award,EPS_PROPOSAL_DOCUMENT,FULL,reference/package/proposal/eps_proposal_document.csv,OK,1
+Proposal / pre-award,EPS_PROPOSAL_STATUS,FULL,reference/package/proposal/eps_proposal_status.csv,OK,7
+Proposal / pre-award,EPS_PROP_COLUMNS_TO_ALTER,FULL,reference/package/proposal/eps_prop_columns_to_alter.csv,OK,9
+Proposal / pre-award,EPS_PROP_IDC_RATE,FULL,reference/package/proposal/eps_prop_idc_rate.csv,OK,56
+Proposal / pre-award,EPS_PROP_PERSON_ROLE,FULL,reference/package/proposal/eps_prop_person_role.csv,OK,8
+Proposal / pre-award,EPS_PROP_PER_DOC_TYPE,FULL,reference/package/proposal/eps_prop_per_doc_type.csv,OK,6
+Proposal / pre-award,EPS_PROP_RATES,SAMPLE,reference/package/proposal/eps_prop_rates.csv,OK,"1,000"
+Proposal / pre-award,EPS_PROP_SITES,FULL,reference/package/proposal/eps_prop_sites.csv,OK,2
+Proposal / pre-award,NARRATIVE_STATUS,FULL,reference/package/proposal/narrative_status.csv,OK,2
+Proposal / pre-award,NARRATIVE_TYPE,FULL,reference/package/proposal/narrative_type.csv,OK,162
+Proposal / pre-award,S2S_ERROR,FULL,reference/package/proposal/s2s_error.csv,OK,457
+Proposal / pre-award,S2S_FORM_CONFIG,FULL,reference/package/proposal/s2s_form_config.csv,OK,3
+Proposal / pre-award,S2S_FORM_TO_QUESTIONNAIRE,FULL,reference/package/proposal/s2s_form_to_questionnaire.csv,OK,16
+Proposal / pre-award,S2S_PROVIDERS,FULL,reference/package/proposal/s2s_providers.csv,OK,1
+Proposal / pre-award,S2S_REVISION_TYPE,FULL,reference/package/proposal/s2s_revision_type.csv,OK,9
+Proposal / pre-award,S2S_SUBMISSION_TYPE,FULL,reference/package/proposal/s2s_submission_type.csv,OK,3
+Reference / lookup,ABSTRACT_TYPE,FULL,reference/package/reference/abstract_type.csv,OK,17
+Reference / lookup,ACCOUNT_TYPE,FULL,reference/package/reference/account_type.csv,OK,2
+Reference / lookup,ACTIVITY_TYPE,FULL,reference/package/reference/activity_type.csv,OK,5
+Reference / lookup,AFFILIATION_TYPE,FULL,reference/package/reference/affiliation_type.csv,OK,19
+Reference / lookup,APPOINTMENT_TYPE,FULL,reference/package/reference/appointment_type.csv,OK,3
+Reference / lookup,ARG_VALUE_LOOKUP,FULL,reference/package/reference/arg_value_lookup.csv,OK,"1,041"
+Reference / lookup,ATTACHMENTS_TYPE,FULL,reference/package/reference/attachments_type.csv,OK,2
+Reference / lookup,ATTACHMENT_FILE,SAMPLE,reference/package/reference/attachment_file.csv,OK,"1,000"
+Reference / lookup,CARRIER_TYPE,FULL,reference/package/reference/carrier_type.csv,OK,3
+Reference / lookup,CITIZENSHIP_TYPE_T,FULL,reference/package/reference/citizenship_type_t.csv,OK,7
+Reference / lookup,CLOSEOUT_REPORT_TYPE,FULL,reference/package/reference/closeout_report_type.csv,OK,6
+Reference / lookup,CLOSEOUT_TYPE,FULL,reference/package/reference/closeout_type.csv,OK,13
+Reference / lookup,COEUS_MODULE,FULL,reference/package/reference/coeus_module.csv,OK,10
+Reference / lookup,COEUS_SUB_MODULE,FULL,reference/package/reference/coeus_sub_module.csv,OK,27
+Reference / lookup,COMMENT_TYPE,FULL,reference/package/reference/comment_type.csv,OK,23
+Reference / lookup,CONTACT_TYPE,FULL,reference/package/reference/contact_type.csv,OK,3
+Reference / lookup,CONTACT_USAGE,FULL,reference/package/reference/contact_usage.csv,OK,3
+Reference / lookup,CORRESPONDENT_TYPE,FULL,reference/package/reference/correspondent_type.csv,OK,2
+Reference / lookup,COST_ELEMENT,FULL,reference/package/reference/cost_element.csv,OK,54
+Reference / lookup,COST_SHARE_TYPE,FULL,reference/package/reference/cost_share_type.csv,OK,3
+Reference / lookup,DEADLINE_TYPE,FULL,reference/package/reference/deadline_type.csv,OK,3
+Reference / lookup,DEGREE_TYPE,FULL,reference/package/reference/degree_type.csv,OK,50
+Reference / lookup,DISTRIBUTION,FULL,reference/package/reference/distribution.csv,OK,2
+Reference / lookup,DOCUMENT_NEXTVALUE,SAMPLE,reference/package/reference/document_nextvalue.csv,OK,"1,000"
+Reference / lookup,FILE_DATA,SAMPLE,reference/package/reference/file_data.csv,OK,"1,000"
+Reference / lookup,FORMULATED_TYPE,FULL,reference/package/reference/formulated_type.csv,OK,4
+Reference / lookup,FREQUENCY,FULL,reference/package/reference/frequency.csv,OK,28
+Reference / lookup,FREQUENCY_BASE,FULL,reference/package/reference/frequency_base.csv,OK,8
+Reference / lookup,FUNDING_SOURCE_TYPE,FULL,reference/package/reference/funding_source_type.csv,OK,7
+Reference / lookup,GROUP_TYPES,FULL,reference/package/reference/group_types.csv,OK,7
+Reference / lookup,IDC_RATE_TYPE,FULL,reference/package/reference/idc_rate_type.csv,OK,6
+Reference / lookup,INSTITUTE_RATES,FULL,reference/package/reference/institute_rates.csv,OK,261
+Reference / lookup,INV_CREDIT_TYPE,FULL,reference/package/reference/inv_credit_type.csv,OK,1
+Reference / lookup,JOB_CODE,FULL,reference/package/reference/job_code.csv,OK,1
+Reference / lookup,LOCATION_TYPE,FULL,reference/package/reference/location_type.csv,OK,4
+Reference / lookup,MAIL_BY,FULL,reference/package/reference/mail_by.csv,OK,2
+Reference / lookup,MAIL_TYPE,FULL,reference/package/reference/mail_type.csv,OK,4
+Reference / lookup,NIH_VALIDATION_MAPPING,FULL,reference/package/reference/nih_validation_mapping.csv,OK,412
+Reference / lookup,NOTICE_OF_OPPORTUNITY,FULL,reference/package/reference/notice_of_opportunity.csv,OK,6
+Reference / lookup,NSF_CODES,FULL,reference/package/reference/nsf_codes.csv,OK,117
+Reference / lookup,PERSON_APPOINTMENT,SAMPLE,reference/package/reference/person_appointment.csv,OK,100
+Reference / lookup,PERSON_EDITABLE_FIELDS,FULL,reference/package/reference/person_editable_fields.csv,OK,84
+Reference / lookup,PERSON_EXT_T,SAMPLE,reference/package/reference/person_ext_t.csv,OK,100
+Reference / lookup,PERSON_MASS_CHANGE,FULL,reference/package/reference/person_mass_change.csv,OK,25
+Reference / lookup,PERSON_MASS_CHANGE_DOCUMENT,FULL,reference/package/reference/person_mass_change_document.csv,OK,25
+Reference / lookup,RATE_CLASS,FULL,reference/package/reference/rate_class.csv,OK,8
+Reference / lookup,RATE_CLASS_BASE_EXCLUSION,FULL,reference/package/reference/rate_class_base_exclusion.csv,OK,10
+Reference / lookup,RATE_CLASS_BASE_INCLUSION,FULL,reference/package/reference/rate_class_base_inclusion.csv,OK,21
+Reference / lookup,RATE_CLASS_TYPE,FULL,reference/package/reference/rate_class_type.csv,OK,3
+Reference / lookup,RATE_TYPE,FULL,reference/package/reference/rate_type.csv,OK,11
+Reference / lookup,REPORT,FULL,reference/package/reference/report.csv,OK,54
+Reference / lookup,REPORT_CLASS,FULL,reference/package/reference/report_class.csv,OK,11
+Reference / lookup,REPORT_STATUS,FULL,reference/package/reference/report_status.csv,OK,4
+Reference / lookup,RESEARCH_AREAS,FULL,reference/package/reference/research_areas.csv,OK,"1,855"
+Reference / lookup,ROLODEX,FULL,reference/package/reference/rolodex.csv,OK,"12,942"
+Reference / lookup,SCHOOL_CODE,FULL,reference/package/reference/school_code.csv,OK,4
+Reference / lookup,SPECIAL_REVIEW,FULL,reference/package/reference/special_review.csv,OK,8
+Reference / lookup,SPECIAL_REVIEW_USAGE,FULL,reference/package/reference/special_review_usage.csv,OK,37
+Reference / lookup,SP_REV_APPROVAL_TYPE,FULL,reference/package/reference/sp_rev_approval_type.csv,OK,3
+Reference / lookup,TBN,FULL,reference/package/reference/tbn.csv,OK,6
+Reference / lookup,VALID_AWARD_BASIS_PAYMENT,FULL,reference/package/reference/valid_award_basis_payment.csv,OK,45
+Reference / lookup,VALID_BASIS_METHOD_PMT,FULL,reference/package/reference/valid_basis_method_pmt.csv,OK,42
+Reference / lookup,VALID_CALC_TYPES,FULL,reference/package/reference/valid_calc_types.csv,OK,7
+Reference / lookup,VALID_CE_RATE_TYPES,FULL,reference/package/reference/valid_ce_rate_types.csv,OK,153
+Reference / lookup,VALID_CLASS_REPORT_FREQ,FULL,reference/package/reference/valid_class_report_freq.csv,OK,324
+Reference / lookup,VALID_FREQUENCY_BASE,FULL,reference/package/reference/valid_frequency_base.csv,OK,74
+Reference / lookup,VALID_NARR_FORMS,FULL,reference/package/reference/valid_narr_forms.csv,OK,580
+Reference / lookup,VALID_SP_REV_APPROVAL,FULL,reference/package/reference/valid_sp_rev_approval.csv,OK,27
+Reference / lookup,VERSION_HISTORY,SAMPLE,reference/package/reference/version_history.csv,OK,"1,000"
+Sponsor,SPONSOR,FULL,reference/package/reference/sponsor.csv,OK,"7,552"
+Sponsor,SPONSOR_HIERARCHY,FULL,reference/package/reference/sponsor_hierarchy.csv,OK,39
+Sponsor,SPONSOR_HIERARCHY_MT,FULL,reference/package/reference/sponsor_hierarchy_mt.csv,OK,29
+Sponsor,SPONSOR_IMPORT,FULL,reference/package/reference/sponsor_import.csv,OK,160
+Sponsor,SPONSOR_SAM_MAPPING,FULL,reference/package/reference/sponsor_sam_mapping.csv,OK,645
+Sponsor,SPONSOR_TERM,FULL,reference/package/reference/sponsor_term.csv,OK,293
+Sponsor,SPONSOR_TERM_TYPE,FULL,reference/package/reference/sponsor_term_type.csv,OK,10
+Sponsor,SPONSOR_TYPE,FULL,reference/package/reference/sponsor_type.csv,OK,14
+Subaward,SUBAWARD,SAMPLE,reference/package/subaward/subaward.csv,OK,"1,000"
+Subaward,SUBAWARD_AMOUNT_INFO,SAMPLE,reference/package/subaward/subaward_amount_info.csv,OK,"1,000"
+Subaward,SUBAWARD_AMT_RELEASED,FULL,reference/package/subaward/subaward_amt_released.csv,OK,2
+Subaward,SUBAWARD_APPROVAL_TYPE,FULL,reference/package/subaward/subaward_approval_type.csv,OK,28
+Subaward,SUBAWARD_ATTACHMENTS,SAMPLE,reference/package/subaward/subaward_attachments.csv,OK,"1,000"
+Subaward,SUBAWARD_ATTACHMENT_TYPE,FULL,reference/package/subaward/subaward_attachment_type.csv,OK,15
+Subaward,SUBAWARD_CONTACT,SAMPLE,reference/package/subaward/subaward_contact.csv,OK,100
+Subaward,SUBAWARD_DOCUMENT,SAMPLE,reference/package/subaward/subaward_document.csv,OK,"1,000"
+Subaward,SUBAWARD_FFATA_REPORTING,FULL,reference/package/subaward/subaward_ffata_reporting.csv,OK,"5,206"
+Subaward,SUBAWARD_FORMS,FULL,reference/package/subaward/subaward_forms.csv,OK,18
+Subaward,SUBAWARD_FUNDING_SOURCE,FULL,reference/package/subaward/subaward_funding_source.csv,OK,"7,954"
+Subaward,SUBAWARD_MODIFICATION_TYPE,FULL,reference/package/subaward/subaward_modification_type.csv,OK,8
+Subaward,SUBAWARD_NOTIFICATION,SAMPLE,reference/package/subaward/subaward_notification.csv,OK,"1,000"
+Subaward,SUBAWARD_REPORT_TYPE,FULL,reference/package/subaward/subaward_report_type.csv,OK,3
+Subaward,SUBAWARD_STATUS,FULL,reference/package/subaward/subaward_status.csv,OK,10
+Subaward,SUBAWARD_TEMPLATE_INFO,SAMPLE,reference/package/subaward/subaward_template_info.csv,OK,"1,000"
+Subaward,SUBAWARD_TEMPLATE_TYPE,FULL,reference/package/subaward/subaward_template_type.csv,OK,4
+Subaward,SUBCONTRACT_COPYRIGHT_TYPE,FULL,reference/package/subaward/subcontract_copyright_type.csv,OK,2
+Subaward,SUBCONTRACT_COST_TYPE,FULL,reference/package/subaward/subcontract_cost_type.csv,OK,3
+Unit,KUALI_UNIT_ORG_MAP,FULL,reference/package/reference/kuali_unit_org_map.csv,OK,152
+Unit,UNIT,FULL,reference/package/reference/unit.csv,OK,"5,241"
+Unit,UNIT_ADMINISTRATOR,FULL,reference/package/reference/unit_administrator.csv,OK,"1,016"
+Unit,UNIT_ADMINISTRATOR_TYPE,FULL,reference/package/reference/unit_administrator_type.csv,OK,11

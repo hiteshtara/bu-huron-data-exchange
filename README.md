@@ -18,37 +18,45 @@ This repository is for data work only:
 
 ## Structure
 
+Directories are created when work actually starts in them, so the tree reflects real
+work rather than a template.
+
 ```text
 bu-huron-data-exchange/
 ├── CLAUDE.md
 ├── README.md
-├── mappings/
-│   ├── irb/
-│   ├── award/
-│   ├── proposal/
-│   ├── subaward/
-│   ├── negotiations/
-│   └── common/
+├── scripts/                    # read-only production runner + build scripts
+├── reference/
+│   ├── award/                  # Award object graph + front-end field mapping
+│   ├── kuali/                  # KUALI_FIELD_DICTIONARY.csv (all modules)
+│   └── package/                # frozen 359-table discovery package (data gitignored)
 ├── sql/
-│   ├── extraction/
-│   ├── validation/
+│   ├── extraction/             # discovery + custom-data extract queries
 │   ├── reconciliation/
-│   ├── troubleshooting/
-│   └── fixes/
-├── migrations/
-│   ├── irb/
-│   ├── award/
-│   ├── proposal/
-│   └── subaward/
-├── integrations/
-│   ├── sap/
-│   ├── huron/
-│   └── other/
-├── samples/
+│   └── views/                  # SELECT-only logical interface for Huron
+│       ├── award/              # root + child collections + json/ proof of concept
+│       ├── proposal/           # next
+│       ├── subaward/
+│       ├── negotiation/
+│       └── reference/
+├── mappings/                   # source-to-target field mappings
 ├── issues/
-├── runbooks/
-└── reference/
+└── runbooks/
 ```
+
+### Current state
+
+| Module | Graph | Front-end mapping | SQL interface |
+|---|---|---|---|
+| Award | done | done | done (root + 22 children + JSON PoC) |
+| Institutional Proposal | next | next | next |
+| Subaward | — | — | — |
+| Negotiation | — | — | — |
+
+Per-module work follows one method: root object from the Kuali source → complete
+relationship graph → current-version selection rule validated against production →
+front-end field-to-database mapping → BU extensions and custom attributes → SQL views
+last.
 
 ## Naming
 

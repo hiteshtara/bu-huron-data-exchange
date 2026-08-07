@@ -22,6 +22,19 @@ data/
 exports/
 downloads/
 
+# Extracted BU production data for the Huron discovery package.
+# These files hold real KCOEUS production rows (PII redacted, but still
+# institutional data) and must not be committed. The scripts that regenerate
+# them, and the metadata/documentation, ARE tracked.
+reference/package/**/*.csv
+!reference/package/01_data_dictionary.csv
+!reference/package/02_table_manifest.csv
+!reference/package/02_excluded_tables.csv
+!reference/package/02_extract_log.csv
+
+# Generated per-table extract SQL (regenerable via scripts/extract_grants_package.py)
+sql/extraction/package/
+
 # Python
 __pycache__/
 *.pyc

@@ -356,9 +356,18 @@ def classify_module(java_class, table):
 REFERENCE_ROW_CEILING = 20_000
 
 
+# Primary domain entities are never "reference data", however small they are.
+CORE_ENTITY_TABLES = {
+    "AWARD", "PROPOSAL", "SUBAWARD", "NEGOTIATION", "EPS_PROPOSAL", "BUDGET",
+    "PROPOSAL_LOG", "TIME_AND_MONEY_DOCUMENT", "INSTITUTE_PROPOSAL_DOCUMENT",
+}
+
+
 def classify_origin(table, is_lookup_target, row_count):
     if table.endswith("_EXTENSION") or table.startswith("BU_"):
         return "BU_EXTENSION"
+    if table in CORE_ENTITY_TABLES:
+        return "CORE_KUALI"
     if is_lookup_target and row_count is not None and row_count <= REFERENCE_ROW_CEILING:
         return "LOOKUP_REFERENCE"
     if is_lookup_target and row_count is None and not RE_TRANSACTIONAL.search(table):
@@ -410,6 +419,20 @@ def load_prod_columns(path: Path):
     return dict(prod)
 
 
+def load_row_counts(path: Path):
+    """table -> actual production row count."""
+    counts = {}
+    if not path or not path.exists():
+        return counts
+    with path.open(encoding="utf-8") as f:
+        for r in csv.DictReader(f):
+            try:
+                counts[r["TABLE_NAME"]] = int(r["ACTUAL_ROWS"] or 0)
+            except ValueError:
+                pass
+    return counts
+
+
 def load_custom_attributes(path: Path):
     """Rows of the production CUSTOM_ATTRIBUTE catalog (attribute x document type)."""
     if not path or not path.exists():
@@ -424,6 +447,7 @@ def main():
     ap.add_argument("--source", required=True, help="Kuali source root (read only)")
     ap.add_argument("--prod-columns", help="CSV from ALL_TAB_COLUMNS")
     ap.add_argument("--custom-attributes", help="CSV of the CUSTOM_ATTRIBUTE catalog")
+    ap.add_argument("--row-counts", help="CSV of TABLE_NAME,ACTUAL_ROWS from production")
     ap.add_argument("--output", required=True)
     args = ap.parse_args()
 
@@ -435,6 +459,8 @@ def main():
     prod = load_prod_columns(Path(args.prod_columns).expanduser()) if args.prod_columns else {}
     ca_rows = load_custom_attributes(
         Path(args.custom_attributes).expanduser()) if args.custom_attributes else []
+    row_counts = load_row_counts(
+        Path(args.row_counts).expanduser()) if args.row_counts else {}
 
     # java_class -> candidate DD entries. A BO class is often claimed by several
     # entries (both "Organization" and "OrganizationMaintenanceDocument" declare
@@ -530,7 +556,8 @@ def main():
             else:
                 confidence = "LOW"
 
-            origin = classify_origin(table, col, table in lookup_targets)
+            origin = classify_origin(
+                table, table in lookup_targets, row_counts.get(table))
             priority = mapping_priority(module, col, ui_label, origin, f["pk"])
 
             src = [os.path.relpath(f["source"], root)]
@@ -621,6 +648,13 @@ def main():
             notes.append("required field")
         if not doc_type:
             notes.append("NOT attached to any document type - confirm with BU")
+        try:
+            if int(observed or 0) > 0 and int(distinct or 0) == 0:
+                notes.append(
+                    "value rows exist but every value is NULL - field configured "
+                    "but never populated; confirm whether BU still uses it")
+        except ValueError:
+            pass
 
         rows.append({
             "MODULE": module,
