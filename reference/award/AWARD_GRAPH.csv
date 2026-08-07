@@ -1,0 +1,67 @@
+PARENT_OBJECT,RELATIONSHIP_NAME,RELATIONSHIP_TYPE,CHILD_OBJECT,PARENT_TABLE,CHILD_TABLE,JOIN_COLUMNS,BUSINESS_PURPOSE,HURON_EXPOSE,NOTES
+Award,activityType,MANY_TO_ONE,ActivityType,AWARD,ACTIVITY_TYPE,activityTypeCode,Activity type decode,Y, | child rows: 5
+Award,awardBasisOfPayment,MANY_TO_ONE,AwardBasisOfPayment,AWARD,AWARD_BASIS_OF_PAYMENT,basisOfPaymentCode,Basis of payment decode,Y, | child rows: 3
+Award,awardDocument,MANY_TO_ONE,AwardDocument,AWARD,AWARD_DOCUMENT,documentNumber,KEW routing document header,N,"KEW workflow routing header - platform infrastructure, not Grants data | child rows: 288,509"
+Award,awardMethodOfPayment,MANY_TO_ONE,AwardMethodOfPayment,AWARD,AWARD_METHOD_OF_PAYMENT,methodOfPaymentCode,Method of payment decode,Y, | child rows: 38
+Award,awardStatus,MANY_TO_ONE,AwardStatus,AWARD,AWARD_STATUS,statusCode,Award status decode,Y, | child rows: 10
+Award,awardTemplate,MANY_TO_ONE,AwardTemplate,AWARD,AWARD_TEMPLATE,templateCode,Award template the record was created from,N,"authoring template the record was created from, not award content | child rows: 29"
+Award,awardTransactionType,MANY_TO_ONE,AwardTransactionType,AWARD,AWARD_TRANSACTION_TYPE,awardTransactionTypeCode,Transaction type decode for the current action,Y, | child rows: 20
+Award,awardType,MANY_TO_ONE,AwardType,AWARD,AWARD_TYPE,awardTypeCode,Award type decode,Y, | child rows: 19
+Award,leadUnit,MANY_TO_ONE,Unit,AWARD,UNIT,unitNumber,Owning organizational unit,Y," | child rows: 5,241"
+Award,nsfCodeBo,MANY_TO_ONE,NsfCode,AWARD,NSF_CODES,nsfSequenceNumber,NSF science code decode,Y, | child rows: 117
+Award,primeSponsor,MANY_TO_ONE,Sponsor,AWARD,SPONSOR,primeSponsorCode,Prime (pass-through) sponsor,Y," | child rows: 7,552"
+Award,sponsor,MANY_TO_ONE,Sponsor,AWARD,SPONSOR,sponsorCode,Sponsor of record,Y," | child rows: 7,552"
+Award,versionHistory,MANY_TO_ONE,VersionHistorySearchBo,AWARD,VERSION_HISTORY,(not declared),Framework versioning bookkeeping,N,"framework versioning bookkeeping, not a business relationship | child rows: 372,669"
+Award,allFundingProposals,ONE_TO_MANY,AwardFundingProposal,AWARD,AWARD_FUNDING_PROPOSALS,(not declared),Funding proposals incl. inactive,N,"duplicate of fundingProposals without an inverse FK | child rows: 13,657"
+Award,approvedEquipmentItems,ONE_TO_MANY,AwardApprovedEquipment,AWARD,AWARD_APPROVED_EQUIPMENT,awardId,Approved equipment authorizations,Y, | child rows: 3
+Award,approvedForeignTravelTrips,ONE_TO_MANY,AwardApprovedForeignTravel,AWARD,AWARD_APPROVED_FOREIGN_TRAVEL,awardId,Approved foreign travel authorizations,Y, | child rows: 0
+Award,awardAmountInfos,ONE_TO_MANY,AwardAmountInfo,AWARD,AWARD_AMOUNT_INFO,awardId,Obligated/anticipated money and dates per transaction,Y," | child rows: 923,457"
+Award,awardApprovedSubawards,ONE_TO_MANY,AwardApprovedSubaward,AWARD,AWARD_APPROVED_SUBAWARDS,awardId,Approved subaward authorizations,Y," | child rows: 9,336"
+Award,awardAttachments,ONE_TO_MANY,AwardAttachment,AWARD,AWARD_ATTACHMENT,awardId,Attachment metadata,Y," | child rows: 1,861,982"
+Award,awardBudgetLimits,ONE_TO_MANY,AwardBudgetLimit,AWARD,AWARD_BUDGET_LIMIT,awardId,Budget limits,Y," | child rows: 63,051"
+Award,awardCfdas,ONE_TO_MANY,AwardCfda,AWARD,AWARD_CFDA,awardId,CFDA / ALN numbers,Y," | child rows: 187,993"
+Award,awardCgbList,ONE_TO_MANY,AwardCgb,AWARD,AWARD_CGB,awardId,Contracts & Grants Billing configuration,N,"EXCLUDED on evidence, not name: stock Kuali child collection with a real UI panel and DataDictionary, but production carries no information - 7 of 14 business fields are entirely NULL and the other 6 are 'N' on all 154,705 rows (zero variance). See AWARD_GRAPH.md. | child rows: 154,701"
+Award,awardCloseoutItems,ONE_TO_MANY,AwardCloseout,AWARD,AWARD_CLOSEOUT,awardId,Closeout checklist and dates,Y," | child rows: 1,265,423"
+Award,awardComments,ONE_TO_MANY,AwardComment,AWARD,AWARD_COMMENT,awardId,Free-text comments by type,Y," | child rows: 2,595,983"
+Award,awardCostShares,ONE_TO_MANY,AwardCostShare,AWARD,AWARD_COST_SHARE,awardId,Cost share commitments,Y," | child rows: 7,618"
+Award,awardCustomDataList,ONE_TO_MANY,AwardCustomData,AWARD,AWARD_CUSTOM_DATA,awardId,BU custom attribute values (EAV),Y," | child rows: 6,930,491"
+Award,awardDirectFandADistributions,ONE_TO_MANY,AwardDirectFandADistribution,AWARD,AWARD_AMT_FNA_DISTRIBUTION,awardId,Direct / F&A distribution by period,Y," | child rows: 458,011"
+Award,awardFandaRate,ONE_TO_MANY,AwardFandaRate,AWARD,AWARD_IDC_RATE,awardId,F&A / IDC rates applied,Y, | child rows: 10
+Award,awardHierarchy,ONE_TO_MANY,AwardHierarchy,AWARD,AWARD_HIERARCHY,awardNumber,"Parent/child award hierarchy (root, parent, originating award)",Y,"associates on AWARD_NUMBER, not AWARD_ID - version independent | child rows: 43,239"
+Award,awardNotepads,ONE_TO_MANY,AwardNotepad,AWARD,AWARD_NOTEPAD,awardId,Notepad entries,Y, | child rows: 34
+Award,awardNotifications,ONE_TO_MANY,AwardNotification,AWARD,AWARD_NOTIFICATION,owningDocumentIdFk,Notification log,N,notification send log - operational | child rows: 2
+Award,awardReportTermItems,ONE_TO_MANY,AwardReportTerm,AWARD,AWARD_REPORT_TERMS,awardId,Required reports and their schedule,Y," | child rows: 839,095"
+Award,awardSponsorTerms,ONE_TO_MANY,AwardSponsorTerm,AWARD,AWARD_SPONSOR_TERM,awardId,Sponsor terms attached to the award,Y," | child rows: 4,063,797"
+Award,awardTransferringSponsors,ONE_TO_MANY,AwardTransferringSponsor,AWARD,AWARD_TRANSFERRING_SPONSOR,awardId,Transferring sponsors,Y, | child rows: 0
+Award,awardUnitContacts,ONE_TO_MANY,AwardUnitContact,AWARD,AWARD_UNIT_CONTACTS,awardId,Unit administrative contacts,Y," | child rows: 386,214"
+Award,currentVersionBudgets,ONE_TO_MANY,AwardBudgetExt,AWARD,AWARD_BUDGET_EXT,awardId,Award budget versions,Y," | child rows: 80,248"
+Award,fundingProposals,ONE_TO_MANY,AwardFundingProposal,AWARD,AWARD_FUNDING_PROPOSALS,awardId,Institutional Proposals funding this award,Y," | child rows: 13,657"
+Award,keywords,ONE_TO_MANY,AwardScienceKeyword,AWARD,AWARD_SCIENCE_KEYWORD,awardId,Science keywords,Y, | child rows: 0
+Award,paymentScheduleItems,ONE_TO_MANY,AwardPaymentSchedule,AWARD,AWARD_PAYMENT_SCHEDULE,awardId,Payment schedule,Y, | child rows: 3
+Award,projectPersons,ONE_TO_MANY,AwardPerson,AWARD,AWARD_PERSONS,awardId,Key personnel on the award,Y," | child rows: 345,596"
+Award,specialReviews,ONE_TO_MANY,AwardSpecialReview,AWARD,AWARD_SPECIAL_REVIEW,awardId,Compliance special reviews (IRB/IACUC/etc.),Y," | child rows: 134,513"
+Award,sponsorContacts,ONE_TO_MANY,AwardSponsorContact,AWARD,AWARD_SPONSOR_CONTACTS,awardId,Sponsor-side contacts,Y, | child rows: 16
+Award,syncChanges,ONE_TO_MANY,AwardSyncChange,AWARD,AWARD_SYNC_CHANGE,awardId,Award hierarchy sync change log,N,"hierarchy sync change log - operational, not conversion data | child rows: 0"
+Award,syncStatuses,ONE_TO_MANY,AwardSyncStatus,AWARD,AWARD_SYNC_STATUS,parentAwardId,Award hierarchy sync status,N,"hierarchy sync status - operational, not conversion data | child rows: 0"
+Award,extension,ONE_TO_ONE,AwardExtension,AWARD,AWARD_EXTENSION,awardId,BU-specific extended Award attributes,Y," | child rows: 282,464"
+AwardSpecialReview,approvalType,MANY_TO_ONE,SpecialReviewApprovalType,AWARD_SPECIAL_REVIEW,SP_REV_APPROVAL_TYPE,approvalTypeCode,SpecialReviewApprovalType,Y, | child rows: 3
+AwardBudgetExt,awardBudgetDocument,MANY_TO_ONE,AwardBudgetDocument,AWARD_BUDGET_EXT,BUDGET_DOCUMENT,documentNumber,AwardBudgetDocument,Y," | child rows: 80,256"
+AwardBudgetExt,awardBudgetStatus,MANY_TO_ONE,AwardBudgetStatus,AWARD_BUDGET_EXT,AWARD_BUDGET_STATUS,awardBudgetStatusCode,AwardBudgetStatus,Y, | child rows: 10
+AwardBudgetExt,awardBudgetType,MANY_TO_ONE,AwardBudgetType,AWARD_BUDGET_EXT,AWARD_BUDGET_TYPE,awardBudgetTypeCode,AwardBudgetType,Y, | child rows: 2
+AwardReportTerm,distribution,MANY_TO_ONE,Distribution,AWARD_REPORT_TERMS,DISTRIBUTION,ospDistributionCode,Distribution,Y, | child rows: 2
+AwardReportTerm,frequency,MANY_TO_ONE,Frequency,AWARD_REPORT_TERMS,FREQUENCY,frequencyCode,Frequency,Y, | child rows: 28
+AwardReportTerm,frequencyBase,MANY_TO_ONE,FrequencyBase,AWARD_REPORT_TERMS,FREQUENCY_BASE,frequencyBaseCode,FrequencyBase,Y, | child rows: 8
+AwardReportTerm,report,MANY_TO_ONE,Report,AWARD_REPORT_TERMS,REPORT,reportCode,Report,Y, | child rows: 54
+AwardReportTerm,reportClass,MANY_TO_ONE,ReportClass,AWARD_REPORT_TERMS,REPORT_CLASS,reportClassCode,ReportClass,Y, | child rows: 11
+AwardSpecialReview,specialReviewType,MANY_TO_ONE,SpecialReviewType,AWARD_SPECIAL_REVIEW,SPECIAL_REVIEW,specialReviewTypeCode,SpecialReviewType,Y, | child rows: 8
+AwardBudgetExt,super,MANY_TO_ONE,Budget,AWARD_BUDGET_EXT,BUDGET,budgetId,Budget,Y," | child rows: 80,248"
+AwardReportTerm,award,MANY_TO_ONE_INVERSE,Award,AWARD_REPORT_TERMS,AWARD,awardId,Award,N,"inverse navigation back to the Award root; the child dataset already carries award_id/award_number | child rows: 282,464"
+AwardBudgetExt,award,MANY_TO_ONE_INVERSE,Award,AWARD_BUDGET_EXT,AWARD,awardId,Award,N,"inverse navigation back to the Award root; the child dataset already carries award_id/award_number | child rows: 282,464"
+AwardPerson,award,MANY_TO_ONE_INVERSE,Award,AWARD_PERSONS,AWARD,awardId,Award,N,"inverse navigation back to the Award root; the child dataset already carries award_id/award_number | child rows: 282,464"
+AwardSpecialReview,sequenceOwner,MANY_TO_ONE_INVERSE,Award,AWARD_SPECIAL_REVIEW,AWARD,awardId,Award,N,"inverse navigation back to the Award root; the child dataset already carries award_id/award_number | child rows: 282,464"
+AwardBudgetExt,awardBudgetLimits,ONE_TO_MANY,AwardBudgetLimit,AWARD_BUDGET_EXT,AWARD_BUDGET_LIMIT,budgetId,Budget limits,Y," | child rows: 63,051"
+AwardReportTerm,awardReportTermRecipients,ONE_TO_MANY,AwardReportTermRecipient,AWARD_REPORT_TERMS,AWARD_REP_TERMS_RECNT,awardReportTermId,Report recipients,Y, | child rows: 0
+AwardBudgetExt,budgetPeriods,ONE_TO_MANY,AwardBudgetPeriodExt,AWARD_BUDGET_EXT,AWARD_BUDGET_PERIOD_EXT,budgetId,AwardBudgetPeriodExt,Y," | child rows: 84,965"
+AwardPerson,creditSplits,ONE_TO_MANY,AwardPersonCreditSplit,AWARD_PERSONS,AWARD_PERSON_CREDIT_SPLITS,awardContactId,Credit split percentages,Y," | child rows: 216,156"
+AwardSpecialReview,specialReviewExemptions,ONE_TO_MANY,AwardSpecialReviewExemption,AWARD_SPECIAL_REVIEW,AWARD_EXEMPT_NUMBER,awardSpecialReviewId,AwardSpecialReviewExemption,Y," | child rows: 2,684"
+AwardPerson,units,ONE_TO_MANY,AwardPersonUnit,AWARD_PERSONS,AWARD_PERSON_UNITS,awardContactId,Units the person is credited under,Y," | child rows: 353,105"
