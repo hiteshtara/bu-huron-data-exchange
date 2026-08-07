@@ -1,0 +1,31 @@
+# OS
+.DS_Store
+
+# Editors
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.log
+
+# Secrets / environment
+.env
+.env.*
+credentials
+credentials.json
+*.pem
+*.key
+
+# Raw exports that may contain institutional data
+data/
+exports/
+downloads/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Node
+node_modules/
