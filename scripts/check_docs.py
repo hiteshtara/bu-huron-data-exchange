@@ -9,10 +9,15 @@ the database:
   links      every relative markdown link resolves
   paths      every file and SQL path mentioned in prose exists
   counts     relationship, UI field and child-collection counts match the CSVs
+  sqlcounts  the documented "SQL files running against production" count matches
+             how many tracked .sql files the module actually has
   mermaid    fences are balanced and declare a diagram type
   freshness  artifact hashes still match docs/provenance.json
   style      the phrases CLAUDE.md rules out do not appear
   status     module status lines are consistent between root and module docs
+
+This checks documentation against repository contents. It never runs a query - whether
+those files execute successfully against production is a separate test.
 
 Exit code is non-zero if anything fails, so it can gate a commit or run in CI.
 """
@@ -21,6 +26,7 @@ import csv
 import hashlib
 import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -102,6 +108,68 @@ def check_counts():
                             f"actual is {actual}")
 
 
+def tracked_files():
+    """Paths git knows about, so an untracked scratch query does not skew a count."""
+    try:
+        out = subprocess.run(["git", "-C", str(REPO), "ls-files"],
+                             capture_output=True, text=True, timeout=30)
+        if out.returncode == 0:
+            return {REPO / line for line in out.stdout.split("\n") if line}
+    except (OSError, subprocess.SubprocessError):
+        pass
+    return None          # not a git checkout - fall back to the filesystem
+
+
+def module_sql_files(mod, tracked):
+    """Every runnable .sql in the module, including sql/json - those count too."""
+    found = sorted((REPO / "modules" / mod / "sql").rglob("*.sql"))
+    return [p for p in found if tracked is None or p in tracked]
+
+
+def check_sql_counts():
+    tracked = tracked_files()
+    total = 0
+
+    for mod in MODULES:
+        actual = len(module_sql_files(mod, tracked))
+        total += actual
+
+        doc = REPO / "modules" / mod / "README.md"
+        if not doc.exists():
+            continue
+        text = doc.read_text(encoding="utf-8", errors="replace")
+
+        found = re.search(
+            r"SQL files running against production\s*\|\s*(\d+)\s*/\s*(\d+)", text)
+        if not found:
+            warn.append(f"modules/{mod}/README.md has no SQL file count line")
+            continue
+
+        passing, documented = int(found.group(1)), int(found.group(2))
+        if documented != actual:
+            fail.append(
+                f"modules/{mod}/README.md says {documented} SQL files, "
+                f"actual is {actual} (counted recursively under sql/, including json)")
+        if passing > documented:
+            fail.append(
+                f"modules/{mod}/README.md reports {passing} SQL files passing "
+                f"out of {documented}")
+
+    # If any document states a repo-wide total, it has to agree with the sum.
+    patterns = (
+        r"(\d+)\s*/\s*(\d+)\s+SQL(?:\s+files)?\s+passing",
+        r"(\d+)\s+SQL files across (?:all )?(?:the )?four modules",
+    )
+    for p in md_files():
+        text = p.read_text(encoding="utf-8", errors="replace")
+        for pattern in patterns:
+            for m in re.finditer(pattern, text):
+                stated = int(m.groups()[-1])
+                if stated != total:
+                    fail.append(f"{p.relative_to(REPO)} states a repo-wide total of "
+                                f"{stated} SQL files, actual is {total}")
+
+
 def check_mermaid():
     for p in md_files():
         lines = p.read_text(encoding="utf-8", errors="replace").split("\n")
@@ -164,8 +232,8 @@ def check_status():
 
 
 def main():
-    for fn in (check_links, check_paths, check_counts, check_mermaid,
-               check_freshness, check_style, check_status):
+    for fn in (check_links, check_paths, check_counts, check_sql_counts,
+               check_mermaid, check_freshness, check_style, check_status):
         fn()
 
     print("=" * 62)
