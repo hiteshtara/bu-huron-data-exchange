@@ -98,6 +98,19 @@ and it is worth knowing so you don't fight it:
 - On the database side it issues `SET TRANSACTION READ ONLY` before your query, so even a
   statement that slipped past the keyword check could not write.
 
+One thing that catches people out: the keyword check splits the whole file on whitespace,
+so it does not know the difference between SQL and a comment. A `.sql` file whose header
+comment contains the bare word `grant` — or `create`, or `update` — is rejected before it
+reaches the database, even though the query itself is a plain `SELECT`. Two consequences
+worth knowing:
+
+- Prose in SQL comments has to work around it. Write `award family` rather than the other
+  phrase, or attach punctuation (`grant,` is a different token and passes). This is also
+  why the module SQL files keep their explanatory comments in a footer rather than a
+  header — the runner needs the first statement to start with `SELECT` or `WITH`.
+- It is a blunt check on purpose. We would rather it reject a harmless comment than try to
+  parse SQL and get it subtly wrong.
+
 No script opens its own database connection — everything goes through these two runners. If
 you write a new analysis script, have it call the runner or import `connect()` from it
 rather than wiring up a fresh connection, so the read-only guarantee stays in one place.

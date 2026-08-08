@@ -44,8 +44,8 @@ So the counts stack up like this:
 
 Every family root ends in `-00001`, every award shares its root's base number, and the
 subaccounts genuinely are separate accounts — 27,170 have their own `ACCOUNT_NUMBER` and
-none reuses the root's. Nesting exists but is rare: 101 awards sit at level 3 and 3 at
-level 4, across 21 of the 15,729 families.
+none reuses the root's. Nesting exists but is rare: `HIERARCHY_LEVEL` is 0-based, and
+101 awards sit at level 2 with 3 at level 3, across 21 of the 15,729 families.
 
 `modules/award/sql/huron_award_hierarchy.sql` is the machine-readable version, with
 `IS_ROOT_AWARD`, `HIERARCHY_LEVEL`, `ROOT_AWARD_NUMBER` and `PARENT_AWARD_NUMBER`. The

@@ -284,8 +284,8 @@ awards.
 | Awards whose base number differs from their root | 0 of 43,201 |
 | Children with their own `ACCOUNT_NUMBER` | 27,170 |
 | Children sharing the root's `ACCOUNT_NUMBER` | **0** |
-| Level distribution | L1 15,729 · L2 27,368 · L3 101 · L4 3 |
-| Families deeper than level 2 | 21 of 15,729 |
+| Level distribution (0-based) | L0 15,729 · L1 27,368 · L2 101 · L3 3 |
+| Families deeper than level 1 | 21 of 15,729 |
 | Largest family | `207805-00001`, 216 awards |
 
 The `-00001` rule holds in both directions, so it is a genuine BU convention rather than
@@ -326,11 +326,11 @@ For two of them it is real:
 
 | Award | Inactive row says | Active row says | We take |
 |---|---|---|---|
-| `200431-00004` | parent `200431-00002` (level 3) | parent `200431-00001` (level 2) | the active one |
-| `201514-00005` | parent `201514-00004` (level 3) | parent `201514-00001` (level 2) | the active one |
+| `200431-00004` | parent `200431-00002` (level 2) | parent `200431-00001` (level 1) | the active one |
+| `201514-00005` | parent `201514-00004` (level 2) | parent `201514-00001` (level 1) | the active one |
 
 Both look like a re-parenting that KC recorded by superseding the old row. Taking the
-active placement is why level 3 shows 101 here against 103 in the raw table.
+active placement is why level 2 shows 101 here against 103 in the raw table.
 
 Three anomalies are reported and deliberately left alone, in
 `sql/huron_award_hierarchy_validation.sql`:
@@ -356,7 +356,7 @@ with what we measured.
 
 | What the specification says | Where | What production shows |
 |---|---|---|
-| An Award Action can create an award with children, add a child to an award, or "add a Child to another Child" | §1.3.1 step 1, p. 7 | 21 families reach level 3 or 4 |
+| An Award Action can create an award with children, add a child to an award, or "add a Child to another Child" | §1.3.1 step 1, p. 7 | 21 families reach level 2 or 3 |
 | The interface is launched from the Parent Award only | §1.3.1 step 2, p. 7; §1.5.1, p. 9 | — |
 | The `00001` award is the top node and "should always be selected"; it cannot be unchecked | §1.5.2, p. 10 | all 15,729 roots end `-00001`, and no `-00001` award is a non-root |
 | `Grant_Main` "maps 1:1 from the Parent Award" | §1.7.1, p. 16 | no family carries more than one grant number |

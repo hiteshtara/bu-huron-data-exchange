@@ -12,7 +12,7 @@ WITH canonical_hierarchy AS (
     )
     WHERE rn = 1
 ), hierarchy_levels AS (
-    SELECT award_number, LEVEL AS hierarchy_level
+    SELECT award_number, LEVEL - 1 AS hierarchy_level
     FROM   canonical_hierarchy
     START WITH parent_award_number = '000000-00000'
     CONNECT BY NOCYCLE PRIOR award_number = parent_award_number
@@ -33,10 +33,10 @@ UNION ALL SELECT 'level distribution',
   (SELECT LISTAGG('L' || TO_CHAR(hierarchy_level) || '=' || TO_CHAR(n), '  ')
             WITHIN GROUP (ORDER BY hierarchy_level)
    FROM (SELECT hierarchy_level, COUNT(*) AS n FROM hierarchy_levels GROUP BY hierarchy_level)) FROM dual
-UNION ALL SELECT 'families with any award below level 2',
+UNION ALL SELECT 'families with any award below level 1',
   TO_CHAR((SELECT COUNT(DISTINCT c.root_award_number)
            FROM canonical_hierarchy c JOIN hierarchy_levels l ON l.award_number = c.award_number
-           WHERE l.hierarchy_level > 2)) FROM dual
+           WHERE l.hierarchy_level > 1)) FROM dual
 UNION ALL SELECT 'ANOMALY award numbers with more than one raw row',
   TO_CHAR((SELECT COUNT(*) FROM (SELECT award_number FROM kcoeus.award_hierarchy
            GROUP BY award_number HAVING COUNT(*) > 1))) FROM dual
@@ -104,6 +104,11 @@ UNION ALL SELECT 'RULE awards whose base number differs from their root (expect 
 --     -     2   in AWARD with no hierarchy row (200086-00008, 211654-00003)
 --     +     1   in the hierarchy but not in AWARD (204946-00004)
 --     = 43,201   award numbers in the canonical hierarchy
+--
+-- HIERARCHY_LEVEL is 0-based here and in huron_award_hierarchy.sql: level 0 is the
+-- root/main award, level 1 a direct subaccount, level 2 a grandchild, level 3 deeper
+-- still. "families with any award below level 1" therefore counts families that have
+-- descendants beyond their direct children.
 --
 -- The three RULE checks at the end confirm the -00001 convention still holds. If any of
 -- them stops returning 0, the documentation in huron_award_hierarchy.sql needs revisiting.

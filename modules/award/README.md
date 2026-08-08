@@ -74,7 +74,7 @@ today's data, is in [AWARD_GRAPH.md](AWARD_GRAPH.md).
 | Is the root always the `-00001` award? | Yes. All 15,729 roots end in `-00001`, and every award ending `-00001` is a root |
 | Does every award share its root's base number? | Yes, all 43,201 |
 | Are the others really separate accounts? | Yes. 27,170 have their own `ACCOUNT_NUMBER` and **none** shares the root's |
-| Does nesting exist? | Yes but rarely — 101 awards at level 3, 3 at level 4, in 21 of 15,729 families |
+| Does nesting exist? | Yes but rarely — 101 awards at level 2, 3 at level 3, in 21 of 15,729 families |
 | Family sizes | 199 families hold one award, 14,839 hold 2–5, 612 hold 6–20, 75 hold 21–100, 4 hold over 100. Largest is `207805-00001` with 216 |
 
 Two details worth knowing. Root rows do not have a NULL parent — they carry the sentinel
@@ -93,7 +93,7 @@ deterministic.
 
 That choice is not cosmetic for two of them. `200431-00004` and `201514-00005` each have
 an inactive row placing them a level deeper and an active row re-parenting them directly
-under the root. We take the active placement, which is why level 3 shows 101 here and
+under the root. We take the active placement, which is why level 2 shows 101 here and
 103 in the raw table.
 
 Nothing is hidden. `sql/huron_award_hierarchy_validation.sql` reports every duplicate,

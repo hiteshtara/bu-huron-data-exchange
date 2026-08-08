@@ -21,7 +21,7 @@ WITH canonical_hierarchy AS (
     )
     WHERE rn = 1
 ), hierarchy_levels AS (
-    SELECT award_number, LEVEL AS hierarchy_level
+    SELECT award_number, LEVEL - 1 AS hierarchy_level
     FROM   canonical_hierarchy
     START WITH parent_award_number = '000000-00000'
     CONNECT BY NOCYCLE PRIOR award_number = parent_award_number
@@ -42,22 +42,29 @@ SELECT
 FROM       canonical_hierarchy c
 LEFT JOIN  hierarchy_levels    l ON l.award_number = c.award_number
 
--- HOW BU's AWARDS ROLL UP INTO AWARD FAMILIES
+-- HOW BU's AWARDS ROLL UP INTO FAMILIES
 --
--- There are two completely different things going on in an award number, and mixing
--- them up is the main risk this dataset exists to prevent.
+-- Three separate concepts live in this data. Collapsing any two of them is the main
+-- risk this dataset exists to prevent.
 --
---   AWARD_NUMBER hierarchy = the award-family / account structure.
---       123456-00001 is the main award for one funded project.
---       123456-00002, -00003 ... are separate subaccounts in the same family.
---       These are DIFFERENT award records.
+--   1. AWARD FAMILY - identified by ROOT_AWARD_NUMBER.
+--          One funded project. 123456-00001 is the family and the main award.
 --
---   SEQUENCE_NUMBER = version history of ONE award record.
---       123456-00001 sequence 1, 2, 3 are the same account edited over time.
---       These are the SAME award record.
+--   2. AWARD / ACCOUNT - identified by AWARD_NUMBER.
+--          123456-00002, -00003 ... are separate subaccounts in that family, each
+--          with its own account number and money. These are DIFFERENT award records.
+--          A subaccount can itself have children, so read PARENT_AWARD_NUMBER rather
+--          than assuming every non-root award hangs directly off the -00001 root.
 --
--- So 43,202 award business records roll up into 15,729 award families - about 2.7
--- awards each. The largest family, 207805-00001, holds 216 awards.
+--   3. VERSION of one award/account - identified by SEQUENCE_NUMBER.
+--          123456-00002 sequence 1, 2, 3 are that one award edited over time.
+--          These are the SAME award record.
+--
+-- They are three dimensions, not one nested numbering scheme. AWARD_NUMBER and
+-- SEQUENCE_NUMBER are not two levels of the same hierarchy.
+--
+-- So 43,202 award business records - versions already collapsed - roll up into 15,729
+-- families, about 2.7 awards each. The largest family, 207805-00001, holds 216 awards.
 --
 -- What we verified in production:
 --   * Every one of the 15,729 roots ends in -00001, and every award ending in -00001
@@ -69,9 +76,10 @@ LEFT JOIN  hierarchy_levels    l ON l.award_number = c.award_number
 --     and NONE shares the root's account number. "Subaccount" is accurate.
 --   * Roots do not have a NULL parent. They carry the sentinel '000000-00000', which
 --     is what the CONNECT BY starts from.
---   * Nesting is real but rare. Levels: 15,729 roots, 27,368 at level 2, 101 at
---     level 3, 3 at level 4. Only 23 of 15,729 families go deeper than level 2, so
---     read HIERARCHY_LEVEL rather than assuming two tiers.
+--   * Nesting is real but rare. HIERARCHY_LEVEL is 0-based: level 0 is the root.
+--     Levels: 15,729 roots, 27,368 direct subaccounts at level 1, 101 at level 2,
+--     3 at level 3. Only 21 of 15,729 families go deeper than level 1, so read
+--     HIERARCHY_LEVEL rather than assuming two tiers.
 --
 -- CANONICALIZATION
 -- AWARD_HIERARCHY holds 43,241 rows for 43,201 award numbers - 40 award numbers appear
@@ -81,7 +89,7 @@ LEFT JOIN  hierarchy_levels    l ON l.award_number = c.award_number
 --
 -- That choice matters for two awards. 200431-00004 and 201514-00005 each have an
 -- inactive row placing them one level deeper and an active row re-parenting them
--- directly under the root. We take the active placement, which is why level 3 shows
+-- directly under the root. We take the active placement, which is why level 2 shows
 -- 101 here against 103 in the raw table.
 --
 -- Nothing is hidden by this. huron_award_hierarchy_validation.sql reports every
