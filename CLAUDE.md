@@ -284,83 +284,155 @@ Before finishing an investigation, determine:
 - What should Huron receive?
 - How can we prove the result is correct?
 
+
 ## Documentation Writing Style
 
 Write documentation as if Hitesh wrote it for another developer, analyst, or Huron
-project partner. It should sound human, not AI-generated.
+project partner. The documentation should sound human. Do not write documentation in an
+AI-generated, machine-like style.
 
 ### Tone
 
-Use simple, direct language. Prefer "We found...", "We use...", "BU stores...",
-"This query selects...", "We kept this separate because...", "We could not find...",
-"This needs BU/Huron review."
+Use simple, direct language.
 
-Avoid "This artifact provides...", "The following section delineates...", "It is
-imperative to note...", "This implementation facilitates...", "The aforementioned...",
-"Leverage this...", "Downstream consumers...", "This methodology ensures...".
+Prefer:
+
+- "We found..."
+- "We use..."
+- "BU stores..."
+- "This query selects..."
+- "We kept this separate because..."
+- "The important thing here is..."
+- "Huron can use..."
+- "We could not find..."
+- "This needs BU/Huron review."
+
+Avoid artificial or overly formal language such as:
+
+- "This artifact provides..."
+- "The following section delineates..."
+- "It is imperative to note..."
+- "This implementation facilitates..."
+- "The aforementioned..."
+- "Leverage this..."
+- "This serves as..."
+- "Consumers should..."
+- "Downstream consumers..."
+- "This methodology ensures..."
 
 Do not sound like a product manual, consultant report, academic paper, or AI-generated
-specification.
+technical specification.
 
-### Explain why, not just what
+### Explain why we did something
 
-Instead of "Child collections are represented as separate datasets", write:
+Do not only document WHAT exists. Explain WHY we made the decision.
+
+Instead of:
+
+> Child collections are represented as separate datasets.
+
+write:
 
 > We keep people, terms, amounts, and custom fields in separate queries. If we joined
 > them all to AWARD, one award with 5 people, 12 terms, and 40 custom fields would turn
 > into 2,400 rows.
 
+That is how this project's documentation should read.
+
 ### Write from our point of view
 
-Say "We checked production", "We found 62 duplicate maximum sequences", "We use ACTIVE
-when it exists". Avoid passive constructions like "It was determined that...", "An
-analysis was conducted...".
+This is BU's working technical documentation. It is fine to say:
+
+- "We checked production."
+- "We found 62 duplicate maximum sequences."
+- "We use ACTIVE when it exists."
+- "We could not find a lookup for SUBAWARD_TYPE_CODE."
+- "We left the description blank rather than guessing."
+
+Do not turn everything into passive voice. Avoid "It was determined that...", "It was
+observed that...", "An analysis was conducted...". Prefer "We found...", "We checked...",
+"We tested...".
 
 ### Use real examples
 
-"AWARD.AWARD_NUMBER is called 'Award ID' on the Kuali screen" beats "Database field
-names may differ from UI labels." State both if useful, but lead with the example.
+When a real example makes something easier to understand, use it.
+
+> AWARD.AWARD_NUMBER is called 'Award ID' on the Kuali screen.
+
+is better than:
+
+> Database field names may differ from UI labels.
+
+Both can be stated, but the concrete example should come first.
 
 ### Be honest about uncertainty
 
-If we do not know something, say so:
+If we do not know something, say so plainly.
 
-> We could not find a lookup table for SUBAWARD_TYPE_CODE. The code is preserved, but
-> we have not assigned a description.
+Good:
 
-Never fill a gap with an assumption to make a document look complete.
+> We could not find a lookup table for SUBAWARD_TYPE_CODE. The code is preserved, but we
+> have not assigned a description.
 
-### Skip obvious implementation detail
+Bad — unless the source actually proves it:
 
-Do not write "The script iterates through the records." Focus on business meaning,
-relationships, decisions, exceptions, things someone could misunderstand, and what
-Huron or a future BU developer actually needs.
+> SUBAWARD_TYPE_CODE represents the Subaward classification.
+
+Never fill documentation gaps with assumptions just to make the document look complete.
+
+### Do not narrate obvious implementation details
+
+Avoid documentation such as "The script iterates through the records and processes each
+row" unless that behavior matters.
+
+Focus on business meaning, relationships, decisions, exceptions, things someone could
+misunderstand, things Huron needs for mapping, and things a future BU developer needs to
+know.
 
 ### Keep headings natural
 
-"How Award versions work", "Why these queries are separate", "Things we still need to
-confirm", "How Subaward connects to Award" — not "Architectural Considerations" or
-"Implementation Methodology".
+Prefer:
 
-### Tables for facts, prose for explanation
+- How Award versions work
+- Why these queries are separate
+- BU custom fields
+- Things we still need to confirm
+- How Subaward connects to Award
 
-Use tables for field mappings, counts, relationships, statuses and exceptions. Then
-explain the important finding in normal prose. Do not build a table just because the
-information would fit in one.
+Avoid headings such as "Architectural Considerations", "Implementation Methodology",
+"Data Consumption Strategy", or "Operational Paradigm" unless those words are genuinely
+necessary.
 
-### Partner-facing vs internal
+### Tables are for facts, prose is for explanation
 
-Writing for Huron, we are one technical team sharing information with another. Avoid
-"You must...", "You should...", "Do not...". Prefer "We structured it this way
-because...", "For mapping purposes this may be useful...", "We can review this
-together."
+Use tables for field mappings, counts, relationships, statuses, and exceptions. Then
+explain the important finding in normal prose. Do not create a table merely because
+information can technically fit in one.
 
-Internal documentation can be blunter, because being blunt prevents repeated mistakes:
+### Partner-facing documentation
+
+When writing for Huron, write as one technical team sharing information with another
+technical team. Do not tell Huron how to do its job.
+
+Avoid "You must...", "You should...", "Do not...", "You need to...". Prefer "We
+structured it this way because...", "For mapping purposes, this may be useful...", "BU
+has preserved...", "We can review this together...", "This is one item we may want to
+confirm during mapping.".
+
+### Internal documentation
+
+Internal technical documentation can be more direct. For example:
 
 > Do not join PROPOSAL_LOG using INST_PROPOSAL_NUMBER. We tested all 30,646 populated
 > values and none matched PROPOSAL.PROPOSAL_NUMBER.
 
-### Do not repeat yourself across documents
+That is useful because it prevents someone from repeating the mistake.
+
+### Keep documentation concise
+
+Do not repeat the same fact in README.md, module README, GRAPH.md and
+HURON_MAPPING_GUIDE.md unless each document genuinely needs it. Use links to the detailed
+document instead.
 
 | Document | Covers |
 |---|---|
@@ -369,9 +441,8 @@ Internal documentation can be blunter, because being blunt prevents repeated mis
 | `*_GRAPH.md` | Detailed relationships, decisions and exceptions |
 | `HURON_MAPPING_GUIDE.md` | Information useful to Huron |
 
-Link to the detailed document instead of restating the same fact.
-
 ### Final test
 
-Read it as if Hitesh were explaining the project to a coworker. If it sounds like
-ChatGPT wrote it, rewrite it. If a shorter sentence says the same thing, use it.
+Before finishing any Markdown documentation, read it as if Hitesh were explaining the
+project to a coworker. If it sounds like ChatGPT wrote it, rewrite it. If a shorter,
+simpler sentence says the same thing, use the shorter sentence.

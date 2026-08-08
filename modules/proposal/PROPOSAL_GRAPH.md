@@ -9,15 +9,16 @@
 | Primary key | `PROPOSAL_ID` |
 | Business key | `PROPOSAL_NUMBER` + `SEQUENCE_NUMBER` |
 
-Derived from the OJB descriptors in `repository-institutionalproposal.xml`, resolved to
-real KCOEUS tables and annotated with production row counts.
-Built by `scripts/build_object_graph.py --module proposal`.
-Machine-readable form: `PROPOSAL_GRAPH.csv` — **64 relationships, 50 exposed, 14 excluded**.
+We built this from the OJB descriptors in `repository-institutionalproposal.xml`,
+resolved every child class to a real KCOEUS table, and annotated each edge with its
+production row count. `scripts/build_object_graph.py --module proposal` regenerates it.
+`PROPOSAL_GRAPH.csv` is the machine-readable version — **64 relationships, 50 exposed,
+14 excluded**.
 
 ## InstitutionalProposal vs InstitutionalProposalBoLite
 
-`PROPOSAL` is mapped by **two** OJB class-descriptors. This matters: picking the wrong
-one produces a graph missing 14 of 15 collections.
+Two OJB class-descriptors map to `PROPOSAL`, and picking the wrong one costs you 14 of
+the 15 collections.
 
 | | `InstitutionalProposal` | `InstitutionalProposalBoLite` |
 |---|---|---|
@@ -27,10 +28,9 @@ one produces a graph missing 14 of 15 collections.
 | DataDictionary entry | **yes** | none |
 | Used by | the Institutional Proposal UI and document | `AwardFundingProposal`, `AwardDocument`, Elasticsearch serializers |
 
-`InstitutionalProposal` is the business-object root. `BoLite` is a deliberate
-lightweight projection for cases where an Award or the search index needs to reference
-a proposal without loading its full graph — it is **not** a competing root and must not
-be used to derive the graph.
+`InstitutionalProposal` is the business object. `BoLite` is a deliberate lightweight
+projection, used where an Award or the search index needs to mention a proposal without
+loading its whole graph. It is not a competing root.
 
 ## Graph shape
 
@@ -76,9 +76,10 @@ graph LR
 Dotted lines are relationships KC navigates outside the ORM (shared business key).
 Purple = BU-authored. Orange = separate business object, not a child.
 
-## Population rule — the inverse of Award
+## How Proposal versions work
 
-Award's selector was **not** reused. The evidence points the other way:
+This is the opposite of Award, so we did not reuse Award's rule. The evidence points the
+other way:
 
 ```mermaid
 graph TD
@@ -102,20 +103,19 @@ graph TD
     class J,K good
 ```
 
-Proved by `sql/huron_proposal_latest_version_validation.sql`. `SELECTION_RULE` records
-which branch chose each row — nothing is silently deduplicated.
+`sql/huron_proposal_latest_version_validation.sql` proves it. `SELECTION_RULE` on the
+root says which branch chose each row, so nothing is quietly deduplicated.
 
-## The four relationships that needed investigation
+## Four relationships we had to dig into
 
-### 1. `PROPOSAL_EXTENSION` — ONE_TO_ONE, but the ORM said otherwise
+### PROPOSAL_EXTENSION is 1:1, even though the ORM suggested otherwise
 
-The graph builder first typed this `MANY_TO_ONE`. The cause was **not** a modelling
-question: BU's fork declares the table as `table="PROPOSAL_EXTENSION "` — with a
-**trailing space** — the only such typo in the entire source. Every lookup keyed on
-table name missed, so no row count resolved and the 1:1 test could not fire.
+Our graph builder first typed this `MANY_TO_ONE`, and the cause was not a modelling
+question at all. BU's fork declares the table as `table="PROPOSAL_EXTENSION "` — with a
+trailing space — the only typo like it in the whole source. Every lookup keyed on table
+name missed it, so no row count resolved and the 1:1 test never fired.
 
-Fixed by stripping whitespace in the OJB parser, then confirmed against production
-rather than assumed:
+We fixed the parser to strip whitespace, then checked production rather than assuming:
 
 | Check | Result |
 |---|---|
@@ -124,11 +124,11 @@ rather than assumed:
 | proposals with no extension row | 7,762 — so the relationship is **optional** |
 | `PROPOSAL` LEFT JOIN `PROPOSAL_EXTENSION` | 130,122 rows — no multiplication |
 
-**ONE_TO_ONE (optional).** All six BU fields carry real signal — 120,947 rows populated
-for the four indicators, 48,396 and 15,885 for the two F&A rates — so the whole
-extension is exposed.
+So it is an optional 1:1. All six BU fields carry real data — 120,947 rows populated for
+the four indicators, and 48,396 and 15,885 for the two F&A rates — so we expose the whole
+extension.
 
-### 2. `PROPOSAL_PERS_UNIT_CRED_SPLITS` — three levels down
+### PROPOSAL_PERS_UNIT_CRED_SPLITS sits three levels down
 
 ```mermaid
 graph LR
@@ -140,17 +140,17 @@ graph LR
     PUCS --> ICT
 ```
 
-It was absent because the graph builder only expanded two levels. Fixed
-(`MAX_DEPTH = 2`, i.e. three levels of object). Same name-mismatch trap as Award: the
-Java property is `institutionalProposalContactId`, the column is `PROPOSAL_PERSON_ID`.
+We missed it at first because the graph builder only expanded two levels; it now goes to
+three. Same name mismatch as Award — the Java property is
+`institutionalProposalContactId` while the column is `PROPOSAL_PERSON_ID`.
 
-### 3. `PROPOSAL_LOG` — a separate object sharing the business key
+### PROPOSAL_LOG is a separate object that shares the business key
 
-Not a child. `ProposalLog` has its own table, its own primary key (`PROPOSAL_NUMBER`),
-its own BU extension, and **no OJB relationship in either direction**. It is the
-**intake record**: created when a proposal is first logged (deadline, log status, PI
-and sponsor as first captured), and it keeps the same `PROPOSAL_NUMBER` when it becomes
-an Institutional Proposal.
+It is not a child. `ProposalLog` has its own table, its own primary key
+(`PROPOSAL_NUMBER`), its own BU extension, and no OJB relationship in either direction.
+It is the intake record — created when a proposal is first logged, holding the deadline,
+log status, and the PI and sponsor as first captured — and it keeps the same
+`PROPOSAL_NUMBER` when it becomes an Institutional Proposal.
 
 | Check | Result |
 |---|---|
@@ -160,21 +160,21 @@ an Institutional Proposal.
 | LEFT JOIN selected roots → log | 36,863 — no multiplication |
 | `PROPOSAL_LOG_EXTENSION` (BU) | 33,149 / 33,149, 1:1 |
 
-**Exposed** as `ONE_TO_ONE` on `PROPOSAL_NUMBER` — the intake data is business content
-Huron may want, and it cannot multiply the root.
+We expose it as a 1:1 on `PROPOSAL_NUMBER`. The intake data is real business content and
+it cannot multiply the root.
 
-> **`INST_PROPOSAL_NUMBER` is a trap.** 30,646 log rows populate it and it looks like
-> the link to the Institutional Proposal. It is a **7-character legacy identifier** and
-> matches **zero** `PROPOSAL.PROPOSAL_NUMBER` values (which are 8 characters), even
-> after trimming leading zeros. Do not join on it. Reported for BU to explain, not
-> resolved here.
+> Do not join `PROPOSAL_LOG` using `INST_PROPOSAL_NUMBER`. It looks like the link to the
+> Institutional Proposal — 30,646 rows populate it — but we tested every one of those
+> values and none matches a `PROPOSAL.PROPOSAL_NUMBER`, even after trimming leading
+> zeros. It is a 7-character legacy identifier where proposal numbers are 8 characters.
+> We left it for BU to explain rather than guessing at it.
 
-### 4. `IP_REVIEW` — a separate versioned object reached through a join
+### IP_REVIEW is its own versioned object, reached through a join
 
-`IntellectualPropertyReview` is its own business object: own primary key
-(`IP_REVIEW_ID`), and its own `PROPOSAL_NUMBER` + `SEQUENCE_NUMBER` +
-`IP_REVIEW_SEQUENCE_STATUS` (`ACTIVE`/`ARCHIVED`) — it is versioned in its own right.
-`PROPOSAL_IP_REVIEW_JOIN` links it to each proposal version.
+`IntellectualPropertyReview` has its own primary key (`IP_REVIEW_ID`) and its own
+`PROPOSAL_NUMBER`, `SEQUENCE_NUMBER` and `IP_REVIEW_SEQUENCE_STATUS` (`ACTIVE` or
+`ARCHIVED`), so it is versioned in its own right. `PROPOSAL_IP_REVIEW_JOIN` links it to
+each proposal version.
 
 | Check | Result |
 |---|---|
@@ -183,10 +183,10 @@ Huron may want, and it cannot multiply the root.
 | max reviews joined to one `PROPOSAL_ID` | **1** |
 | selected roots having a review | 36,863 — 100% |
 
-So in practice: **one review per proposal number, joined to every proposal version.**
-Because the maximum is 1 per proposal version it *could* be folded into the root without
-multiplying rows — but it is a distinct object with its own versioning, so it is exposed
-as its own dataset carrying the proposal keys.
+In practice that means one review per proposal number, joined to every proposal version.
+Since the maximum is 1 per version it could be folded into the root without multiplying
+anything, but it is a distinct object with its own versioning, so we kept it as its own
+dataset carrying the proposal keys.
 
 ## Excluded relationships
 
@@ -226,16 +226,22 @@ Reported, deliberately not cleaned up:
 | Attributes where every value is NULL | 6 |
 | Rows referencing a missing `CUSTOM_ATTRIBUTE` | **0** (Award had 2) |
 
-## Design rules
+## Why the queries are shaped this way
 
-1. **No giant flat join.** One-to-many collections are never joined into the root.
-2. **Many-to-one lookups fold into the root** as code + description; they cannot multiply.
-3. **Every child dataset carries `PROPOSAL_ID`, `PROPOSAL_NUMBER`, `SEQUENCE_NUMBER`** plus
-   its own key, so Huron can reassemble the graph against the right proposal version.
-4. **Children follow the selected root's `PROPOSAL_ID`** — `MAX(SEQUENCE_NUMBER)` is
-   never recomputed on a child table. The two exceptions key on `PROPOSAL_NUMBER`
-   (`PROPOSAL_LOG`, `PROPOSAL_LOG_EXTENSION`) and are documented as such.
-5. **Nothing is filtered to a final migration population**; anomalies are reported.
+We keep one-to-many collections in their own queries so they cannot multiply the root.
+Many-to-one lookups go into the root as code plus description, since a lookup cannot
+multiply anything.
+
+Every child dataset carries `PROPOSAL_ID`, `PROPOSAL_NUMBER` and `SEQUENCE_NUMBER`
+alongside its own key, so the graph can be reassembled against the right proposal
+version.
+
+Children are fetched through the selected root's `PROPOSAL_ID`. We never recompute
+`MAX(SEQUENCE_NUMBER)` on a child table. The two exceptions key on `PROPOSAL_NUMBER` —
+`PROPOSAL_LOG` and `PROPOSAL_LOG_EXTENSION` — because the intake record is not versioned.
+
+We did not filter anything to a final migration population, and we reported anomalies
+instead of cleaning them up.
 
 ## Custom data — authoritative vs convenience
 
@@ -262,9 +268,9 @@ attribute, lineage built on it would silently drift. The normalized EAV tables p
 `CUSTOM_ATTRIBUTE` and `CUSTOM_ATTRIBUTE_DOCUMENT` remain authoritative; the view is a
 convenience interface only.
 
-## Decisions on the flagged findings
+## What we decided about the flagged findings
 
-Resolved with BU, recorded so the reasoning is not lost:
+Agreed with BU. Recorded here so the reasoning does not get lost:
 
 | Finding | Decision |
 |---|---|
@@ -274,8 +280,8 @@ Resolved with BU, recorded so the reasoning is not lost:
 | Six INPR attributes have rows but no non-NULL values | **Kept** in the field dictionary, marked `NO_POPULATED_VALUES_IN_PRODUCTION`. They describe configured BU fields; Huron decides whether they matter as configuration rather than as migrated data. |
 | `PROPOSAL_CUSTOM_DATA_V` | **Convenience, not authoritative** — see above. |
 
-## Still open for BU
+## Things we still need to confirm
 
-Nothing blocking. If Huron asks, the questions worth raising are whether the 1,136
-orphan intake logs are in migration scope, and whether the legacy
-`INST_PROPOSAL_NUMBER` needs migrating as a cross-reference.
+Nothing blocking. The two worth raising are whether the 1,136 orphan intake logs are in
+migration scope, and whether the legacy `INST_PROPOSAL_NUMBER` needs to come across as a
+cross-reference.

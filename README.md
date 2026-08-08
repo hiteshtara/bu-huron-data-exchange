@@ -7,12 +7,12 @@ Huron mapping.
 
 ## Status
 
-| Module | State |
-|---|---|
-| Award | **COMPLETE** |
-| Institutional Proposal | **COMPLETE** |
-| Subaward | **COMPLETE** |
-| Negotiation | **COMPLETE** |
+| Module | State | Business records | Physical rows |
+|---|---|---|---|
+| Award | **COMPLETE** | 43,202 | 282,468 |
+| Institutional Proposal | **COMPLETE** | 36,863 | 130,122 |
+| Subaward | **COMPLETE** | 3,466 | 93,061 |
+| Negotiation | **COMPLETE** | 11,842 | 11,842 (not versioned) |
 
 ## How it works
 
@@ -37,8 +37,13 @@ graph LR
     class SQL out
 ```
 
-Nothing is inferred from table names. Every relationship, label and count is checked
-against both the application source and production before it is written down.
+We do not infer relationships from table names. Every relationship, label and count is
+checked against both the Kuali source and production before we write it down.
+
+One thing worth knowing up front: all four business objects are versioned differently.
+Award, Institutional Proposal and Subaward each needed their own rule for picking the
+current row, and Negotiation is not versioned at all. Each module documents its own rule
+and the exceptions behind it.
 
 ## Where to look
 
@@ -46,11 +51,18 @@ against both the application source and production before it is written down.
 |---|---|
 | `modules/award/` | Everything about Award |
 | `modules/proposal/` | Everything about Institutional Proposal |
+| `modules/subaward/` | Everything about Subaward |
+| `modules/negotiation/` | Everything about Negotiation |
+| `docs/` | Cross-module data model, the SQL interface, and developer setup |
 | `reference/` | Cross-module Kuali field metadata |
 | `discovery/` | Broad KC schema research |
 | `scripts/` | Reproducible analysis/build tooling |
 | `templates/` | Generic working templates |
 | `HURON_MAPPING_GUIDE.md` | Orientation for Huron / external consumers |
+
+New here? [docs/DATA_MODEL.md](docs/DATA_MODEL.md) is the cross-module picture,
+[docs/SQL_INTERFACE.md](docs/SQL_INTERFACE.md) explains the query datasets, and
+[docs/ONBOARDING.md](docs/ONBOARDING.md) covers setup and regenerating the artifacts.
 
 ## Database access
 

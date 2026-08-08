@@ -39,14 +39,21 @@ ever helpful to audit a particular field.
 
 | Module | Contents |
 |---|---|
-| `modules/award/` | Award |
-| `modules/proposal/` | Institutional Proposal |
-| `modules/subaward/` | Subaward |
-| `modules/negotiation/` | Negotiation |
+| `modules/award/` | Award — 108 relationships, 238 UI fields |
+| `modules/proposal/` | Institutional Proposal — 64 relationships, 138 UI fields |
+| `modules/subaward/` | Subaward — 32 relationships, 156 UI fields |
+| `modules/negotiation/` | Negotiation — 15 relationships, 46 UI fields |
 
-Each completed module contains a business-object graph (`*_GRAPH.md` explains it,
-`*_GRAPH.csv` is machine readable), a UI-to-database field mapping, a read-only SQL
-representation under `sql/`, and the findings and open questions specific to that area.
+Each module contains a business-object graph (`*_GRAPH.md` explains it, `*_GRAPH.csv` is
+machine readable), a UI-to-database field mapping, a read-only SQL representation under
+`sql/`, and the findings and open questions specific to that area.
+
+A few relationships are worth mentioning because they cross modules. A Subaward connects
+to its funding Award through `SUBAWARD_FUNDING_SOURCE`, which records the specific award
+*version* that funded it — `FUNDING_AWARD_NUMBER` reaches the current Award root. A
+Negotiation can be about an Award, a Subaward or an Institutional Proposal, and which one
+depends on its association type, so that dataset carries an
+`ASSOCIATED_DOCUMENT_ID_MEANS` column to make the key readable.
 
 ## SQL representation
 
@@ -80,11 +87,14 @@ row counts are considerably larger than business record counts:
 |---|---|---|
 | Award | 282,468 | 43,202 |
 | Institutional Proposal | 130,122 | 36,863 |
+| Subaward | 93,061 | 3,466 |
+| Negotiation | 11,842 | 11,842 |
 
-Each module documents the selection logic that identifies the current record, derived
-from production evidence rather than assuming `MAX(SEQUENCE_NUMBER)` is always correct.
-The two modules completed so far needed different rules, and each module's
-`*_latest_version_validation.sql` shows the counts and exceptions behind its rule.
+Each module documents the logic that identifies the current record, worked out from
+production evidence rather than assuming `MAX(SEQUENCE_NUMBER)` is always right. All four
+turned out differently: Award, Institutional Proposal and Subaward each needed their own
+rule, and Negotiation is not versioned at all — one row is one negotiation. Each module's
+validation query shows the counts and exceptions behind its rule.
 
 **BU custom fields.** KC stores institution-specific fields in an
 entity-attribute-value model: `CUSTOM_ATTRIBUTE` holds the field definitions and

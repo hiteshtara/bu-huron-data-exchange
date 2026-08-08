@@ -1,15 +1,12 @@
 # KC Award Business-Object Graph
 
-## Problem
+## Where this graph came from
 
-Huron consumes a business object as a **complete graph**, not a single table. To expose
-BU's Awards as a SQL interface we first need the real Award object graph — every
-relationship that constitutes an Award in Kuali Coeus — established from the KC model
-rather than guessed from table names.
+Huron works with a business object as a whole graph, not a single table, so before we
+could expose Awards as SQL we had to work out what actually makes up an Award in KC. We
+built it from the KC model rather than guessing from table names.
 
-## Source of the graph
-
-The graph was derived from **both**:
+We used two sources together:
 
 1. **`~/Downloads/kuali-research-bu-master`** (BU's fork, branch `bu-master`, read-only) —
    the OJB class descriptor for `org.kuali.kra.award.home.Award` in
@@ -19,7 +16,8 @@ The graph was derived from **both**:
 2. **KCOEUS production** — every child class resolved to a real table, annotated with its
    actual `COUNT(*)`, so the graph reflects what BU holds, not what KC supports.
 
-Built by `scripts/build_object_graph.py --module award`. Machine-readable form: `AWARD_GRAPH.csv`.
+We build it with `scripts/build_object_graph.py --module award`. `AWARD_GRAPH.csv` is
+the machine-readable version.
 
 **108 relationships** discovered: 53 `MANY_TO_ONE`, 41 `ONE_TO_MANY`, 1 `ONE_TO_ONE`,
 13 `MANY_TO_ONE_INVERSE`. 87 proposed for exposure, 21 excluded.
@@ -40,12 +38,11 @@ Built by `scripts/build_object_graph.py --module award`. Machine-readable form: 
 | Primary key | `AWARD_ID` |
 | Business key | `AWARD_NUMBER` + `SEQUENCE_NUMBER` |
 
-**Award is versioned.** One `AWARD_NUMBER` has many `SEQUENCE_NUMBER`s, each its own
-`AWARD_ID` row. 282,468 rows do **not** mean 282,468 awards. Nothing here filters to the
-latest sequence — population selection is a later migration decision.
+Award is versioned. One `AWARD_NUMBER` has many sequences, each its own `AWARD_ID` row,
+so 282,468 rows are only 43,202 awards.
 
-Every child collection keys on `AWARD_ID`, so children belong to a **specific award
-version**, not to the award as a whole. The exceptions are called out below.
+Every child collection keys on `AWARD_ID`, which means a child belongs to one specific
+award version rather than to the award as a whole. The exceptions are called out below.
 
 ## Graph shape
 
@@ -101,9 +98,9 @@ AWARD (root, AWARD_ID)
     └── awardTransferringSponsors  AWARD_TRANSFERRING_SPONSOR ..... 0  (empty at BU)
 ```
 
-## Relationships that do not follow the AWARD_ID pattern
+## Relationships that do not key on AWARD_ID
 
-These are the ones most likely to be mis-joined, so they are called out explicitly:
+These are the ones most likely to be joined wrongly, so they are worth stating plainly:
 
 | Relationship | Join | Why it differs |
 |---|---|---|
@@ -159,11 +156,11 @@ AWARD
 
 Four findings that matter for mapping:
 
-**1. A person has two possible identities, and only one of them is joinable.**
-`AwardContact` (the parent of `AwardPerson`) holds `personId`, `rolodexId`, `person`
-and `rolodex`. There is **no OJB or JPA relationship from `AWARD_PERSONS` to any person
-table** — `person` is a `KcPerson` resolved at runtime by `KcPersonService` from KIM.
-`rolodex` resolves from `ROLODEX_ID` against `ROLODEX` and *is* joinable. In production:
+**A person has two possible identities, and only one of them is joinable.**
+`AwardContact`, the parent of `AwardPerson`, holds `personId`, `rolodexId`, `person` and
+`rolodex`. There is no ORM relationship from `AWARD_PERSONS` to any person table at all —
+`person` is a `KcPerson` that KC resolves at runtime through `KcPersonService`. `rolodex`
+does resolve against `ROLODEX` and is joinable. In production:
 
 | Identity | Rows |
 |---|---|
@@ -171,32 +168,31 @@ table** — `person` is a `KcPerson` resolved at runtime by `KcPersonService` fr
 | `ROLODEX_ID` (external contact) | 464 |
 | neither | 3 |
 
-`AWARD_PERSONS.FULL_NAME` is a **persisted denormalized copy**, not the system of
-record: `AwardContact.getFullName()` calls `getContact()`, which refreshes it from the
-person record on read. The interface therefore exposes `PERSON_SOURCE`
-(`KIM_PERSON` / `ROLODEX` / `UNIDENTIFIED`) so Huron does not mistake `FULL_NAME` for
-authoritative KIM data.
+`AWARD_PERSONS.FULL_NAME` is a stored copy rather than the system of record —
+`AwardContact.getFullName()` calls `getContact()`, which refreshes it from the person
+record every time it is read. We expose `PERSON_SOURCE` (`KIM_PERSON`, `ROLODEX` or
+`UNIDENTIFIED`) so it is obvious which identity a row actually has.
 
-**2. The role lookup silently doubles the dataset.** `CONTACT_ROLE_CODE`
-(`COI`, `KP`, `MPI`, `PI`) decodes against `EPS_PROP_PERSON_ROLE` via
-`PropAwardPersonRoleService`. That table holds **two rows per code**, one per
-`SPONSOR_HIERARCHY_NAME` (`DEFAULT` and `NIH Multiple PI`) — the same code carries
-different labels (`PI` is both "Principal Investigator" and "PD/PI Contact"). An
-unfiltered join takes the dataset from **345,600 to 691,200 rows**, verified. The
-interface pins the join to `SPONSOR_HIERARCHY_NAME = 'DEFAULT'`, which resolves all
-345,600 rows with 0 unmatched. Awards under the NIH multiple-PI hierarchy legitimately
-carry the other label — reported, not resolved.
+**The role lookup doubles the dataset if you let it.** `CONTACT_ROLE_CODE` (`COI`, `KP`,
+`MPI`, `PI`) decodes against `EPS_PROP_PERSON_ROLE`, which KC reaches through
+`PropAwardPersonRoleService`. That table holds two rows for every code, one per
+`SPONSOR_HIERARCHY_NAME` — `DEFAULT` and `NIH Multiple PI` — and the same code carries a
+different label in each. `PI` is both "Principal Investigator" and "PD/PI Contact".
 
-**3. Credit splits exist at two levels.** Person-level
-(`AWARD_PERSON_CREDIT_SPLITS`, keyed on `AWARD_PERSON_ID`) and unit-level
+We checked what an unfiltered join does: 345,600 rows become 691,200. We pin the join to
+the `DEFAULT` hierarchy, which resolves all 345,600 with nothing unmatched. Awards under
+the NIH multiple-PI hierarchy genuinely carry the other label, and we left that alone.
+
+**Credit splits exist at two levels.** There is a person-level split
+(`AWARD_PERSON_CREDIT_SPLITS`, keyed on `AWARD_PERSON_ID`) and a unit-level one
 (`AWARD_PERS_UNIT_CRED_SPLITS`, keyed on `AWARD_PERSON_UNIT_ID`). Both decode against
-`INV_CREDIT_TYPE`. The UI renders one column per credit type, which is why the credit
-grid is built from JSTL macros rather than fixed field names.
+`INV_CREDIT_TYPE`. The screen renders one column per credit type, which is why that part
+of the UI is built from JSTL macros instead of fixed field names.
 
-**4. Property names differ from column names.** `AwardPerson.roleCode` →
-`CONTACT_ROLE_CODE`, `faculty` → `FACULTY_FLAG`, `includeInCreditAllocation` →
-`ADD_CREDIT_SPLIT`, `awardContactId` → `AWARD_PERSON_ID`. The UI form bean adds a
-third name for the same field (`contactRoleCode`).
+**Property names and column names drift apart here.** `AwardPerson.roleCode` is
+`CONTACT_ROLE_CODE`, `faculty` is `FACULTY_FLAG`, `includeInCreditAllocation` is
+`ADD_CREDIT_SPLIT`, and `awardContactId` is `AWARD_PERSON_ID`. The UI form bean then adds
+a third name for the same field, `contactRoleCode`.
 
 ## AWARD_CGB — investigated, recommendation: exclude
 
@@ -212,47 +208,50 @@ third name for the same field (`contactRoleCode`).
 | DataDictionary | Full entry (`AwardCgb.xml`) with 14 labelled fields |
 | Business meaning | Contracts & Grants Billing: invoicing configuration (Auto Approve, Invoicing Option, Minimum Invoice Amount, Dunning Campaign, Stop Work, Suspend Invoicing, Letter of Credit Review) plus operational billing state (Last Billed Date, Final Billed Indicator, Amount To Draw, Invoice Document Status) |
 
-So the structure is legitimate: a real, stock Award child collection with a real UI and
-real labels. On structure alone it would qualify for exposure.
+On structure alone this would qualify: a real stock Award child collection with a real
+UI panel and real labels.
 
-**The production data decides it.** Of the 14 business fields:
+The production data is what settled it. Of the 14 business fields:
 
 | Field | Populated | Distinct values |
 |---|---|---|
 | `MIN_INVOICE_AMT`, `INVOICING_OPTION`, `DUNNING_CAMPAIGN_ID`, `LAST_BILLED_DATE`, `AMT_TO_DRAW`, `INVOICE_DOCUMENT_STATUS`, `LOC_CREATION_TYPE` | **0 rows** | — |
 | `ADDITIONAL_FORMS_REQ`, `AUTO_APPROVE_INVOICE`, `STOP_WORK`, `FINAL_BILL`, `LETTER_OF_CREDIT_REVIEW`, `SUSPEND_INVOICING` | 154,705 rows | **`'N'` only — one value, zero variance** |
 
-Seven fields are entirely empty; the other six are `'N'` on every single row. The table
-contains **no information**: the rows are defaults written when the award was created,
-and no user has ever set a value.
+Seven fields are empty and the other six are `'N'` on every row. The table holds no
+information — the rows are defaults written when each award was created and nobody has
+ever set a value.
 
-**Recommendation: exclude.** Not because it is "billing", but because it carries zero
-business signal at BU — every field is either NULL or a constant. Migrating it would
-move 154,705 rows of defaults into HRS and give Huron's mapper 14 fields with nothing
-to infer meaning from. If BU intends to *start* using Contracts & Grants Billing in
-HRS, that is a configuration decision for the new system, not a data conversion.
+So we excluded it. Not because it is billing, but because every field is either NULL or a
+constant. Migrating it would move 154,705 rows of defaults into HRS and give the mapper
+14 fields with nothing to work from. If BU wants to start using Contracts & Grants
+Billing in HRS, that is a configuration decision in the new system rather than something
+to convert.
 
-`HURON_EXPOSE = N` in `AWARD_GRAPH.csv`, reason recorded.
+`AWARD_GRAPH.csv` records `HURON_EXPOSE = N` with the reason.
 
-## Design rules for the SQL interface
+## Why the queries are shaped this way
 
-1. **No giant flat join.** One-to-many collections are never joined into the root. A single
-   award version with 5 persons × 12 sponsor terms × 40 custom attributes would otherwise
-   produce 2,400 duplicate award rows.
-2. **Many-to-one descriptive relationships are folded into the root**, exposing both the
-   source code and its description (`STATUS_CODE` + `STATUS_DESCRIPTION`). These cannot
-   multiply rows.
-3. **Every child dataset carries `AWARD_ID`, `AWARD_NUMBER` and `SEQUENCE_NUMBER`** plus its
-   own primary key, so Huron can reassemble the graph and tie each child to the correct
-   award version.
-4. **Nothing is filtered to a final migration population**, and historical anomalies are
-   reported rather than resolved.
+We keep one-to-many collections in their own queries. One award version with 5 people,
+12 sponsor terms and 40 custom attributes would otherwise come back as 2,400 duplicate
+award rows.
 
-## Verification
+Many-to-one lookups go into the root, with both the code and its description
+(`STATUS_CODE` and `STATUS_DESCRIPTION`), because a lookup cannot multiply rows.
 
-- `AWARD_EXTENSION` confirmed 1:1: 282,468 rows / 282,468 distinct `AWARD_ID`.
-- All root lookup joins verified against production datatypes; three require conversion
-  (`STATUS_CODE` and `ACTIVITY_TYPE_CODE` need `TO_CHAR`, `TRANSACTION_TYPE_CODE` needs
-  `TO_NUMBER` and is safe — 0 non-numeric values).
-- Unmatched lookup codes (reported, not resolved): `transaction_type_code` 15 rows,
-  `sponsor_code` 3, `prime_sponsor_code` 6.
+Every child dataset carries `AWARD_ID`, `AWARD_NUMBER` and `SEQUENCE_NUMBER` alongside
+its own key, so the graph can be put back together against the right award version.
+
+We did not filter anything down to a final migration population, and where we found
+historical oddities we reported them instead of cleaning them up.
+
+## What we checked
+
+`AWARD_EXTENSION` is 1:1 — 282,468 rows against 282,468 distinct `AWARD_ID`.
+
+We checked every root lookup against production datatypes. Three need conversion:
+`STATUS_CODE` and `ACTIVITY_TYPE_CODE` need `TO_CHAR`, and `TRANSACTION_TYPE_CODE` needs
+`TO_NUMBER`, which is safe because none of its values are non-numeric.
+
+A few codes do not resolve, and we left them alone rather than inventing a fix:
+`transaction_type_code` on 15 rows, `sponsor_code` on 3, `prime_sponsor_code` on 6.
