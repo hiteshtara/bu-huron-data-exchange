@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """
-Trace every Award field a BU user can see or interact with back to its Java property
-and its physical Oracle storage.
+Trace every field a BU user can see or interact with, for a given KC business object,
+back to its Java property and its physical Oracle storage.
+
+Generalises the Award mapping builder to any module via --module.
 
 The Award UI is Struts/JSP with Kuali tag libraries. Its structure is declared, not
 inferred:
@@ -85,8 +87,41 @@ NESTED_DISPLAY = ("person.", "rolodex.", "unit.", "sponsor.", "organization.",
 
 RE_READONLY = re.compile(r'readOnly="true"|readOnlyAlternateDisplay', re.I)
 
+# ---------------------------------------------------------------------------
+# Per-module configuration. Everything module-specific lives here so one
+# implementation serves every business object.
+# ---------------------------------------------------------------------------
+MODULES = {
+    "award": {
+        "tag_dir": "tags/award",
+        "jsp_dir": "jsp/award",
+        "root_path": "document.awardList[0]",
+        "root_prefixes": ("document.awardList", "awardHierarchy"),
+        "custom_doc_type": "AWRD",
+        "custom_table": "AWARD_CUSTOM_DATA",
+        "custom_java_class": "org.kuali.kra.award.customdata.AwardCustomData",
+        "custom_section": "Award Custom Data",
+        "custom_panel": "award Custom Data",
+        "personnel_section": "Award Contacts",
+    },
+    "proposal": {
+        "tag_dir": "tags/institutionalproposal",
+        "jsp_dir": "jsp/institutionalproposal",
+        "root_path": "document.institutionalProposal",
+        "root_prefixes": ("document.institutionalProposal",
+                          "document.institutionalProposalList"),
+        "custom_doc_type": "INPR",
+        "custom_table": "PROPOSAL_CUSTOM_DATA",
+        "custom_java_class":
+            "org.kuali.kra.institutionalproposal.customdata.InstitutionalProposalCustomData",
+        "custom_section": "Institutional Proposal Custom Data",
+        "custom_panel": "institutional Proposal Custom Data",
+        "personnel_section": "Institutional Proposal Contacts",
+    },
+}
+
 # Property-path prefix -> the business object it addresses. Longest match wins.
-PATH_TO_ENTRY = [
+AWARD_PATH_TO_ENTRY = [
     ("document.awardList[0].extension.", "AwardExtension"),
     ("document.awardList[0].awardCurrentActionComments.", "AwardComment"),
     ("document.awardList[0].projectPersons", "AwardPerson"),
@@ -115,6 +150,57 @@ PATH_TO_ENTRY = [
     ("awardHierarchy", "AwardHierarchy"),
 ]
 
+PROPOSAL_PATH_TO_ENTRY = [
+    # The Institutional Proposal tags address the object BOTH ways --
+    # document.institutionalProposalList[0].<x> and document.institutionalProposal.<x>.
+    # Both families must be listed or half the UI silently fails to resolve.
+    ("document.institutionalProposalList[0].extension.", "InstitutionalProposalExtension"),
+    ("document.institutionalProposalList[0].projectPersons", "InstitutionalProposalPerson"),
+    ("document.institutionalProposalList[0].institutionalProposalCostShares", "InstitutionalProposalCostShare"),
+    ("document.institutionalProposalList[0].institutionalProposalFandAs", "InstitutionalProposalFandA"),
+    ("document.institutionalProposalList[0].institutionalProposalUnrecoveredFandAs", "InstitutionalProposalUnrecoveredFandA"),
+    ("document.institutionalProposalList[0].institutionalProposalCustomDataList", "InstitutionalProposalCustomData"),
+    ("document.institutionalProposalList[0].institutionalProposalUnitContacts", "InstitutionalProposalUnitContact"),
+    ("document.institutionalProposalList[0].institutionalProposalNotepads", "InstitutionalProposalNotepad"),
+    ("document.institutionalProposalList[0].institutionalProposalScienceKeywords", "InstitutionalProposalScienceKeyword"),
+    ("document.institutionalProposalList[0].specialReviews", "InstitutionalProposalSpecialReview"),
+    ("document.institutionalProposalList[0].proposalComments", "InstitutionalProposalComment"),
+    ("document.institutionalProposalList[0].instProposalAttachments", "InstitutionalProposalAttachment"),
+    ("document.institutionalProposalList[0].proposalCfdas", "InstitutionalProposalCfda"),
+    ("document.institutionalProposalList[0].awardFundingProposals", "AwardFundingProposal"),
+    ("document.institutionalProposalList[0].allFundingProposals", "AwardFundingProposal"),
+    ("document.institutionalProposalList[0].", "InstitutionalProposal"),
+    ("document.institutionalProposal.extension.", "InstitutionalProposalExtension"),
+    ("document.institutionalProposal.projectPersons", "InstitutionalProposalPerson"),
+    ("document.institutionalProposal.institutionalProposalCostShares", "InstitutionalProposalCostShare"),
+    ("document.institutionalProposal.institutionalProposalFandAs", "InstitutionalProposalFandA"),
+    ("document.institutionalProposal.institutionalProposalUnrecoveredFandAs", "InstitutionalProposalUnrecoveredFandA"),
+    ("document.institutionalProposal.institutionalProposalCustomDataList", "InstitutionalProposalCustomData"),
+    ("document.institutionalProposal.institutionalProposalUnitContacts", "InstitutionalProposalUnitContact"),
+    ("document.institutionalProposal.institutionalProposalNotepads", "InstitutionalProposalNotepad"),
+    ("document.institutionalProposal.institutionalProposalScienceKeywords", "InstitutionalProposalScienceKeyword"),
+    ("document.institutionalProposal.specialReviews", "InstitutionalProposalSpecialReview"),
+    ("document.institutionalProposal.proposalComments", "InstitutionalProposalComment"),
+    ("document.institutionalProposal.instProposalAttachments", "InstitutionalProposalAttachment"),
+    ("document.institutionalProposal.proposalCfdas", "InstitutionalProposalCfda"),
+    ("document.institutionalProposal.awardFundingProposals", "AwardFundingProposal"),
+    ("document.institutionalProposal.allFundingProposals", "AwardFundingProposal"),
+    ("document.institutionalProposal.", "InstitutionalProposal"),
+]
+PROPOSAL_FORM_BEAN_ENTRY = [
+    ("institutionalProposalFandABean.newInstitutionalProposalFandA", "InstitutionalProposalFandA"),
+    ("institutionalProposalFandABean", "InstitutionalProposalFandA"),
+    ("institutionalProposalCostShareBean.newInstitutionalProposalCostShare",
+     "InstitutionalProposalCostShare"),
+    ("institutionalProposalCostShareBean", "InstitutionalProposalCostShare"),
+    ("institutionalProposalUnrecoveredFandABean.newInstitutionalProposalUnrecoveredFandA",
+     "InstitutionalProposalUnrecoveredFandA"),
+    ("institutionalProposalUnrecoveredFandABean", "InstitutionalProposalUnrecoveredFandA"),
+    ("institutionalProposalAttachmentBean", "InstitutionalProposalAttachment"),
+    ("institutionalProposalNotepadBean", "InstitutionalProposalNotepad"),
+    ("institutionalProposalContactBean", "InstitutionalProposalPerson"),
+]
+
 # DD entry -> Java class, for entries the dictionary knows by class name.
 TECHNICAL_PROPS = {
     "versionNumber", "objectId", "updateUser", "updateTimestamp",
@@ -129,8 +215,8 @@ def clean_leaf(leaf):
     return leaf.strip(". ")
 
 
-def entry_for_path(prop_path):
-    for prefix, entry in PATH_TO_ENTRY:
+def entry_for_path(prop_path, path_to_entry):
+    for prefix, entry in path_to_entry:
         if prop_path.startswith(prefix):
             leaf = prop_path[len(prefix):]
             # strip collection indexes: projectPersons[0].fullName -> fullName
@@ -140,6 +226,7 @@ def entry_for_path(prop_path):
 
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--module", required=True, choices=sorted(MODULES))
     ap.add_argument("--source", required=True)
     ap.add_argument("--dictionary", required=True)
     ap.add_argument("--custom-attributes", required=True)
@@ -147,10 +234,17 @@ def main():
     ap.add_argument("--output", required=True)
     args = ap.parse_args()
 
+    cfg = MODULES[args.module]
+    path_to_entry = (AWARD_PATH_TO_ENTRY if args.module == "award"
+                     else PROPOSAL_PATH_TO_ENTRY)
+    form_beans = (FORM_BEAN_ENTRY if args.module == "award"
+                  else PROPOSAL_FORM_BEAN_ENTRY)
+    root_prefixes = cfg["root_prefixes"]
+
     root = Path(args.source).expanduser()
     webapp = root / "coeus-webapp/src/main/webapp/WEB-INF"
-    tagdir = webapp / "tags/award"
-    jspdir = webapp / "jsp/award"
+    tagdir = webapp / cfg["tag_dir"]
+    jspdir = webapp / cfg["jsp_dir"]
 
     # ---- field dictionary, keyed by (java simple class, property) and by table.column
     by_class_prop = {}
@@ -210,19 +304,22 @@ def main():
             for mp in RE_PROPERTY.finditer(line):
                 prop_path = mp.group(1)
                 # EL indirections used throughout the Award tags
+                rp = cfg["root_path"]
                 prop_path = (prop_path
-                             .replace("${docAward}", "document.awardList[0]")
-                             .replace("${cgbPath}", "document.awardList[0]")
-                             .replace("${awardPath}", "document.awardList[0]"))
+                             .replace("${docAward}", rp)
+                             .replace("${cgbPath}", rp)
+                             .replace("${awardPath}", rp)
+                             .replace("${docIP}", rp)
+                             .replace("${proposalPath}", rp))
                 # "Add new row" form beans address the same business object as the
                 # collection they feed, e.g. costShareFormHelper.newAwardCostShare.<x>
                 mb = RE_NEW_BEAN.match(prop_path)
                 if mb:
-                    prop_path = ("document.awardList[0]." + NEW_BEAN_COLLECTION.get(
+                    prop_path = (rp + "." + NEW_BEAN_COLLECTION.get(
                         mb.group(2), mb.group(2)) + "[0]." + mb.group(3))
                 nested_display = any(n in prop_path for n in NESTED_DISPLAY)
-                if not prop_path.startswith(("document.awardList", "awardHierarchy")):
-                    hit = next((e for pfx, e in FORM_BEAN_ENTRY
+                if not prop_path.startswith(root_prefixes):
+                    hit = next((e for pfx, e in form_beans
                                 if prop_path.startswith(pfx)), None)
                     if not hit:
                         continue
@@ -233,7 +330,7 @@ def main():
                 if prop_path.startswith("__bean__"):
                     entry, leaf = prop_path[len("__bean__"):].split(".", 1)
                 else:
-                    entry, leaf = entry_for_path(prop_path)
+                    entry, leaf = entry_for_path(prop_path, path_to_entry)
                 leaf = clean_leaf(leaf)
                 if not entry or not leaf or leaf.startswith("methodToCall"):
                     continue
@@ -379,7 +476,8 @@ def main():
          "decodes against INV_CREDIT_TYPE"),
     ]
 
-    for tagfile, tab, cls, prop, origin_override, note in PERSONNEL:
+    for tagfile, tab, cls, prop, origin_override, note in (
+            PERSONNEL if args.module == "award" else []):
         d = by_class_prop.get((cls, prop))
         table = d["DB_TABLE"] if d else ""
         column = d["DB_COLUMN"] if d else ""
@@ -392,7 +490,7 @@ def main():
             notes.append("no DataDictionary label in source; UI name not asserted")
         verified = column in prod.get(table, set()) if table else False
         rows.append({
-            "UI_SECTION": "Award Contacts",
+            "UI_SECTION": cfg["personnel_section"],
             "UI_TAB": tab,
             "UI_PANEL": re.sub(r"(?<!^)(?=[A-Z])", " ", tagfile[:-4]).strip(),
             "UI_FIELD_NAME": ui_name,
@@ -418,18 +516,18 @@ def main():
 
     # ---- BU custom attributes: defined in the database, not the source ----
     for ca in csv.DictReader(open(args.custom_attributes, encoding="utf-8")):
-        if (ca.get("DOCUMENT_TYPE_CODE") or "").strip() != "AWRD":
+        if (ca.get("DOCUMENT_TYPE_CODE") or "").strip() != cfg["custom_doc_type"]:
             continue
         rows.append({
-            "UI_SECTION": "Award Custom Data",
+            "UI_SECTION": cfg["custom_section"],
             "UI_TAB": ca.get("GROUP_NAME", ""),
-            "UI_PANEL": "award Custom Data",
+            "UI_PANEL": cfg["custom_panel"],
             "UI_FIELD_NAME": ca.get("ATTRIBUTE_LABEL", ""),
             "UI_SHORT_LABEL": ca.get("ATTRIBUTE_NAME", ""),
             "FIELD_DESCRIPTION": ca.get("ATTRIBUTE_NAME", ""),
-            "JAVA_CLASS": "org.kuali.kra.award.customdata.AwardCustomData",
+            "JAVA_CLASS": cfg["custom_java_class"],
             "JAVA_PROPERTY": "value",
-            "DB_TABLE": "AWARD_CUSTOM_DATA",
+            "DB_TABLE": cfg["custom_table"],
             "DB_COLUMN": "VALUE",
             "DATA_TYPE": ca.get("DATA_TYPE_DESC") or ca.get("DATA_TYPE_CODE", ""),
             "LOOKUP_TABLE": "CUSTOM_ATTRIBUTE",
@@ -488,7 +586,7 @@ def main():
         w.writerows(rows)
 
     from collections import Counter
-    print(f"Award UI fields discovered : {len(rows)} -> {out}")
+    print(f"{args.module} UI fields discovered : {len(rows)} -> {out}")
     print("FIELD_ORIGIN :", dict(Counter(r["FIELD_ORIGIN"] for r in rows)))
     print("CONFIDENCE   :", dict(Counter(r["CONFIDENCE"] for r in rows)))
     print(f"mapped to a DB column      : {sum(1 for r in rows if r['DB_COLUMN'])}")

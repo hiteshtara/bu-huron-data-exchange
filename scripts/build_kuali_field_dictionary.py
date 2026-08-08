@@ -72,8 +72,10 @@ def parse_ojb(root: Path):
             continue
 
         for cd in tree.iter("class-descriptor"):
-            java_class = cd.get("class")
-            table = cd.get("table")
+            # Strip whitespace: BU's fork declares table="PROPOSAL_EXTENSION " with a
+            # trailing space, which otherwise fails every lookup keyed on table name.
+            java_class = (cd.get("class") or "").strip()
+            table = (cd.get("table") or "").strip()
             if not java_class or not table:
                 continue  # interfaces / extents have no table
             entry = mappings.setdefault(
@@ -89,7 +91,8 @@ def parse_ojb(root: Path):
                     "source": str(path),
                 }
             for rd in cd.findall("reference-descriptor"):
-                name, class_ref = rd.get("name"), rd.get("class-ref")
+                name = (rd.get("name") or "").strip()
+                class_ref = (rd.get("class-ref") or "").strip()
                 if not name or not class_ref:
                     continue
                 references[java_class][name] = {
@@ -651,8 +654,10 @@ def main():
         try:
             if int(observed or 0) > 0 and int(distinct or 0) == 0:
                 notes.append(
-                    "value rows exist but every value is NULL - field configured "
-                    "but never populated; confirm whether BU still uses it")
+                    "NO_POPULATED_VALUES_IN_PRODUCTION - value rows exist but every "
+                    "value is NULL. Kept because it describes a configured BU field; "
+                    "Huron can decide whether it matters as configuration rather than "
+                    "as migrated data")
         except ValueError:
             pass
 

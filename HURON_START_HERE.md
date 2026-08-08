@@ -22,6 +22,11 @@ screen**, the lookup that decodes it, and a mapping priority.
 Do not infer a label from the Java property name. `AWARD.AWARD_NUMBER` is
 **"Award ID"** on screen; `PROPOSAL.TITLE` is **"Project Title"**.
 
+**You do not need to read any Kuali source.** Everything here is CSV and SQL. The
+`JAVA_CLASS`, `JAVA_PROPERTY` and `SOURCE_FILE` columns are provenance — they record
+where each label and mapping came from so a disputed field can be traced back to the
+exact file. Ignore them unless you want to audit a specific mapping.
+
 **2. `modules/<object>/`** — one directory per business object.
 
 `modules/award/` is complete. Each contains the object graph (`*_GRAPH.md` explains it,
@@ -36,6 +41,24 @@ single award with 5 people × 12 terms × 40 custom fields would otherwise produ
 duplicate award rows. Every child carries the root keys so you can reassemble the graph.
 
 ## Two things that will bite you otherwise
+
+```mermaid
+graph LR
+    subgraph WRONG["what the raw table looks like"]
+        R["AWARD_NUMBER | CUSTOM_ATTRIBUTE_ID | VALUE<br/>100001-00001 | 1542 | 'Yes'"]
+    end
+    subgraph RIGHT["what it actually means"]
+        D["CUSTOM_ATTRIBUTE 1542<br/><b>label:</b> IRB Multi-Site<br/><b>group:</b> Compliance<br/><b>type:</b> String"]
+        V["field <b>IRB Multi-Site</b> = 'Yes'<br/>on award 100001-00001"]
+        D --> V
+    end
+    R -->|"join CUSTOM_ATTRIBUTE_ID<br/>→ CUSTOM_ATTRIBUTE"| D
+
+    classDef bad fill:#922b21,stroke:#641e16,color:#fff
+    classDef good fill:#1e8449,stroke:#145a32,color:#fff
+    class R bad
+    class V good
+```
 
 **Custom fields are EAV.** `AWARD_CUSTOM_DATA.VALUE` is not a business field — it is
 generic storage. The real field is `CUSTOM_ATTRIBUTE_ID` plus its definition in

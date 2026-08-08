@@ -10,25 +10,35 @@ Huron mapping.
 | Module | State |
 |---|---|
 | Award | **COMPLETE** |
-| Institutional Proposal | **IN PROGRESS** |
-| Subaward | NOT STARTED |
+| Institutional Proposal | **COMPLETE** |
+| Subaward | **NEXT** |
 | Negotiation | NOT STARTED |
 
 ## How it works
 
-```text
-Kuali source code  +  KCOEUS production
-                 ↓
-       Business-object graph
-                 ↓
-   Front-end → database mapping
-                 ↓
-      Huron SQL interface
+```mermaid
+graph LR
+    SRC["<b>Kuali source</b><br/>OJB · JPA · DataDictionary<br/>JSP/tag UI"]
+    PROD["<b>KCOEUS production</b><br/>schema · row counts<br/>real values"]
+    G["<b>Business-object graph</b><br/>every relationship, typed<br/>and row-count verified"]
+    M["<b>Front-end → database map</b><br/>UI label → Java property<br/>→ Oracle column"]
+    SQL["<b>Huron SQL interface</b><br/>root + child collections<br/>read only"]
+
+    SRC --> G
+    PROD --> G
+    SRC --> M
+    PROD --> M
+    G --> SQL
+    M --> SQL
+
+    classDef in fill:#1f4e79,stroke:#0d2b45,color:#fff
+    classDef out fill:#1e8449,stroke:#145a32,color:#fff
+    class SRC,PROD in
+    class SQL out
 ```
 
-The graph comes from the Kuali application's own ORM and DataDictionary metadata —
-never from table-name guesswork. Every relationship, label and row count is verified
-against KCOEUS production before it is written down.
+Nothing is inferred from table names. Every relationship, label and count is checked
+against both the application source and production before it is written down.
 
 ## Where to look
 

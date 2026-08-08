@@ -49,6 +49,9 @@ def _load_parsers():
 # a foreign-key target without being a lookup.
 REFERENCE_ROW_CEILING = 20_000
 
+# Levels of collection nesting to expand below the root.
+MAX_DEPTH = 2
+
 MODULES = {
     "award": {
         "root_class": "org.kuali.kra.award.home.Award",
@@ -173,7 +176,35 @@ MODULES = {
                 "duplicate of awardFundingProposals without an inverse FK",
         },
         "core_entities": {"PROPOSAL"},
-        "extra_edges": [],
+        "extra_edges": [
+            {
+                "relationship_name": "proposalLog",
+                "relationship_type": "ONE_TO_ONE",
+                "child_object": "ProposalLog",
+                "child_class": "org.kuali.kra.institutionalproposal.proposallog.ProposalLog",
+                "join_columns": "proposalNumber",
+                "business_purpose": "Intake record the proposal was created from "
+                                    "(deadline, log status, PI and sponsor as first captured)",
+                "expose": "Y",
+                "notes": "SEPARATE business object, not an OJB relationship in either "
+                         "direction. PROPOSAL_LOG's own primary key is PROPOSAL_NUMBER and "
+                         "it shares that business key with the Institutional Proposal it "
+                         "became: 36,860 of 36,863 proposal numbers have a log row, and "
+                         "1,136 logs never became proposals. Its INST_PROPOSAL_NUMBER "
+                         "column is a 7-character LEGACY identifier that matches no "
+                         "PROPOSAL row - do not join on it",
+            },
+            {
+                "relationship_name": "proposalLogExtension",
+                "relationship_type": "ONE_TO_ONE",
+                "child_object": "ProposalLogExtension",
+                "child_class": "edu.bu.kuali.kra.institutionalproposal.proposallog.ProposalLogExtension",
+                "join_columns": "proposalNumber",
+                "business_purpose": "BU extension on the intake record",
+                "expose": "Y",
+                "notes": "BU-authored (edu.bu). 1:1 on PROPOSAL_NUMBER, 33,149 rows",
+            },
+        ],
     },
 }
 
@@ -208,11 +239,12 @@ def load_collections(root: Path):
         except ET.ParseError:
             continue
         for cd in tree.iter("class-descriptor"):
-            cls = cd.get("class")
+            cls = (cd.get("class") or "").strip()
             if not cls:
                 continue
             for c in cd.findall("collection-descriptor"):
-                nm, el = c.get("name"), c.get("element-class-ref")
+                nm = (c.get("name") or "").strip()
+                el = (c.get("element-class-ref") or "").strip()
                 if nm and el:
                     collections[cls][nm] = {
                         "child": el,
@@ -316,7 +348,14 @@ def main():
                 "NOTES": EXCLUDE.get(name, "") + child_rows_note(child_table),
                 "_depth": depth,
             })
-            if depth == 0 and child_cls in collections and name not in EXCLUDE:
+            # Expand to three levels: several KC graphs are genuinely that deep
+            # (root -> person -> person unit -> unit credit split). Stopping at two
+            # silently omitted those leaf collections from the machine-readable graph.
+            # Recurse into a child that has collections OR references. Testing only
+            # for collections silently dropped pure join objects: ProposalIpReviewJoin
+            # has no collections, so IP_REVIEW was never reached through it.
+            if (depth < MAX_DEPTH and name not in EXCLUDE
+                    and (child_cls in collections or child_cls in ojb_refs)):
                 add_edges(child_cls, depth + 1)
 
     add_edges(root_class, 0)

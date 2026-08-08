@@ -21,8 +21,15 @@ The graph was derived from **both**:
 
 Built by `scripts/build_object_graph.py --module award`. Machine-readable form: `AWARD_GRAPH.csv`.
 
-**66 relationships** discovered: 24 `MANY_TO_ONE`, 37 `ONE_TO_MANY`, 1 `ONE_TO_ONE`,
-4 `MANY_TO_ONE_INVERSE`. 54 proposed for exposure, 12 excluded.
+**108 relationships** discovered: 53 `MANY_TO_ONE`, 41 `ONE_TO_MANY`, 1 `ONE_TO_ONE`,
+13 `MANY_TO_ONE_INVERSE`. 87 proposed for exposure, 21 excluded.
+
+> Regenerated after two graph-builder defects found during the Institutional Proposal
+> work: expansion stopped at two levels (dropping `AwardPersonUnit.creditSplits`), and
+> children with only references — never collections — were not expanded at all. The
+> Award *findings* were unaffected: both relationships were already documented below and
+> covered by `sql/huron_award_person_unit_credit_split.sql`; only the machine-readable
+> CSV was incomplete.
 
 ## Root object
 
