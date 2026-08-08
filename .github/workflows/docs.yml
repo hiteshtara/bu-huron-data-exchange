@@ -1,0 +1,20 @@
+name: docs
+
+# Documentation drifts quietly. This runs the checks that do not need the database,
+# so a stale count or a broken link fails the PR instead of surviving for two commits.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # No dependencies needed: check_docs.py is standard library only, and it never
+      # connects to Oracle.
+      - run: python scripts/check_docs.py

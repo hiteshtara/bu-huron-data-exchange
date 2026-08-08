@@ -1,6 +1,11 @@
 # Negotiation
 
-**Status: COMPLETE** — pending review
+Status: **Technical mapping complete · BU validation pending**
+
+The graph, field mapping and SQL are built and verified against production. That is
+not the same as the business decisions being settled — see
+[the decision register](../../docs/DECISION_REGISTER.md) for what is still open.
+Counts measured 2026-08-07 ([provenance](../../docs/PROVENANCE.md)).
 
 Root is `org.kuali.kra.negotiations.bo.Negotiation` → `KCOEUS.NEGOTIATION`. One class,
 one DataDictionary entry, no projection variant.
@@ -59,10 +64,10 @@ Everything BU-specific here is one of the 8 `NGT` custom attributes.
 ## Regenerating
 
 ```bash
-python scripts/build_object_graph.py --module negotiation --source ~/…/kuali-research-bu-master \
+.venv/bin/python scripts/build_object_graph.py --module negotiation --source ~/…/kuali-research-bu-master \
     --row-counts <counts.csv> --output modules/negotiation/NEGOTIATION_GRAPH.csv
 
-python scripts/build_frontend_mapping.py --module negotiation --source ~/…/kuali-research-bu-master \
+.venv/bin/python scripts/build_frontend_mapping.py --module negotiation --source ~/…/kuali-research-bu-master \
     --dictionary reference/KUALI_FIELD_DICTIONARY.csv --custom-attributes <catalog.csv> \
     --prod-columns <columns.csv> --output modules/negotiation/NEGOTIATION_FRONTEND_DATABASE_MAPPING.csv
 ```

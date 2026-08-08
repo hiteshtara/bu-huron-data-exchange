@@ -66,7 +66,7 @@ AWARD (root, AWARD_ID)
 └── ONE_TO_MANY (each its own dataset — never flattened into the root)
     ├── projectPersons ........... AWARD_PERSONS ............ 345,596
     │   ├── units ................ AWARD_PERSON_UNITS ....... 353,105
-    │   │   └── unitCreditSplits . AWARD_PERS_UNIT_CRED_SPLITS 197,220
+    │   │   └── unitCreditSplits . AWARD_PERS_UNIT_CRED_SPLITS 198,926
     │   └── creditSplits ......... AWARD_PERSON_CREDIT_SPLITS  216,156
     ├── awardAmountInfos ......... AWARD_AMOUNT_INFO ........ 923,457
     ├── awardDirectFandADistributions AWARD_AMT_FNA_DISTRIBUTION 458,011

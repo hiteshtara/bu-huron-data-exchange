@@ -9,8 +9,20 @@ whole.
 
 ## Suggested starting point
 
+If a worked example is more useful than a description,
+[docs/WALKTHROUGH.md](docs/WALKTHROUGH.md) takes one real Award through the whole thing —
+the root query, its people and custom fields, joining them back together, and checking a
+field against the dictionary. It takes about five minutes.
+
+[docs/DATA_CONTRACT.md](docs/DATA_CONTRACT.md) covers the operational detail: grain,
+keys, null semantics, date and number conventions, and what is filtered out.
+
 For mapping purposes, `reference/KUALI_FIELD_DICTIONARY.csv` may be the most useful
 starting point.
+
+For the full sequence from interpreting the KC model through source-to-target mapping,
+extraction, loading and reconciliation, see
+[How Huron can use this repository](docs/HURON_USAGE_GUIDE.md).
 
 KC's Oracle schema contains no column comments, so the database alone conveys column
 names and datatypes but little business meaning. BU supplemented the database metadata
@@ -125,10 +137,18 @@ question calls for deeper investigation of the source schema.
 
 | Module | State |
 |---|---|
-| Award | Complete |
-| Institutional Proposal | Complete |
-| Subaward | Complete |
-| Negotiation | Complete |
+| Award | Technical mapping complete, BU validation pending |
+| Institutional Proposal | Technical mapping complete, BU validation pending |
+| Subaward | Technical mapping complete, BU/Huron decision pending |
+| Negotiation | Technical mapping complete, BU validation pending |
+
+"Technical mapping complete" means the graph, field mapping and SQL are built and checked
+against production. It does not mean every business question is settled — the
+[decision register](docs/DECISION_REGISTER.md) lists what is still open, and nothing is
+marked approved for migration yet.
+
+All counts in this guide were measured on **2026-08-07**
+([provenance](docs/PROVENANCE.md)).
 
 ## Joint review items
 

@@ -138,16 +138,16 @@ first, because the frontend mapping builder consumes it.
 
 ```bash
 # The end-to-end field dictionary (Oracle -> Java -> Kuali UI label)
-python scripts/build_kuali_field_dictionary.py   # -> reference/KUALI_FIELD_DICTIONARY.csv
+.venv/bin/python scripts/build_kuali_field_dictionary.py   # -> reference/KUALI_FIELD_DICTIONARY.csv
 
 # Per-module object graph (relationships + production row counts)
-python scripts/build_object_graph.py --module award \
+.venv/bin/python scripts/build_object_graph.py --module award \
     --source ~/Downloads/kuali-research-bu-master \
     --row-counts <row-counts.csv> \
     --output modules/award/AWARD_GRAPH.csv
 
 # Per-module UI -> database field mapping
-python scripts/build_frontend_mapping.py --module award \
+.venv/bin/python scripts/build_frontend_mapping.py --module award \
     --source ~/Downloads/kuali-research-bu-master \
     --dictionary reference/KUALI_FIELD_DICTIONARY.csv \
     --custom-attributes <catalog.csv> --prod-columns <columns.csv> \
@@ -168,12 +168,12 @@ dictionary, table manifest, exclusions, extract log) is tracked in Git. The actu
 extracts are not.
 
 ```bash
-python scripts/extract_grants_package.py \
+.venv/bin/python scripts/extract_grants_package.py \
     --manifest discovery/02_table_manifest.csv \
     --dictionary discovery/01_data_dictionary.csv \
     --out-root discovery/output --sql-root discovery/sql/package
 
-python scripts/validate_grants_package.py   # structure, counts, PII redaction, lineage keys
+.venv/bin/python scripts/validate_grants_package.py   # structure, counts, PII redaction, lineage keys
 ```
 
 ## Data safety and what never gets committed

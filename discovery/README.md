@@ -40,7 +40,7 @@ Columns documented:         4,074
 It is fully gitignored and reproducible:
 
 ```bash
-python scripts/extract_grants_package.py \
+.venv/bin/python scripts/extract_grants_package.py \
     --manifest discovery/02_table_manifest.csv \
     --dictionary discovery/01_data_dictionary.csv \
     --out-root discovery/output --sql-root discovery/sql/package

@@ -278,7 +278,7 @@ These were found during discovery and are **deliberately not resolved** here:
    labels; the rest are technical columns. No labels were invented.
 
 7. **Row-sample size and format** still need Phil's confirmation (see
-   `reference/HURON_REPLY_DRAFT.md`): sample size, CSV vs SQL table, and secure channel.
+   `discovery/HURON_REPLY_DRAFT.md`): sample size, CSV vs SQL table, and secure channel.
 
 ## Result
 

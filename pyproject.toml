@@ -1,0 +1,17 @@
+[project]
+name = "bu-huron-data-exchange"
+version = "1.0.0"
+description = "BU Kuali Coeus Grants business objects modelled for Huron HRS mapping"
+requires-python = ">=3.11"
+
+# Only one runtime dependency: the Oracle driver used by the read-only query runner.
+# Everything else is the standard library. Pinned so a rebuild months from now produces
+# the same artifacts as the ones committed here.
+dependencies = [
+    "oracledb==4.0.2",
+]
+
+[tool.bu-huron]
+# Recorded so scripts/check_docs.py can flag drift between what is documented and what
+# is installed.
+validated-python = "3.12.13"

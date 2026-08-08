@@ -27,12 +27,12 @@ both were verified to reproduce their outputs identically before removal. Their 
 remains in Git. Award generation is now:
 
 ```bash
-python scripts/build_object_graph.py --module award \
+.venv/bin/python scripts/build_object_graph.py --module award \
     --source ~/Downloads/kuali-research-bu-master \
     --row-counts <row-counts.csv> \
     --output modules/award/AWARD_GRAPH.csv
 
-python scripts/build_frontend_mapping.py --module award \
+.venv/bin/python scripts/build_frontend_mapping.py --module award \
     --source ~/Downloads/kuali-research-bu-master \
     --dictionary reference/KUALI_FIELD_DICTIONARY.csv \
     --custom-attributes <catalog.csv> --prod-columns <columns.csv> \

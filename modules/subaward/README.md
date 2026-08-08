@@ -1,6 +1,11 @@
 # Subaward
 
-**Status: COMPLETE**
+Status: **Technical mapping complete · BU/Huron decision pending**
+
+The graph, field mapping and SQL are built and verified against production. That is
+not the same as the business decisions being settled — see
+[the decision register](../../docs/DECISION_REGISTER.md) for what is still open.
+Counts measured 2026-08-07 ([provenance](../../docs/PROVENANCE.md)).
 
 Root is `org.kuali.kra.subaward.bo.SubAward` → `KCOEUS.SUBAWARD`. Only one class maps to
 that table, so unlike Institutional Proposal there was no root-class question to settle.
@@ -160,10 +165,10 @@ These are open questions for BU and Huron to work through together, not defects:
 ## Regenerating
 
 ```bash
-python scripts/build_object_graph.py --module subaward --source ~/…/kuali-research-bu-master \
+.venv/bin/python scripts/build_object_graph.py --module subaward --source ~/…/kuali-research-bu-master \
     --row-counts <counts.csv> --output modules/subaward/SUBAWARD_GRAPH.csv
 
-python scripts/build_frontend_mapping.py --module subaward --source ~/…/kuali-research-bu-master \
+.venv/bin/python scripts/build_frontend_mapping.py --module subaward --source ~/…/kuali-research-bu-master \
     --dictionary reference/KUALI_FIELD_DICTIONARY.csv --custom-attributes <catalog.csv> \
     --prod-columns <columns.csv> --output modules/subaward/SUBAWARD_FRONTEND_DATABASE_MAPPING.csv
 ```

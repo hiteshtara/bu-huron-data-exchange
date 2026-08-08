@@ -1,0 +1,96 @@
+{
+  "validated_against_production": "2026-08-07",
+  "database": "KCOEUS on prod.db.kuali.research.bu.edu",
+  "repository_revision": "b6cf65630ec9df71590a2f80ae7c39f429f69ca2",
+  "repository_clean": false,
+  "kuali_source": {
+    "path": "/Users/mukadder/Downloads/kuali-research-bu-master",
+    "branch": "bu-master",
+    "revision": null,
+    "revision_note": "extracted from a zip, so no git revision is available",
+    "pom_version": "2001.0040"
+  },
+  "populations": [
+    {
+      "module": "Award",
+      "table": "AWARD",
+      "physical_rows": 282468,
+      "business_records": 43202
+    },
+    {
+      "module": "Institutional Proposal",
+      "table": "PROPOSAL",
+      "physical_rows": 130122,
+      "business_records": 36863
+    },
+    {
+      "module": "Subaward",
+      "table": "SUBAWARD",
+      "physical_rows": 93061,
+      "business_records": 3466
+    },
+    {
+      "module": "Negotiation",
+      "table": "NEGOTIATION",
+      "physical_rows": 11842,
+      "business_records": 11842
+    }
+  ],
+  "artifacts": [
+    {
+      "artifact": "reference/KUALI_FIELD_DICTIONARY.csv",
+      "rows": 6194,
+      "sha256": "0397e8ab96dda71a"
+    },
+    {
+      "artifact": "modules/award/AWARD_GRAPH.csv",
+      "rows": 108,
+      "sha256": "0423ba2d496ada11"
+    },
+    {
+      "artifact": "modules/award/AWARD_FRONTEND_DATABASE_MAPPING.csv",
+      "rows": 238,
+      "sha256": "815147db43dac777"
+    },
+    {
+      "artifact": "modules/proposal/PROPOSAL_GRAPH.csv",
+      "rows": 64,
+      "sha256": "06c3b8e2ee5557ae"
+    },
+    {
+      "artifact": "modules/proposal/PROPOSAL_FRONTEND_DATABASE_MAPPING.csv",
+      "rows": 138,
+      "sha256": "b5225ee7280ce1bc"
+    },
+    {
+      "artifact": "modules/subaward/SUBAWARD_GRAPH.csv",
+      "rows": 32,
+      "sha256": "402198e61de5098f"
+    },
+    {
+      "artifact": "modules/subaward/SUBAWARD_FRONTEND_DATABASE_MAPPING.csv",
+      "rows": 156,
+      "sha256": "7c958d5481419e81"
+    },
+    {
+      "artifact": "modules/negotiation/NEGOTIATION_GRAPH.csv",
+      "rows": 15,
+      "sha256": "761ac65a95b5cbb8"
+    },
+    {
+      "artifact": "modules/negotiation/NEGOTIATION_FRONTEND_DATABASE_MAPPING.csv",
+      "rows": 46,
+      "sha256": "f7f91f5cbbc1aeda"
+    },
+    {
+      "artifact": "discovery/01_data_dictionary.csv",
+      "rows": 4074,
+      "sha256": "71a97308f1e42cae"
+    },
+    {
+      "artifact": "discovery/02_table_manifest.csv",
+      "rows": 359,
+      "sha256": "28e768b98803a8cb"
+    }
+  ]
+}
