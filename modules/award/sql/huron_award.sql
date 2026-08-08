@@ -25,6 +25,7 @@ SELECT
        a.proposal_number                   AS source_proposal_number,
        a.account_number                    AS account_number,
        /* ---- version / sequence state ---------------------------------- */
+       v.selection_rule                    AS root_selection_rule,
        a.award_sequence_status             AS award_sequence_status,
        a.ver_nbr                           AS version_number,
        /* ---- core business fields (code + description) ------------------ */
@@ -140,9 +141,12 @@ JOIN       huron_award_version v ON v.award_id = a.award_id
 -- ===========================================================================
 -- HURON_GRANTS_AWARD
 --
--- Grain      : one row per AWARD sequence (award_id). AWARD is versioned, so an
---              award_number has many sequence_numbers. NOT filtered to the
---              latest sequence -- population selection is a later decision.
+-- Grain      : one row per AWARD_NUMBER -- the current version, picked by the
+--              huron_award_version CTE (ACTIVE, else highest sequence). AWARD is
+--              versioned, so an award_number has many sequence_numbers; this query
+--              returns the selected current one, not all history. Remove the
+--              huron_award_version join to expose every sequence. This is version
+--              selection, not final population selection -- that stays a later decision.
 -- Source     : KCOEUS.AWARD (57 cols) + KCOEUS.AWARD_EXTENSION (31 cols, BU)
 -- Cardinality: AWARD_EXTENSION verified 1:1 on award_id
 --              (282,468 rows / 282,468 distinct ids). All lookups are many:1
