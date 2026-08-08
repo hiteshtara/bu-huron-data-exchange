@@ -38,6 +38,72 @@ Counts measured 2026-08-07 ([provenance](PROVENANCE.md)).
 | D-14 | Award | `204946-00004` appears in `AWARD_HIERARCHY` but not in `AWARD`. | Low | BU | Open | |
 | D-15 | Award | 30 award numbers have hierarchy rows that differ only by the `ACTIVE` flag, and 2 of those (`200431-00004`, `201514-00005`) also disagree about the parent. We take the active placement. Confirm that is the intended current structure. | Low | BU | Open | |
 | D-16 | Award | BU's 2012 KCRM-SAP specification says an account number may only sit on an award with no children, and that it must be handed down if that award later gains children. 16 non-leaf awards still hold one. Stale from before a re-parenting, or meaningful? | Low | BU | Open | |
+| D-17 | Award | Does HRS expect the Award family, the individual Award/account, or both as distinct objects? This sets the grain of the whole Award migration — 15,729 families against 43,202 awards. Detail below. | **High** — decides what an Award record *is* in HRS | BU + Huron | Open | |
+
+## What grain does HRS expect for Awards? (D-17)
+
+This is the one question in the register that changes what the Award migration produces
+rather than how much of it there is, so it gets more room than a table cell.
+
+**Award family** (the BU grant family) means the root `-00001` award together with its
+child/subaccount awards. We use that term rather than "grant" throughout, because until
+this question is answered we do not know what HRS calls its own equivalent object.
+
+### Where BU is today
+
+| | |
+|---|---|
+| Award/account business records | 43,202 |
+| Award families | 15,729 |
+| Award/accounts per family | about 2.7 |
+| Families that are a root with no children | 199 |
+
+The `-00001` root award is the main award for a family. Child award numbers are separate
+accounts or subaccounts under it, and a small number of families nest deeper than that.
+
+`BU_GRANT_NUMBER` behaves as a family-level identifier where it is populated:
+
+| | Families |
+|---|---|
+| Exactly one distinct `BU_GRANT_NUMBER` | 14,447 |
+| More than one | 0 |
+| None at all | 1,282 |
+
+So it is clean but not universal. It is never ambiguous within a family, and about 8% of
+families have no value.
+
+### What we need decided
+
+Whether HRS expects:
+
+1. the Award family as the primary migrated object,
+2. each Award/account as the primary object, or
+3. both, as separate related objects.
+
+If HRS maps at the family level, we also need to know what identifies the family:
+
+- `BU_GRANT_NUMBER`, with a strategy for the 1,282 families that have none;
+- `ROOT_AWARD_NUMBER`;
+- or an HRS identifier, keeping both of ours as source identifiers.
+
+**We are not assuming `BU_GRANT_NUMBER` should be backfilled or derived from
+`ROOT_AWARD_NUMBER`.** That is a migration decision, not a data fix, and it is part of
+this question rather than something to settle first.
+
+### Why it matters
+
+It moves the Award migration grain from 43,202 records to 15,729, and it determines how
+child and subaccount awards, hierarchy relationships, account numbers and
+`BU_GRANT_NUMBER` are represented in HRS.
+
+### Wording for the meeting
+
+> How should the KC Award hierarchy map to HRS? BU currently has 43,202 Award/account
+> records organized into 15,729 Award families — what BU has historically called a grant
+> family. The -00001 root Award is the main award, while child Awards represent separate
+> accounts/subaccounts. BU_GRANT_NUMBER behaves as a family-level identifier where
+> populated, but 1,282 families have no value. We would like to confirm whether HRS
+> expects the Award family, individual Award/accounts, or both as distinct objects.
 
 ## How this connects to the modules
 
@@ -46,14 +112,16 @@ evidence lives. This table is for tracking the answer.
 
 | Module | Findings | IDs |
 |---|---|---|
-| [Award](../modules/award/AWARD_GRAPH.md) | 6 | D-02, D-12, D-13, D-14, D-15, D-16 |
+| [Award](../modules/award/AWARD_GRAPH.md) | 7 | D-02, D-12, D-13, D-14, D-15, D-16, D-17 |
 | [Institutional Proposal](../modules/proposal/PROPOSAL_GRAPH.md) | 5 | D-03 … D-07 |
 | [Subaward](../modules/subaward/SUBAWARD_GRAPH.md) | 2 | D-01, D-10 |
 | [Negotiation](../modules/negotiation/NEGOTIATION_GRAPH.md) | 2 | D-08, D-09 |
 | Cross-module | 1 | D-11 |
 
-## The two to settle first
+## The three to settle first
 
-**D-01** and **D-08** are the ones that change what data means rather than how much of it
-there is. D-01 decides what a subaward is attached to in HRS. D-08 covers 78% of all
-negotiations. The rest can wait for conversion planning.
+**D-17**, **D-01** and **D-08** are the ones that change what the data means rather than
+how much of it there is. D-17 decides the grain of the Award migration and should come
+first, because the answer affects how everything else in the Award module is presented.
+D-01 decides what a subaward is attached to in HRS. D-08 covers 78% of all negotiations.
+The rest can wait for conversion planning.
