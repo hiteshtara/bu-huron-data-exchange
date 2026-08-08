@@ -1,0 +1,150 @@
+CUSTOM_ATTRIBUTE_ID,ATTRIBUTE_NAME,ATTRIBUTE_LABEL,GROUP_NAME,DATA_TYPE_CODE,DATA_TYPE_DESC,DATA_LENGTH,DEFAULT_VALUE,LOOKUP_CLASS,LOOKUP_RETURN,DOCUMENT_TYPE_CODE,ATTACHED_MODULE,IS_REQUIRED,ACTIVE_FLAG,AWARD_VALUE_ROWS,AWARD_DISTINCT_VALUES,PROPOSAL_VALUE_ROWS,PROPOSAL_DISTINCT_VALUES,SUBAWARD_VALUE_ROWS,SUBAWARD_DISTINCT_VALUES,NEGOTIATION_VALUE_ROWS,NEGOTIATION_DISTINCT_VALUES,DOC_VALUE_ROWS,DOC_DISTINCT_VALUES
+500,center_affiliation,Center Affiliation,Center Affiliation,1,String,,,org.kuali.coeus.common.framework.unit.Unit,unitNumber,AWRD,,N,Y,197041,101,114801,155,0,0,0,0,0,0
+1110,post_doc_fellow,Postdoctoral Fellowship? (Y/N),Fellowships,4,Boolean,,No,,,AWRD,,N,Y,194547,1,113689,1,0,0,0,0,0,0
+1100,pre_doc_fellow,Predoctoral Fellowship? (Y/N),Fellowships,4,Boolean,,No,,,AWRD,,N,Y,194548,1,113689,1,0,0,0,0,0,0
+1215,ActvCode,NIH Activity Code,General,1,String,4,,,,AWRD,ActvCode,N,Y,123425,68,91344,131,0,0,0,0,0,0
+1216,Audited,Special Audit,General,4,Boolean,,,,,AWRD,Audited,N,Y,123425,2,0,0,0,0,0,0,0,0
+1213,BillingAgmt,Billing Agreement,General,4,Boolean,,,,,AWRD,Billing Agmt,N,Y,123762,2,2761,2,0,0,0,0,0,0
+1222,COVID_Vaccine_Mandate,COVID Vaccine Mandate,General,4,Boolean,,,,,AWRD,COVID_Vaccine_Mandate,N,N,59899,1,33297,1,0,0,0,0,0,0
+1221,Covid_19_Research,COVID-19 Research,General,4,Boolean,,,,,AWRD,Covid_19_Research,N,N,89440,2,51012,2,0,0,0,0,0,0
+1218,ExportCntrl,Export Control (TCP),General,4,Boolean,,,,,AWRD,ExportCntrl,N,Y,123425,2,0,0,0,0,0,0,0,0
+8,Grant_Termination,Grant Termination,General,4,Boolean,,,,,AWRD,Grant_Termination,N,Y,17222,2,0,0,0,0,0,0,0,0
+1219,InfoSecurityCompliance,Info Security Compliance,General,4,Boolean,,,,,AWRD,InfoSecurityCompliance,N,Y,123425,1,0,0,0,0,0,0,0,0
+9,Limited_Submission_Opportunity,Limited Submission Opportunity,General,4,Boolean,,,,,AWRD,Limited_Submission_Opportunity,N,Y,11101,0,7346,0,0,0,0,0,0,0
+1214,OppNum,Opportunity Number,General,1,String,,,,,AWRD,OppNum,N,Y,123425,1287,91394,6878,0,0,0,0,0,0
+1209,OppTitle,Opportunity Title,General,1,String,,,,,AWRD,OppTitle,N,Y,123425,1713,91394,5454,0,0,0,0,0,0
+1217,RetentionDate,Special Retention End Date,General,3,Date,,,,,AWRD,RetentionDate,N,Y,123425,1,0,0,0,0,0,0,0,0
+6,Trump_Exec_Order_Cert,Trump Exec Order Cert,General,4,Boolean,,,,,AWRD,Trump_Exec_Order_Cert_Det,N,Y,22102,2,14571,2,0,0,0,0,0,0
+5,Trump_Exec_Order_Cert_Det,Trump Exec Order Cert Det,General,5,Long String,,,,,AWRD,Trump_Exec_Order_Cert,N,Y,22102,6,14571,2,0,0,0,0,0,0
+1000,credit_override,Admin Unit Credit Override,General,1,String,,,org.kuali.coeus.common.framework.unit.Unit,unitNumber,AWRD,,N,Y,197041,7,0,0,0,0,0,0,0,0
+1010,paa_override,PAA Credit Override,General,2,Number,,,org.kuali.coeus.common.framework.unit.Unit,unitNumber,AWRD,,N,Y,195598,0,0,0,0,0,0,0,0,0
+753,3rd_party,Will these staff be third party contractors? (Y/N),International Activity,4,Boolean,,,,,AWRD,,N,Y,197041,2,114801,2,0,0,0,0,0,0
+795,Internl_countries,Country or countries involved,International Activity,1,String,,,,,AWRD,,N,Y,197040,261,114801,567,0,0,0,0,0,0
+780,bank_acct,Will you be opening and operating an in-country bank account? (Y/N),International Activity,4,Boolean,,,,,AWRD,,N,Y,197041,2,114801,2,0,0,0,0,0,0
+750,emp_contr,Will these staff be BU employees? (Y/N),International Activity,4,Boolean,,,,,AWRD,,N,Y,197041,2,114801,2,0,0,0,0,0,0
+790,hum_sub,Will you be conducting human subject research internationally? (Y/N),International Activity,4,Boolean,,,,,AWRD,,N,Y,197041,2,114801,2,0,0,0,0,0,0
+793,internl_effort,Percent of the overall effort that will be performed in another country,International Activity,2,Number,3,,,,AWRD,,N,Y,197040,53,114801,83,0,0,0,0,0,0
+700,internl_research,International activity? (excluding travel to conferences) (Y/N),International Activity,4,Boolean,,,,,AWRD,,Y,Y,213215,2,117315,2,0,0,0,0,0,0
+770,op_exp,Will you be incurring in-country operational expenses? (Y/N),International Activity,4,Boolean,,,,,AWRD,,N,Y,197041,2,114801,2,0,0,0,0,0,0
+710,prim_travel,Is this activity primarily collaboration with colleagues? (Y/N),International Activity,4,Boolean,,,,,AWRD,,N,Y,197041,2,114801,2,0,0,0,0,0,0
+760,rent_lease,Will you be renting or leasing office or research space? (Y/N),International Activity,4,Boolean,,,,,AWRD,,N,Y,197041,2,114801,2,0,0,0,0,0,0
+740,temp_perm,Will you be hiring temporary or permanent staff internationally? (Y/N),International Activity,4,Boolean,,,,,AWRD,,N,Y,197041,2,114801,2,0,0,0,0,0,0
+800,bldg_name,Building Name,Location of Research,1,String,,,,,AWRD,,N,Y,197041,535,114801,1281,0,0,0,0,0,0
+830,private_use,Private Use (Y/N),Location of Research,4,Boolean,,,,,AWRD,,N,Y,197041,2,114801,1,0,0,0,0,0,0
+820,room_num,Room Number,Location of Research,1,String,,,,,AWRD,,N,Y,197041,807,114801,1793,0,0,0,0,0,0
+811,str_add,Street Address,Location of Research,1,String,,,,,AWRD,,N,Y,197041,1894,114801,4381,0,0,0,0,0,0
+10,NSF_Activity_Type,NSF Activity Type,NSF HERD Survey Data,1,String,,,,,AWRD,NSF_Activity_Type,N,Y,1710,0,1109,0,0,0,0,0,0,0
+11,Reason_for_Waiver,Reason for Waiver,NSF HERD Survey Data,1,String,,,,,AWRD,Reason_for_Waiver,N,Y,1710,0,1109,0,0,0,0,0,0,0
+1,competitive_segments,Previous Competitive Segment,Project Relationships,1,String,30,,org.kuali.kra.award.home.Award,sponsorAwardNumber,AWRD,,N,Y,241918,14,119254,0,0,0,0,0,75197,12
+2,dual_funded,"If this a Dual-Funded Award, select the other Sponsored Award ID.",Project Relationships,1,String,30,,org.kuali.kra.award.home.Award,sponsorAwardNumber,AWRD,,N,Y,241918,4,119254,0,0,0,0,0,75197,2
+600,fc_name_1,Funds Center Name 1,Space,1,String,,,org.kuali.coeus.common.framework.unit.Unit,unitNumber,AWRD,,N,Y,197041,100,114801,161,0,0,0,0,0,0
+620,fc_name_2,Funds Center Name 2,Space,1,String,,,org.kuali.coeus.common.framework.unit.Unit,unitNumber,AWRD,,N,Y,197041,20,114801,46,0,0,0,0,0,0
+640,fc_name_3,Funds Center Name 3,Space,1,String,,,org.kuali.coeus.common.framework.unit.Unit,unitNumber,AWRD,,N,Y,197041,1,114801,7,0,0,0,0,0,0
+610,sp_all_1,Space Allocation % 1,Space,2,Number,3,,,,AWRD,,N,Y,197041,20,114801,40,0,0,0,0,0,0
+630,sp_all_2,Space Allocation % 2,Space,2,Number,3,,,,AWRD,,N,Y,197041,15,114801,33,0,0,0,0,0,0
+650,sp_all_3,Space Allocation % 3,Space,2,Number,3,,,,AWRD,,N,Y,197041,1,114801,4,0,0,0,0,0,0
+4,postdoc-trainee,Post-Doctoral Trainee Count,Training Grant Supplemental Data,2,Number,3,,,,AWRD,,N,N,46965,1,5745,0,0,0,0,0,75197,1
+3,predoc_trainee,Pre-Doctoral Trainee Count,Training Grant Supplemental Data,2,Number,3,,,,AWRD,,N,N,46965,2,5745,1,0,0,0,0,75197,2
+480,ip_submission_date,Submitted Date,Additional Dates,3,Date,,,,,INPR,,N,Y,0,0,109074,4313,0,0,0,0,0,0
+500,center_affiliation,Center Affiliation,Center Affiliation,1,String,,,org.kuali.coeus.common.framework.unit.Unit,unitNumber,INPR,,N,Y,197041,101,114801,155,0,0,0,0,0,0
+1540,ExportCntrlBlank,Export Control section left blank on PSF,Export Control,4,Boolean,,,,,INPR,ExportCntrlBlank,N,Y,0,0,68096,2,0,0,0,0,0,0
+1500,ExportCntrlNA,Export Control Not Applicable,Export Control,4,Boolean,,,,,INPR,ExportCntrlNA,N,Y,0,0,68119,2,0,0,0,0,0,0
+1530,ExportCntrlRestriction,Export control restrictions,Export Control,4,Boolean,,,,,INPR,ExportCntrlRestriction,N,Y,0,0,68116,2,0,0,0,0,0,0
+1510,PriorApprvDissemPub,Prior approval for dissemination/publications,Export Control,4,Boolean,,,,,INPR,PriorApprvDissemPub,N,Y,0,0,68119,2,0,0,0,0,0,0
+1520,RestrictForeignN,Restrictions on access or participation by foreign nationals,Export Control,4,Boolean,,,,,INPR,RestrictForeignN,N,Y,0,0,68117,2,0,0,0,0,0,0
+1120,cancld_billing_agrmt,Cancelled Billing Agreement,Fellowships,4,Boolean,70,,,,INPR,Activity Code,N,N,0,0,0,0,0,0,0,0,0,0
+1110,post_doc_fellow,Postdoctoral Fellowship? (Y/N),Fellowships,4,Boolean,,No,,,INPR,,N,Y,194547,1,113689,1,0,0,0,0,0,0
+1100,pre_doc_fellow,Predoctoral Fellowship? (Y/N),Fellowships,4,Boolean,,No,,,INPR,,N,Y,194548,1,113689,1,0,0,0,0,0,0
+1215,ActvCode,NIH Activity Code,General,1,String,4,,,,INPR,ActvCode,N,Y,123425,68,91344,131,0,0,0,0,0,0
+1222,COVID_Vaccine_Mandate,COVID Vaccine Mandate,General,4,Boolean,,,,,INPR,COVID_Vaccine_Mandate,N,N,59899,1,33297,1,0,0,0,0,0,0
+1221,Covid_19_Research,COVID-19 Research,General,4,Boolean,,,,,INPR,Covid_19_Research,N,N,89440,2,51012,2,0,0,0,0,0,0
+9,Limited_Submission_Opportunity,Limited Submission Opportunity,General,4,Boolean,,,,,INPR,Limited_Submission_Opportunity,N,Y,11101,0,7346,0,0,0,0,0,0,0
+1214,OppNum,Opportunity Number,General,1,String,,,,,INPR,OppNum,N,Y,123425,1287,91394,6878,0,0,0,0,0,0
+1209,OppTitle,Opportunity Title,General,1,String,,,,,INPR,OppTitle,N,Y,123425,1713,91394,5454,0,0,0,0,0,0
+6,Trump_Exec_Order_Cert,Trump Exec Order Cert,General,4,Boolean,,,,,INPR,Trump_Exec_Order_Cert_Det,N,Y,22102,2,14571,2,0,0,0,0,0,0
+5,Trump_Exec_Order_Cert_Det,Trump Exec Order Cert Det,General,5,Long String,,,,,INPR,Trump_Exec_Order_Cert,N,Y,22102,6,14571,2,0,0,0,0,0,0
+753,3rd_party,Will these staff be third party contractors? (Y/N),International Activity,4,Boolean,,,,,INPR,,N,Y,197041,2,114801,2,0,0,0,0,0,0
+795,Internl_countries,Country or countries involved,International Activity,1,String,,,,,INPR,,N,Y,197040,261,114801,567,0,0,0,0,0,0
+780,bank_acct,Will you be opening and operating an in-country bank account? (Y/N),International Activity,4,Boolean,,,,,INPR,,N,Y,197041,2,114801,2,0,0,0,0,0,0
+750,emp_contr,Will these staff be BU employees? (Y/N),International Activity,4,Boolean,,,,,INPR,,N,Y,197041,2,114801,2,0,0,0,0,0,0
+790,hum_sub,Will you be conducting human subject research internationally? (Y/N),International Activity,4,Boolean,,,,,INPR,,N,Y,197041,2,114801,2,0,0,0,0,0,0
+793,internl_effort,Percent of the overall effort that will be performed in another country,International Activity,2,Number,3,,,,INPR,,N,Y,197040,53,114801,83,0,0,0,0,0,0
+700,internl_research,International activity? (excluding travel to conferences) (Y/N),International Activity,4,Boolean,,,,,INPR,,Y,Y,213215,2,117315,2,0,0,0,0,0,0
+770,op_exp,Will you be incurring in-country operational expenses? (Y/N),International Activity,4,Boolean,,,,,INPR,,N,Y,197041,2,114801,2,0,0,0,0,0,0
+710,prim_travel,Is this activity primarily collaboration with colleagues? (Y/N),International Activity,4,Boolean,,,,,INPR,,N,Y,197041,2,114801,2,0,0,0,0,0,0
+760,rent_lease,Will you be renting or leasing office or research space? (Y/N),International Activity,4,Boolean,,,,,INPR,,N,Y,197041,2,114801,2,0,0,0,0,0,0
+740,temp_perm,Will you be hiring temporary or permanent staff internationally? (Y/N),International Activity,4,Boolean,,,,,INPR,,N,Y,197041,2,114801,2,0,0,0,0,0,0
+800,bldg_name,Building Name,Location of Research,1,String,,,,,INPR,,N,Y,197041,535,114801,1281,0,0,0,0,0,0
+830,private_use,Private Use (Y/N),Location of Research,4,Boolean,,,,,INPR,,N,Y,197041,2,114801,1,0,0,0,0,0,0
+820,room_num,Room Number,Location of Research,1,String,,,,,INPR,,N,Y,197041,807,114801,1793,0,0,0,0,0,0
+811,str_add,Street Address,Location of Research,1,String,,,,,INPR,,N,Y,197041,1894,114801,4381,0,0,0,0,0,0
+10,NSF_Activity_Type,NSF Activity Type,NSF HERD Survey Data,1,String,,,,,INPR,NSF_Activity_Type,N,Y,1710,0,1109,0,0,0,0,0,0,0
+11,Reason_for_Waiver,Reason for Waiver,NSF HERD Survey Data,1,String,,,,,INPR,Reason_for_Waiver,N,Y,1710,0,1109,0,0,0,0,0,0,0
+1,competitive_segments,Previous Competitive Segment,Project Relationships,1,String,30,,org.kuali.kra.award.home.Award,sponsorAwardNumber,INPR,,N,Y,241918,14,119254,0,0,0,0,0,75197,12
+2,dual_funded,"If this a Dual-Funded Award, select the other Sponsored Award ID.",Project Relationships,1,String,30,,org.kuali.kra.award.home.Award,sponsorAwardNumber,INPR,,N,Y,241918,4,119254,0,0,0,0,0,75197,2
+600,fc_name_1,Funds Center Name 1,Space,1,String,,,org.kuali.coeus.common.framework.unit.Unit,unitNumber,INPR,,N,Y,197041,100,114801,161,0,0,0,0,0,0
+620,fc_name_2,Funds Center Name 2,Space,1,String,,,org.kuali.coeus.common.framework.unit.Unit,unitNumber,INPR,,N,Y,197041,20,114801,46,0,0,0,0,0,0
+640,fc_name_3,Funds Center Name 3,Space,1,String,,,org.kuali.coeus.common.framework.unit.Unit,unitNumber,INPR,,N,Y,197041,1,114801,7,0,0,0,0,0,0
+610,sp_all_1,Space Allocation % 1,Space,2,Number,3,,,,INPR,,N,Y,197041,20,114801,40,0,0,0,0,0,0
+630,sp_all_2,Space Allocation % 2,Space,2,Number,3,,,,INPR,,N,Y,197041,15,114801,33,0,0,0,0,0,0
+650,sp_all_3,Space Allocation % 3,Space,2,Number,3,,,,INPR,,N,Y,197041,1,114801,4,0,0,0,0,0,0
+4,postdoc-trainee,Post-Doctoral Trainee Count,Training Grant Supplemental Data,2,Number,3,,,,INPR,,N,N,46965,1,5745,0,0,0,0,0,75197,1
+3,predoc_trainee,Pre-Doctoral Trainee Count,Training Grant Supplemental Data,2,Number,3,,,,INPR,,N,N,46965,2,5745,1,0,0,0,0,75197,2
+910,addgene_number,Addgene Order Number,General,1,String,,,,,NGT,,N,Y,0,0,0,0,0,0,11842,1290,0,0
+900,budget_approval,Budget Approved (Y/N),General,4,Boolean,,,,,NGT,,N,Y,0,0,0,0,0,0,11842,0,0,0
+920,ct_reg_num,Clinicaltrials.gov Reg. No.,General,1,String,,,,,NGT,,N,Y,0,0,0,0,0,0,11842,2,0,0
+970,ind_ide,IND/IDE,General,1,String,3,,,,NGT,,N,Y,0,0,0,0,0,0,11842,0,0,0
+960,irb_number,IRB Number,General,1,String,,,,,NGT,,N,Y,0,0,0,0,0,0,11842,41,0,0
+940,msa_end_date,Master Agreement End Date,Important Dates,3,Date,,,,,NGT,,N,Y,0,0,0,0,0,0,11842,3,0,0
+930,msa_start_date,Master Agreement Start Date,Important Dates,3,Date,,,,,NGT,,N,Y,0,0,0,0,0,0,11842,3,0,0
+950,mta_exp_date,MTA Expiration Date,Important Dates,3,Date,,,,,NGT,,N,Y,0,0,0,0,0,0,11842,2,0,0
+1,competitive_segments,Previous Competitive Segment,Project Relationships,1,String,30,,org.kuali.kra.award.home.Award,sponsorAwardNumber,PRDV,,N,Y,241918,14,119254,0,0,0,0,0,75197,12
+2,dual_funded,"If this a Dual-Funded Award, select the other Sponsored Award ID.",Project Relationships,1,String,30,,org.kuali.kra.award.home.Award,sponsorAwardNumber,PRDV,,N,Y,241918,4,119254,0,0,0,0,0,75197,2
+4,postdoc-trainee,Post-Doctoral Trainee Count,Training Grant Supplemental Data,2,Number,3,,,,PRDV,,N,N,46965,1,5745,0,0,0,0,0,75197,1
+3,predoc_trainee,Pre-Doctoral Trainee Count,Training Grant Supplemental Data,2,Number,3,,,,PRDV,,N,N,46965,2,5745,1,0,0,0,0,75197,2
+1260,irb_approval_date,Approval Date,Dates,3,Date,,,,,PROT,,N,Y,0,0,0,0,0,0,0,0,34280,4781
+1285,irb_auth_date,Authorization Date,Dates,3,Date,,,,,PROT,,N,Y,0,0,0,0,0,0,0,0,34280,81
+1240,irb_claim_date,Claim Date,Dates,3,Date,,,,,PROT,,N,Y,0,0,0,0,0,0,0,0,34280,4342
+1280,irb_date_of_closure,Date of Closure,Dates,3,Date,,,,,PROT,,N,Y,0,0,0,0,0,0,0,0,34280,670
+1230,irb_date_rec,Date Received,Dates,3,Date,,,,,PROT,,N,Y,0,0,0,0,0,0,0,0,34280,5009
+1250,irb_determination_date,Determination Date,Dates,3,Date,,,,,PROT,,N,Y,0,0,0,0,0,0,0,0,34280,4746
+1270,irb_new_date_of_exp,New Date of Expiration,Dates,3,Date,,,,,PROT,,N,Y,0,0,0,0,0,0,0,0,34280,3348
+1204,fac_review_1,Faculty Reviewer 1,General,1,String,,,org.kuali.coeus.common.framework.person.KcPerson,userName,PROT,,N,Y,0,0,0,0,0,0,0,0,25266,46
+1205,fac_review_2,Faculty Reviewer 2,General,1,String,,,org.kuali.coeus.common.framework.person.KcPerson,userName,PROT,,N,Y,0,0,0,0,0,0,0,0,25266,38
+1206,fac_review_3,Faculty Reviewer 3 (Non-Emp),General,1,String,,,org.kuali.coeus.common.framework.rolodex.Rolodex,rolodexId,PROT,,N,Y,0,0,0,0,0,0,0,0,23511,3
+1541,financial_interest_research,Financial Interest in Research,General,1,String,3,,,,PROT,,N,Y,0,0,0,0,0,0,0,0,22654,2
+1542,has_participating_sites,Has Participating Sites,General,1,String,3,,,,PROT,,N,Y,0,0,0,0,0,0,0,0,22654,2
+1210,irb_advisor,Advisor,General,1,String,,,org.kuali.coeus.common.framework.person.KcPerson,userName,PROT,,N,Y,0,0,0,0,0,0,0,0,34280,403
+1211,irb_advisor_2,Advisor (Non-Emp),General,1,String,,,org.kuali.coeus.common.framework.rolodex.Rolodex,rolodexId,PROT,,N,Y,0,0,0,0,0,0,0,0,23511,5
+1200,irb_analyst,Analyst,General,1,String,,,org.kuali.coeus.common.framework.person.KcPerson,userName,PROT,,N,Y,0,0,0,0,0,0,0,0,34280,25
+1220,irb_record_keeper_box,Record Keeper Box#,General,1,String,,,,,PROT,,N,Y,0,0,0,0,0,0,0,0,34280,251
+1290,irb_req_mod_date1,Req Mod Date 1,Modification Dates,3,Date,,,,,PROT,,N,Y,0,0,0,0,0,0,0,0,34280,2902
+1310,irb_req_mod_date2,Req Mod Date 2,Modification Dates,3,Date,,,,,PROT,,N,Y,0,0,0,0,0,0,0,0,34280,1721
+1330,irb_req_mod_date3,Req Mod Date 3,Modification Dates,3,Date,,,,,PROT,,N,Y,0,0,0,0,0,0,0,0,34280,734
+1350,irb_req_mod_date4,Req Mod Date 4,Modification Dates,3,Date,,,,,PROT,,N,Y,0,0,0,0,0,0,0,0,34280,209
+1370,irb_req_mod_date5,Req Mod Date 5,Modification Dates,3,Date,,,,,PROT,,N,Y,0,0,0,0,0,0,0,0,34280,40
+1390,irb_req_mod_date6,Req Mod Date 6,Modification Dates,3,Date,,,,,PROT,,N,Y,0,0,0,0,0,0,0,0,34280,17
+1300,irb_response_date1,Response Date 1,Modification Dates,3,Date,,,,,PROT,,N,Y,0,0,0,0,0,0,0,0,34280,3124
+1320,irb_response_date2,Response Date 2,Modification Dates,3,Date,,,,,PROT,,N,Y,0,0,0,0,0,0,0,0,34280,1777
+1340,irb_response_date3,Response Date 3,Modification Dates,3,Date,,,,,PROT,,N,Y,0,0,0,0,0,0,0,0,34280,737
+1360,irb_response_date4,Response Date 4,Modification Dates,3,Date,,,,,PROT,,N,Y,0,0,0,0,0,0,0,0,34280,210
+1380,irb_response_date5,Response Date 5,Modification Dates,3,Date,,,,,PROT,,N,Y,0,0,0,0,0,0,0,0,34280,39
+1400,irb_response_date6,Response Date 6,Modification Dates,3,Date,,,,,PROT,,N,Y,0,0,0,0,0,0,0,0,34280,16
+220,country,"If Y, Country",International Activity,1,String,30,,,,SAWD,,N,N,0,0,0,0,52808,8,0,0,0,0
+210,international,International? (Y/N),International Activity,1,String,1,,,,SAWD,,Y,N,0,0,0,0,52808,3,0,0,0,0
+350,iacuc_app_date,IACUC Approval Date,Special Review,3,Date,,,,,SAWD,,N,N,0,0,0,0,52808,2,0,0,0,0
+360,iacuc_exp_date,IACUC Expiration Date,Special Review,3,Date,,,,,SAWD,,N,N,0,0,0,0,51889,0,0,0,0,0
+340,iacuc_req,IACUC Required? (Y/N),Special Review,1,String,1,,,,SAWD,,Y,N,0,0,0,0,52808,3,0,0,0,0
+320,irb_app_date,IRB Approval Date,Special Review,3,Date,,,,,SAWD,,N,N,0,0,0,0,52808,11,0,0,0,0
+330,irb_exp_date,IRB Expiration Date,Special Review,3,Date,,,,,SAWD,,N,N,0,0,0,0,52808,3,0,0,0,0
+310,irb_req,IRB Required? (Y/N),Special Review,1,String,1,,,,SAWD,,Y,N,0,0,0,0,52808,3,0,0,0,0
+420,pafo_check,Risk Analysis List Checked,Subrecipient Review,4,Boolean,,,,,SAWD,,N,Y,0,0,0,0,93061,2,0,0,0,0
+430,pafo_date,Risk Analysis List Check Completion Date,Subrecipient Review,3,Date,,,,,SAWD,,N,Y,0,0,0,0,93061,2652,0,0,0,0
+440,risk_check,Risk Analysis Required,Subrecipient Review,4,Boolean,,,,,SAWD,,N,Y,0,0,0,0,93061,2,0,0,0,0
+450,risk_date,Risk Analysis Completion Date,Subrecipient Review,3,Date,,,,,SAWD,,N,Y,0,0,0,0,93061,856,0,0,0,0
+410,sam_date,SAM Check Completion Date,Subrecipient Review,3,Date,,,,,SAWD,,N,Y,0,0,0,0,93061,2841,0,0,0,0
+460,spq_check,SPQ Required,Subrecipient Review,4,Boolean,,,,,SAWD,,N,Y,0,0,0,0,93061,2,0,0,0,0
+470,spq_date,SPQ Completion Date,Subrecipient Review,3,Date,,,,,SAWD,,N,N,0,0,0,0,57344,359,0,0,0,0
+1212,Contract,Contract,General,4,Boolean,,,,,,,,,6892,1,2761,2,0,0,0,0,0,0
+12,NSF_Award_Type,NSF Award Type,General,1,String,,,,,,,,,0,0,0,0,0,0,0,0,0,0
+810,street_add,Street Address,Location of Research,1,String,,,,,,,,,0,0,0,0,0,0,0,0,0,0

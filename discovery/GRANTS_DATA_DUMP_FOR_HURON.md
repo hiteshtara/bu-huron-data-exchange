@@ -67,7 +67,7 @@ Two findings shape the package:
 
 ## The field dictionary — the most valuable artifact
 
-`reference/kuali/KUALI_FIELD_DICTIONARY.csv` (6,194 rows) chains each field end to end:
+`reference/KUALI_FIELD_DICTIONARY.csv` (6,194 rows) chains each field end to end:
 
 ```
 Oracle table/column -> Java object/property -> Kuali UI label
@@ -153,8 +153,8 @@ The package ships **both** representations:
 ## Deliverable package
 
 ```
-reference/package/
-├── 00_README.txt                       # what this is, source, conventions, contact
+discovery/
+├── 00_PACKAGE_README.txt                       # what this is, source, conventions, contact
 ├── 01_data_dictionary.csv              # 4,074 in-scope columns + UI label + priority
 ├── 02_table_manifest.csv               # 359 in-scope tables: domain, extract type, keys, PII
 ├── 02_excluded_tables.csv              # 542 excluded tables, each with a reason code
@@ -172,7 +172,7 @@ reference/package/
 Plus, outside the shipped package:
 
 ```
-reference/kuali/KUALI_FIELD_DICTIONARY.csv   # the full field trace (6,194 rows)
+reference/KUALI_FIELD_DICTIONARY.csv         # the full field trace (6,194 rows)
 ```
 
 ### Extract types

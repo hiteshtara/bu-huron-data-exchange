@@ -1,91 +1,54 @@
 # BU Huron Data Exchange
 
-Repository for Boston University Huron data exchange, migration, validation, reconciliation, and integration work.
+**Purpose:** understand BU's KC Grants business objects and expose them clearly for
+Huron mapping.
 
-## Scope
+**Sharing this with Huron?** Point them at [HURON_START_HERE.md](HURON_START_HERE.md).
 
-This repository is for data work only:
+## Status
 
-- KC / Oracle extracts
-- Huron migrations
-- source-to-target mappings
-- SAP / Huron integration analysis
-- transformation rules
-- reconciliation
-- validation
-- migration troubleshooting
-- runbooks and reference material
+| Module | State |
+|---|---|
+| Award | **COMPLETE** |
+| Institutional Proposal | **IN PROGRESS** |
+| Subaward | NOT STARTED |
+| Negotiation | NOT STARTED |
 
-## Structure
-
-Directories are created when work actually starts in them, so the tree reflects real
-work rather than a template.
+## How it works
 
 ```text
-bu-huron-data-exchange/
-├── CLAUDE.md
-├── README.md
-├── scripts/                    # read-only production runner + build scripts
-├── reference/
-│   ├── award/                  # Award object graph + front-end field mapping
-│   ├── kuali/                  # KUALI_FIELD_DICTIONARY.csv (all modules)
-│   └── package/                # frozen 359-table discovery package (data gitignored)
-├── sql/
-│   ├── extraction/             # discovery + custom-data extract queries
-│   ├── reconciliation/
-│   └── views/                  # SELECT-only logical interface for Huron
-│       ├── award/              # root + child collections + json/ proof of concept
-│       ├── proposal/           # next
-│       ├── subaward/
-│       ├── negotiation/
-│       └── reference/
-├── mappings/                   # source-to-target field mappings
-├── issues/
-└── runbooks/
+Kuali source code  +  KCOEUS production
+                 ↓
+       Business-object graph
+                 ↓
+   Front-end → database mapping
+                 ↓
+      Huron SQL interface
 ```
 
-### Current state
+The graph comes from the Kuali application's own ORM and DataDictionary metadata —
+never from table-name guesswork. Every relationship, label and row count is verified
+against KCOEUS production before it is written down.
 
-| Module | Graph | Front-end mapping | SQL interface |
-|---|---|---|---|
-| Award | done | done | done (root + 22 children + JSON PoC) |
-| Institutional Proposal | next | next | next |
-| Subaward | — | — | — |
-| Negotiation | — | — | — |
+## Where to look
 
-Per-module work follows one method: root object from the Kuali source → complete
-relationship graph → current-version selection rule validated against production →
-front-end field-to-database mapping → BU extensions and custom attributes → SQL views
-last.
+| Path | Contents |
+|---|---|
+| `modules/award/` | Everything about Award |
+| `modules/proposal/` | Everything about Institutional Proposal |
+| `reference/` | Cross-module Kuali field metadata |
+| `discovery/` | Broad KC schema research |
+| `scripts/` | Reproducible analysis/build tooling |
+| `templates/` | Generic working templates |
+| `HURON_START_HERE.md` | Orientation for Huron / external consumers |
 
-## Naming
+## Database access
 
-Use descriptive filenames.
+Production is **read only**, through one controlled runner:
 
-Good:
-
-```text
-irb_active_protocol_population.sql
-award_active_version_extract.sql
-subaward_source_target_reconciliation.sql
-sap_country_code_validation.sql
+```bash
+.venv/bin/python scripts/kc_prod_readonly_query.py --file <query.sql> --limit 20
 ```
 
-Avoid:
-
-```text
-query1.sql
-test.sql
-final.sql
-final2.sql
-```
-
-## Suggested Workflow
-
-1. Put raw/source documentation in `reference/`.
-2. Put field mappings in `mappings/<module>/`.
-3. Put extraction SQL in `sql/extraction/`.
-4. Put migration-specific files in `migrations/<module>/`.
-5. Put comparison queries in `sql/reconciliation/`.
-6. Record defects in `issues/`.
-7. Capture repeatable procedures in `runbooks/`.
+It sets `SET TRANSACTION READ ONLY` and rejects anything that is not `SELECT`/`WITH`.
+No DML or DDL is ever executed. No production row extracts are committed.

@@ -19,7 +19,7 @@ The graph was derived from **both**:
 2. **KCOEUS production** — every child class resolved to a real table, annotated with its
    actual `COUNT(*)`, so the graph reflects what BU holds, not what KC supports.
 
-Built by `scripts/build_award_graph.py`. Machine-readable form: `AWARD_GRAPH.csv`.
+Built by `scripts/build_object_graph.py --module award`. Machine-readable form: `AWARD_GRAPH.csv`.
 
 **66 relationships** discovered: 24 `MANY_TO_ONE`, 37 `ONE_TO_MANY`, 1 `ONE_TO_ONE`,
 4 `MANY_TO_ONE_INVERSE`. 54 proposed for exposure, 12 excluded.

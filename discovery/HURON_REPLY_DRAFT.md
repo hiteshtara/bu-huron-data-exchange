@@ -2,8 +2,8 @@
 
 > Internal note: this is a draft for BU to review/edit and send. Do not send until
 > data-governance sign-off for external transfer is confirmed. See
-> reference/GRANTS_DATA_DUMP_FOR_HURON.md for the full package plan and
-> reference/package/00_README.txt for what actually ships.
+> discovery/GRANTS_DATA_DUMP_FOR_HURON.md for the full package plan and
+> discovery/00_PACKAGE_README.txt for what actually ships.
 
 ---
 

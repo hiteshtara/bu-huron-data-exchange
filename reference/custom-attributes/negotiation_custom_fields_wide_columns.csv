@@ -1,0 +1,13 @@
+CSV_COLUMN,CUSTOM_ATTRIBUTE_ID,CUSTOM_ATTRIBUTE_NAME,CUSTOM_ATTRIBUTE_LABEL,GROUP_NAME,DATA_TYPE,MAX_LENGTH,SOURCE
+MODULE,,,,,,,record key from source table
+RECORD_NUMBER,,,,,,,record key from source table
+RECORD_ID,,,,,,,record key from source table
+SEQUENCE_NUMBER,,,,,,,record key from source table
+ADDGENE_ORDER_NUMBER,910,addgene_number,Addgene Order Number,General,String,,KCOEUS.CUSTOM_ATTRIBUTE (production configuration)
+BUDGET_APPROVED_Y_N,900,budget_approval,Budget Approved (Y/N),General,Boolean,,KCOEUS.CUSTOM_ATTRIBUTE (production configuration)
+CLINICALTRIALS_GOV_REG_NO,920,ct_reg_num,Clinicaltrials.gov Reg. No.,General,String,,KCOEUS.CUSTOM_ATTRIBUTE (production configuration)
+IND_IDE,970,ind_ide,IND/IDE,General,String,3,KCOEUS.CUSTOM_ATTRIBUTE (production configuration)
+IRB_NUMBER,960,irb_number,IRB Number,General,String,,KCOEUS.CUSTOM_ATTRIBUTE (production configuration)
+MASTER_AGREEMENT_END_DATE,940,msa_end_date,Master Agreement End Date,Important Dates,Date,,KCOEUS.CUSTOM_ATTRIBUTE (production configuration)
+MASTER_AGREEMENT_START_DATE,930,msa_start_date,Master Agreement Start Date,Important Dates,Date,,KCOEUS.CUSTOM_ATTRIBUTE (production configuration)
+MTA_EXPIRATION_DATE,950,mta_exp_date,MTA Expiration Date,Important Dates,Date,,KCOEUS.CUSTOM_ATTRIBUTE (production configuration)

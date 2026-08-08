@@ -1,0 +1,34 @@
+PARENT_OBJECT,RELATIONSHIP_NAME,RELATIONSHIP_TYPE,CHILD_OBJECT,PARENT_TABLE,CHILD_TABLE,JOIN_COLUMNS,BUSINESS_PURPOSE,HURON_EXPOSE,NOTES
+InstitutionalProposal,activityType,MANY_TO_ONE,ActivityType,PROPOSAL,ACTIVITY_TYPE,activityTypeCode,Activity type decode,Y, | child rows: 5
+InstitutionalProposal,extension,MANY_TO_ONE,InstitutionalProposalExtension,PROPOSAL,PROPOSAL_EXTENSION ,proposalId,BU-specific extended Institutional Proposal attributes,Y,
+InstitutionalProposal,institutionalProposalDocument,MANY_TO_ONE,InstitutionalProposalDocument,PROPOSAL,INSTITUTE_PROPOSAL_DOCUMENT,documentNumber,KEW routing document header,N,"KEW workflow routing header - platform infrastructure, not Grants data | child rows: 130,121"
+InstitutionalProposal,leadUnit,MANY_TO_ONE,Unit,PROPOSAL,UNIT,unitNumber,Owning organizational unit,Y," | child rows: 5,241"
+InstitutionalProposal,noticeOfOpportunity,MANY_TO_ONE,NoticeOfOpportunity,PROPOSAL,NOTICE_OF_OPPORTUNITY,noticeOfOpportunityCode,Notice of opportunity decode,Y, | child rows: 6
+InstitutionalProposal,nsfCodeBo,MANY_TO_ONE,NsfCode,PROPOSAL,NSF_CODES,nsfSequenceNumber,NSF science code decode,Y, | child rows: 117
+InstitutionalProposal,primeSponsor,MANY_TO_ONE,Sponsor,PROPOSAL,SPONSOR,primeSponsorCode,Prime (pass-through) sponsor,Y," | child rows: 7,552"
+InstitutionalProposal,proposalStatus,MANY_TO_ONE,ProposalStatus,PROPOSAL,PROPOSAL_STATUS,statusCode,Proposal status decode,Y, | child rows: 6
+InstitutionalProposal,proposalType,MANY_TO_ONE,ProposalType,PROPOSAL,PROPOSAL_TYPE,proposalTypeCode,Proposal type decode,Y, | child rows: 9
+InstitutionalProposal,rolodex,MANY_TO_ONE,Rolodex,PROPOSAL,ROLODEX,rolodexId,External contact (non-employee) on the proposal,Y," | child rows: 12,942"
+InstitutionalProposal,sponsor,MANY_TO_ONE,Sponsor,PROPOSAL,SPONSOR,sponsorCode,Sponsor of record,Y," | child rows: 7,552"
+InstitutionalProposal,allFundingProposals,ONE_TO_MANY,AwardFundingProposal,PROPOSAL,AWARD_FUNDING_PROPOSALS,(not declared),Funding links incl. inactive,N,"duplicate of awardFundingProposals without an inverse FK | child rows: 13,657"
+InstitutionalProposal,awardFundingProposals,ONE_TO_MANY,AwardFundingProposal,PROPOSAL,AWARD_FUNDING_PROPOSALS,proposalId,Awards funded by this proposal,Y," | child rows: 13,657"
+InstitutionalProposal,instProposalAttachments,ONE_TO_MANY,InstitutionalProposalAttachment,PROPOSAL,PROPOSAL_ATTACHMENTS,proposalId,Attachment metadata,Y," | child rows: 466,200"
+InstitutionalProposal,institutionalProposalCostShares,ONE_TO_MANY,InstitutionalProposalCostShare,PROPOSAL,PROPOSAL_COST_SHARING,proposalId,Cost share commitments,Y," | child rows: 2,524"
+InstitutionalProposal,institutionalProposalCustomDataList,ONE_TO_MANY,InstitutionalProposalCustomData,PROPOSAL,PROPOSAL_CUSTOM_DATA,proposalId,BU custom attribute values (EAV),Y," | child rows: 3,857,822"
+InstitutionalProposal,institutionalProposalFandAs,ONE_TO_MANY,InstitutionalProposalFandA,PROPOSAL,PROPOSAL_FNA_RATE,proposalId,F&A / IDC rates applied,Y, | child rows: 0
+InstitutionalProposal,institutionalProposalNotepads,ONE_TO_MANY,InstitutionalProposalNotepad,PROPOSAL,PROPOSAL_NOTEPAD,proposalId,Notepad entries,Y," | child rows: 6,954"
+InstitutionalProposal,institutionalProposalScienceKeywords,ONE_TO_MANY,InstitutionalProposalScienceKeyword,PROPOSAL,PROPOSAL_SCIENCE_KEYWORD,proposalId,Science keywords,Y, | child rows: 0
+InstitutionalProposal,institutionalProposalUnitContacts,ONE_TO_MANY,InstitutionalProposalUnitContact,PROPOSAL,PROPOSAL_UNIT_CONTACTS,proposalId,Unit administrative contacts,Y," | child rows: 128,705"
+InstitutionalProposal,institutionalProposalUnrecoveredFandAs,ONE_TO_MANY,InstitutionalProposalUnrecoveredFandA,PROPOSAL,PROPOSAL_UNRECOVERED_FNA_RATE,proposalId,Unrecovered F&A by period,Y, | child rows: 0
+InstitutionalProposal,projectPersons,ONE_TO_MANY,InstitutionalProposalPerson,PROPOSAL,PROPOSAL_PERSONS,proposalId,Key personnel on the proposal,Y," | child rows: 147,794"
+InstitutionalProposal,proposalCfdas,ONE_TO_MANY,InstitutionalProposalCfda,PROPOSAL,PROPOSAL_CFDA,proposalId,CFDA / ALN numbers,Y, | child rows: 22
+InstitutionalProposal,proposalComments,ONE_TO_MANY,InstitutionalProposalComment,PROPOSAL,PROPOSAL_COMMENTS,proposalId,Free-text comments by type,Y," | child rows: 88,955"
+InstitutionalProposal,proposalIpReviewJoins,ONE_TO_MANY,ProposalIpReviewJoin,PROPOSAL,PROPOSAL_IP_REVIEW_JOIN,proposalId,Intellectual property review linkage,Y," | child rows: 130,121"
+InstitutionalProposal,specialReviews,ONE_TO_MANY,InstitutionalProposalSpecialReview,PROPOSAL,PROPOSAL_SPECIAL_REVIEW,proposalId,Compliance special reviews (IRB/IACUC/etc.),Y," | child rows: 43,228"
+InstitutionalProposalSpecialReview,approvalType,MANY_TO_ONE,SpecialReviewApprovalType,PROPOSAL_SPECIAL_REVIEW,SP_REV_APPROVAL_TYPE,approvalTypeCode,SpecialReviewApprovalType,Y, | child rows: 3
+InstitutionalProposalSpecialReview,specialReviewType,MANY_TO_ONE,SpecialReviewType,PROPOSAL_SPECIAL_REVIEW,SPECIAL_REVIEW,specialReviewTypeCode,SpecialReviewType,Y, | child rows: 8
+InstitutionalProposalPerson,institutionalProposal,MANY_TO_ONE_INVERSE,InstitutionalProposal,PROPOSAL_PERSONS,PROPOSAL,proposalId,InstitutionalProposal,N,"inverse navigation back to the root; the child dataset already carries the root keys | child rows: 130,121"
+InstitutionalProposalSpecialReview,sequenceOwner,MANY_TO_ONE_INVERSE,InstitutionalProposal,PROPOSAL_SPECIAL_REVIEW,PROPOSAL,proposalId,InstitutionalProposal,N,"inverse navigation back to the root; the child dataset already carries the root keys | child rows: 130,121"
+InstitutionalProposalPerson,creditSplits,ONE_TO_MANY,InstitutionalProposalPersonCreditSplit,PROPOSAL_PERSONS,PROPOSAL_PER_CREDIT_SPLIT,institutionalProposalContactId,Credit split percentages,Y," | child rows: 129,043"
+InstitutionalProposalSpecialReview,specialReviewExemptions,ONE_TO_MANY,InstitutionalProposalSpecialReviewExemption,PROPOSAL_SPECIAL_REVIEW,PROPOSAL_EXEMPT_NUMBER,proposalSpecialReviewId,InstitutionalProposalSpecialReviewExemption,Y, | child rows: 49
+InstitutionalProposalPerson,units,ONE_TO_MANY,InstitutionalProposalPersonUnit,PROPOSAL_PERSONS,PROPOSAL_PERSON_UNITS,institutionalProposalContactId,Units the person is credited under,Y," | child rows: 144,276"

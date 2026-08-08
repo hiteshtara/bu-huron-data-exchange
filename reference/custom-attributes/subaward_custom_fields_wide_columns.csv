@@ -1,0 +1,20 @@
+CSV_COLUMN,CUSTOM_ATTRIBUTE_ID,CUSTOM_ATTRIBUTE_NAME,CUSTOM_ATTRIBUTE_LABEL,GROUP_NAME,DATA_TYPE,MAX_LENGTH,SOURCE
+MODULE,,,,,,,record key from source table
+RECORD_NUMBER,,,,,,,record key from source table
+RECORD_ID,,,,,,,record key from source table
+SEQUENCE_NUMBER,,,,,,,record key from source table
+IF_Y_COUNTRY,220,country,"If Y, Country",International Activity,String,30,KCOEUS.CUSTOM_ATTRIBUTE (production configuration)
+INTERNATIONAL_Y_N,210,international,International? (Y/N),International Activity,String,1,KCOEUS.CUSTOM_ATTRIBUTE (production configuration)
+IACUC_APPROVAL_DATE,350,iacuc_app_date,IACUC Approval Date,Special Review,Date,,KCOEUS.CUSTOM_ATTRIBUTE (production configuration)
+IACUC_EXPIRATION_DATE,360,iacuc_exp_date,IACUC Expiration Date,Special Review,Date,,KCOEUS.CUSTOM_ATTRIBUTE (production configuration)
+IACUC_REQUIRED_Y_N,340,iacuc_req,IACUC Required? (Y/N),Special Review,String,1,KCOEUS.CUSTOM_ATTRIBUTE (production configuration)
+IRB_APPROVAL_DATE,320,irb_app_date,IRB Approval Date,Special Review,Date,,KCOEUS.CUSTOM_ATTRIBUTE (production configuration)
+IRB_EXPIRATION_DATE,330,irb_exp_date,IRB Expiration Date,Special Review,Date,,KCOEUS.CUSTOM_ATTRIBUTE (production configuration)
+IRB_REQUIRED_Y_N,310,irb_req,IRB Required? (Y/N),Special Review,String,1,KCOEUS.CUSTOM_ATTRIBUTE (production configuration)
+RISK_ANALYSIS_COMPLETION_DATE,450,risk_date,Risk Analysis Completion Date,Subrecipient Review,Date,,KCOEUS.CUSTOM_ATTRIBUTE (production configuration)
+RISK_ANALYSIS_LIST_CHECKED,420,pafo_check,Risk Analysis List Checked,Subrecipient Review,Boolean,,KCOEUS.CUSTOM_ATTRIBUTE (production configuration)
+RISK_ANALYSIS_LIST_CHECK_COMPLETION_DATE,430,pafo_date,Risk Analysis List Check Completion Date,Subrecipient Review,Date,,KCOEUS.CUSTOM_ATTRIBUTE (production configuration)
+RISK_ANALYSIS_REQUIRED,440,risk_check,Risk Analysis Required,Subrecipient Review,Boolean,,KCOEUS.CUSTOM_ATTRIBUTE (production configuration)
+SAM_CHECK_COMPLETION_DATE,410,sam_date,SAM Check Completion Date,Subrecipient Review,Date,,KCOEUS.CUSTOM_ATTRIBUTE (production configuration)
+SPQ_COMPLETION_DATE,470,spq_date,SPQ Completion Date,Subrecipient Review,Date,,KCOEUS.CUSTOM_ATTRIBUTE (production configuration)
+SPQ_REQUIRED,460,spq_check,SPQ Required,Subrecipient Review,Boolean,,KCOEUS.CUSTOM_ATTRIBUTE (production configuration)
