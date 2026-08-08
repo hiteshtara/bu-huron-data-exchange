@@ -3,7 +3,7 @@
 **Purpose:** understand BU's KC Grants business objects and expose them clearly for
 Huron mapping.
 
-**Sharing this with Huron?** Point them at [HURON_START_HERE.md](HURON_START_HERE.md).
+**Sharing this with Huron?** Point them at [HURON_MAPPING_GUIDE.md](HURON_MAPPING_GUIDE.md).
 
 ## Status
 
@@ -11,8 +11,8 @@ Huron mapping.
 |---|---|
 | Award | **COMPLETE** |
 | Institutional Proposal | **COMPLETE** |
-| Subaward | **NEXT** |
-| Negotiation | NOT STARTED |
+| Subaward | **COMPLETE** |
+| Negotiation | **NEXT** |
 
 ## How it works
 
@@ -50,7 +50,7 @@ against both the application source and production before it is written down.
 | `discovery/` | Broad KC schema research |
 | `scripts/` | Reproducible analysis/build tooling |
 | `templates/` | Generic working templates |
-| `HURON_START_HERE.md` | Orientation for Huron / external consumers |
+| `HURON_MAPPING_GUIDE.md` | Orientation for Huron / external consumers |
 
 ## Database access
 

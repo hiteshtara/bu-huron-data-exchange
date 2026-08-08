@@ -1,0 +1,33 @@
+PARENT_OBJECT,RELATIONSHIP_NAME,RELATIONSHIP_TYPE,CHILD_OBJECT,PARENT_TABLE,CHILD_TABLE,JOIN_COLUMNS,BUSINESS_PURPOSE,HURON_EXPOSE,NOTES
+SubAward,organization,MANY_TO_ONE,Organization,SUBAWARD,ORGANIZATION,organizationId,Subrecipient organization,Y," | child rows: 7,557"
+SubAward,rolodex,MANY_TO_ONE,Rolodex,SUBAWARD,ROLODEX,siteInvestigator,Site investigator (external contact),Y," | child rows: 12,942"
+SubAward,subAwardCostType,MANY_TO_ONE,SubAwardCostType,SUBAWARD,SUBCONTRACT_COST_TYPE,costType,Cost type decode,Y, | child rows: 3
+SubAward,subAwardDocument,MANY_TO_ONE,SubAwardDocument,SUBAWARD,SUBAWARD_DOCUMENT,documentNumber,KEW routing document header,N,"KEW workflow routing header - platform infrastructure, not Grants data | child rows: 93,061"
+SubAward,subAwardStatus,MANY_TO_ONE,SubAwardStatus,SUBAWARD,SUBAWARD_STATUS,statusCode,Subaward status decode,Y, | child rows: 10
+SubAward,subAwardType,MANY_TO_ONE,AwardType,SUBAWARD,AWARD_TYPE,subAwardTypeCode,Subaward type decode - reuses the AWARD_TYPE lookup,Y, | child rows: 19
+SubAward,unit,MANY_TO_ONE,Unit,SUBAWARD,UNIT,requisitionerUnit,Requisitioner unit,Y," | child rows: 5,241"
+SubAward,versionHistory,MANY_TO_ONE,VersionHistorySearchBo,SUBAWARD,VERSION_HISTORY,"subAwardCode,sequenceNumber",Framework versioning bookkeeping,N,"framework versioning bookkeeping, not a business relationship | child rows: 372,669"
+SubAward,amountReleasedList,ONE_TO_MANY,SubAwardAmountReleased,SUBAWARD,SUBAWARD_AMT_RELEASED,subAwardId,Invoice / amount released history,Y,"not declared as a collection on SubAward; SUBAWARD_AMT_RELEASED carries SUBAWARD_ID, SUBAWARD_CODE and SEQUENCE_NUMBER and KC reaches it through the amount-released screen | child rows: 2"
+SubAward,subAwardAmountInfoList,ONE_TO_MANY,SubAwardAmountInfo,SUBAWARD,SUBAWARD_AMOUNT_INFO,subAwardId,Obligated/anticipated money per modification,Y," | child rows: 195,118"
+SubAward,subAwardAttachments,ONE_TO_MANY,SubAwardAttachment,SUBAWARD,SUBAWARD_ATTACHMENTS,subAwardId,Attachment metadata,Y," | child rows: 491,449"
+SubAward,subAwardCloseoutList,ONE_TO_MANY,SubAwardCloseout,SUBAWARD,SUBAWARD_CLOSEOUT,subAwardId,Closeout checklist and dates,Y, | child rows: 0
+SubAward,subAwardContactsList,ONE_TO_MANY,SubAwardContact,SUBAWARD,SUBAWARD_CONTACT,subAwardId,People and organizations on the subaward,Y," | child rows: 194,207"
+SubAward,subAwardCustomDataList,ONE_TO_MANY,SubAwardCustomData,SUBAWARD,SUBAWARD_CUSTOM_DATA,subAwardId,BU custom attribute values (EAV),Y," | child rows: 1,037,255"
+SubAward,subAwardFfataReporting,ONE_TO_MANY,SubAwardFfataReporting,SUBAWARD,SUBAWARD_FFATA_REPORTING,subAwardId,FFATA reporting status,Y," | child rows: 5,206"
+SubAward,subAwardFundingSourceList,ONE_TO_MANY,SubAwardFundingSource,SUBAWARD,SUBAWARD_FUNDING_SOURCE,subAwardId,Awards funding this subaward,Y," | child rows: 7,954"
+SubAward,subAwardNotifications,ONE_TO_MANY,SubAwardNotification,SUBAWARD,SUBAWARD_NOTIFICATION,owningDocumentIdFk,Notification log,N,"notification send log - operational | child rows: 33,161"
+SubAward,subAwardReportList,ONE_TO_MANY,SubAwardReports,SUBAWARD,SUBAWARD_REPORTS,subAwardId,Required reports,Y, | child rows: 0
+SubAward,subAwardTemplateAttachments,ONE_TO_MANY,SubAwardTemplateAttachment,SUBAWARD,SUBAWARD_TEMPLATE_ATTACHMENTS,subAwardId,Template attachment metadata,Y, | child rows: 0
+SubAward,subAwardTemplateInfo,ONE_TO_MANY,SubAwardTemplateInfo,SUBAWARD,SUBAWARD_TEMPLATE_INFO,subAwardId,Template/agreement terms captured per subaward,Y," | child rows: 93,061"
+SubAward,extension,ONE_TO_ONE,SubAwardExtension,SUBAWARD,SUBAWARD_EXTENSION,subAwardId,BU-specific extended Subaward attributes,Y," | child rows: 93,060"
+SubAwardFundingSource,award,MANY_TO_ONE,Award,SUBAWARD_FUNDING_SOURCE,AWARD,awardId,Award,Y," | child rows: 282,464"
+SubAwardContact,contactType,MANY_TO_ONE,ContactType,SUBAWARD_CONTACT,CONTACT_TYPE,contactTypeCode,ContactType,Y, | child rows: 3
+SubAwardCustomData,customAttribute,MANY_TO_ONE,CustomAttribute,SUBAWARD_CUSTOM_DATA,CUSTOM_ATTRIBUTE,customAttributeId,CustomAttribute,Y, | child rows: 107
+SubAwardAmountInfo,modificationType,MANY_TO_ONE,SubAwardModificationType,SUBAWARD_AMOUNT_INFO,SUBAWARD_MODIFICATION_TYPE,modificationTypeCode,SubAwardModificationType,Y, | child rows: 8
+SubAwardContact,rolodex,MANY_TO_ONE,Rolodex,SUBAWARD_CONTACT,ROLODEX,rolodexId,Site investigator (external contact),Y," | child rows: 12,942"
+SubAwardFfataReporting,subAwardAmountInfo,MANY_TO_ONE,SubAwardAmountInfo,SUBAWARD_FFATA_REPORTING,SUBAWARD_AMOUNT_INFO,subAwardAmountInfoId,SubAwardAmountInfo,Y," | child rows: 195,118"
+SubAwardAttachment,typeAttachment,MANY_TO_ONE,SubAwardAttachmentType,SUBAWARD_ATTACHMENTS,SUBAWARD_ATTACHMENT_TYPE,subAwardAttachmentTypeCode,SubAwardAttachmentType,Y, | child rows: 15
+SubAwardTemplateAttachment,typeAttachment,MANY_TO_ONE,SubAwardTemplateAttachmentType,SUBAWARD_TEMPLATE_ATTACHMENTS,SUBAWARD_TMPL_ATTACH_TYPE,subAwardAttachmentTypeCode,SubAwardTemplateAttachmentType,Y, | child rows: 0
+SubAwardReports,typeCode,MANY_TO_ONE,SubAwardReportType,SUBAWARD_REPORTS,SUBAWARD_REPORT_TYPE,subAwardReportTypeCode,SubAwardReportType,Y, | child rows: 3
+SubAwardAmountInfo,subAward,MANY_TO_ONE_INVERSE,SubAward,SUBAWARD_AMOUNT_INFO,SUBAWARD,subAwardId,SubAward,N,"inverse navigation back to the root; the child dataset already carries the root keys | child rows: 93,061"
+SubAwardFundingSource,subAward,MANY_TO_ONE_INVERSE,SubAward,SUBAWARD_FUNDING_SOURCE,SUBAWARD,subAwardId,SubAward,N,"inverse navigation back to the root; the child dataset already carries the root keys | child rows: 93,061"

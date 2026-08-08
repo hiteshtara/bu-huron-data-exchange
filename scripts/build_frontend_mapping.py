@@ -104,6 +104,18 @@ MODULES = {
         "custom_panel": "award Custom Data",
         "personnel_section": "Award Contacts",
     },
+    "subaward": {
+        "tag_dir": "tags/subaward",
+        "jsp_dir": "jsp/subaward",
+        "root_path": "document.subAwardList[0]",
+        "root_prefixes": ("document.subAwardList",),
+        "custom_doc_type": "SAWD",
+        "custom_table": "SUBAWARD_CUSTOM_DATA",
+        "custom_java_class": "org.kuali.kra.subaward.customdata.SubAwardCustomData",
+        "custom_section": "Subaward Custom Data",
+        "custom_panel": "sub Award Custom Data",
+        "personnel_section": "Subaward Contacts",
+    },
     "proposal": {
         "tag_dir": "tags/institutionalproposal",
         "jsp_dir": "jsp/institutionalproposal",
@@ -187,6 +199,28 @@ PROPOSAL_PATH_TO_ENTRY = [
     ("document.institutionalProposal.allFundingProposals", "AwardFundingProposal"),
     ("document.institutionalProposal.", "InstitutionalProposal"),
 ]
+SUBAWARD_PATH_TO_ENTRY = [
+    ("document.subAwardList[0].extension.", "SubAwardExtension"),
+    ("document.subAwardList[0].subAwardFundingSourceList", "SubAwardFundingSource"),
+    ("document.subAwardList[0].subAwardAmountInfoList", "SubAwardAmountInfo"),
+    ("document.subAwardList[0].subAwardContactsList", "SubAwardContact"),
+    ("document.subAwardList[0].subAwardCloseoutList", "SubAwardCloseout"),
+    ("document.subAwardList[0].subAwardCustomDataList", "SubAwardCustomData"),
+    ("document.subAwardList[0].subAwardAttachments", "SubAwardAttachment"),
+    ("document.subAwardList[0].subAwardTemplateAttachments", "SubAwardTemplateAttachment"),
+    ("document.subAwardList[0].subAwardReportList", "SubAwardReports"),
+    ("document.subAwardList[0].subAwardTemplateInfo", "SubAwardTemplateInfo"),
+    ("document.subAwardList[0].subAwardFfataReporting", "SubAwardFfataReporting"),
+    ("document.subAwardList[0].", "SubAward"),
+]
+
+SUBAWARD_FORM_BEAN_ENTRY = [
+    ("newSubAwardFundingSource", "SubAwardFundingSource"),
+    ("subAwardAttachmentFormBean", "SubAwardAttachment"),
+    ("subAwardTemplateAttachmentFormBean", "SubAwardTemplateAttachment"),
+    ("subAwardNotepadBean", "SubAwardNotepad"),
+]
+
 PROPOSAL_FORM_BEAN_ENTRY = [
     ("institutionalProposalFandABean.newInstitutionalProposalFandA", "InstitutionalProposalFandA"),
     ("institutionalProposalFandABean", "InstitutionalProposalFandA"),
@@ -235,10 +269,12 @@ def main():
     args = ap.parse_args()
 
     cfg = MODULES[args.module]
-    path_to_entry = (AWARD_PATH_TO_ENTRY if args.module == "award"
-                     else PROPOSAL_PATH_TO_ENTRY)
-    form_beans = (FORM_BEAN_ENTRY if args.module == "award"
-                  else PROPOSAL_FORM_BEAN_ENTRY)
+    path_to_entry = {"award": AWARD_PATH_TO_ENTRY,
+                     "proposal": PROPOSAL_PATH_TO_ENTRY,
+                     "subaward": SUBAWARD_PATH_TO_ENTRY}[args.module]
+    form_beans = {"award": FORM_BEAN_ENTRY,
+                  "proposal": PROPOSAL_FORM_BEAN_ENTRY,
+                  "subaward": SUBAWARD_FORM_BEAN_ENTRY}[args.module]
     root_prefixes = cfg["root_prefixes"]
 
     root = Path(args.source).expanduser()
