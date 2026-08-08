@@ -4,7 +4,9 @@ Status: **Technical mapping complete · BU validation pending**
 
 The graph, field mapping and SQL are built and verified against production. That is
 not the same as the business decisions being settled — see
-[the decision register](../../docs/DECISION_REGISTER.md) for what is still open.
+[the decision register](../../docs/DECISION_REGISTER.md) for what is still open, and
+[the Huron review items](../../reference/HURON_REVIEW_ITEMS.md) for the subset we want to
+work through with Huron.
 Counts measured 2026-08-07 ([provenance](../../docs/PROVENANCE.md)).
 
 Root is `org.kuali.kra.award.home.Award` → `KCOEUS.AWARD`.
@@ -140,7 +142,7 @@ from.
 
 | Check | Result |
 |---|---|
-| SQL files running against production | 24/24 |
+| SQL files running against production | 25/25 |
 | Row-preservation tests | no dataset multiplies |
 | Mapped columns verified in production | 147/147 |
 | UI labels validated against a live Award screen | 15/15 matched |

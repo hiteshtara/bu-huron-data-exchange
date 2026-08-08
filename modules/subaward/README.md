@@ -4,7 +4,9 @@ Status: **Technical mapping complete · BU/Huron decision pending**
 
 The graph, field mapping and SQL are built and verified against production. That is
 not the same as the business decisions being settled — see
-[the decision register](../../docs/DECISION_REGISTER.md) for what is still open.
+[the decision register](../../docs/DECISION_REGISTER.md) for what is still open, and
+[the Huron review items](../../reference/HURON_REVIEW_ITEMS.md) for the subset we want to
+work through with Huron.
 Counts measured 2026-08-07 ([provenance](../../docs/PROVENANCE.md)).
 
 Root is `org.kuali.kra.subaward.bo.SubAward` → `KCOEUS.SUBAWARD`. Only one class maps to
@@ -143,7 +145,7 @@ does join: 77,130 rows populated, 77,127 matching a `ROLODEX` row.
 
 | Check | Result |
 |---|---|
-| SQL files running against production | 13/13 |
+| SQL files running against production | 14/14 |
 | Row-preservation tests | 8/8 exact |
 | Mapped columns verified in production | 103/103 |
 | SAWD custom attributes | 15 configured, 15 in use, no orphans |

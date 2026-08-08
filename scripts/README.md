@@ -41,6 +41,14 @@ remains in Git. Award generation is now:
 
 Add a new module by adding an entry to `MODULES` in each builder.
 
+### A known quirk in `build_provenance.py`
+
+It records `repository_revision` as whatever `HEAD` is when it runs, which is always the
+commit *before* the one that ends up containing the file. So the value is structurally one
+commit behind and will look stale even when the artifact hashes are all current. The hashes
+are the part that matters — `check_docs.py` verifies those. Worth deciding at some point
+whether the revision field earns its place or should record something else.
+
 ## Broad discovery tooling
 
 Used for the one-time `discovery/` sweep, not for the Huron interface.

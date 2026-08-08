@@ -433,3 +433,9 @@ We checked every root lookup against production datatypes. Three need conversion
 
 A few codes do not resolve, and we left them alone rather than inventing a fix:
 `transaction_type_code` on 15 rows, `sponsor_code` on 3, `prime_sponsor_code` on 6.
+
+## Items for joint BU/Huron review
+
+The findings above stay here — this is the evidence file. The ones that need a
+joint decision are summarized, with the meeting-level question, in
+[reference/HURON_REVIEW_ITEMS.md](../../reference/HURON_REVIEW_ITEMS.md) (D-17 and D-02).

@@ -183,7 +183,16 @@ All counts in this guide were measured on **2026-08-07**
 ## Joint review items
 
 Some findings are documented rather than resolved, because they are questions of
-migration scope or historical data rather than mapping decisions — for example legacy
-identifiers that no longer resolve, and custom attributes whose module configuration
-does not match where their values appear. These are recorded at the end of each
-module's `*_GRAPH.md` as items that may benefit from joint BU/Huron review.
+migration scope or target-model shape rather than mapping decisions. BU has collected
+those in one place:
+
+**[reference/HURON_REVIEW_ITEMS.md](reference/HURON_REVIEW_ITEMS.md)**
+
+It is organised by business object, with the verified counts behind each item. The three
+BU would most like to settle early are how the Award hierarchy maps to HRS, whether a
+subaward's funding link should follow the historical or current Award version, and why
+78% of negotiations are attached to nothing.
+
+The full internal list — including source anomalies BU is handling on its own — is in the
+[decision register](docs/DECISION_REGISTER.md), and the evidence behind any item is in
+that module's `*_GRAPH.md`.

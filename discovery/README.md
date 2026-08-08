@@ -21,7 +21,7 @@ a Grants domain or an exclusion reason, and extracting a sample of each. It answ
 | `02_extract_log.csv` | Per-table extract result and row count |
 | `00_PACKAGE_README.txt` | README that shipped with the package |
 | `GRANTS_DATA_DUMP_FOR_HURON.md` | The package plan and findings |
-| `HURON_REPLY_DRAFT.md` | Draft reply to Huron (unsent) |
+| `HURON_REPLY_DRAFT.md` | Draft reply to Huron from the discovery stage, never sent. Superseded by [reference/HURON_REVIEW_ITEMS.md](../reference/HURON_REVIEW_ITEMS.md) — kept for history, do not use it as the current list |
 | `sql/` | The extraction queries |
 | `output/` | **Gitignored.** Locally generated production row extracts |
 

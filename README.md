@@ -7,6 +7,9 @@ Huron mapping.
 then use [docs/HURON_USAGE_GUIDE.md](docs/HURON_USAGE_GUIDE.md) for the expected mapping,
 extraction, loading and reconciliation workflow.
 
+**For the upcoming BU/Huron review:**
+[reference/HURON_REVIEW_ITEMS.md](reference/HURON_REVIEW_ITEMS.md)
+
 ## Status
 
 | Module | State | Business records | Physical rows |
@@ -61,24 +64,44 @@ Award, Institutional Proposal and Subaward each needed their own rule for pickin
 current row, and Negotiation is not versioned at all. Each module documents its own rule
 and the exceptions behind it.
 
-## Where to look
+## Where to go
 
-| Path | Contents |
+| If you want to | Go to |
 |---|---|
-| `modules/award/` | Everything about Award |
-| `modules/proposal/` | Everything about Institutional Proposal |
-| `modules/subaward/` | Everything about Subaward |
-| `modules/negotiation/` | Everything about Negotiation |
-| `docs/` | Cross-module data model, the SQL interface, and developer setup |
-| `reference/` | Cross-module Kuali field metadata |
-| `discovery/` | Broad KC schema research |
-| `scripts/` | Reproducible analysis/build tooling |
-| `docs/` | Cross-module docs — [walkthrough](docs/WALKTHROUGH.md), [data contract](docs/DATA_CONTRACT.md), [decision register](docs/DECISION_REGISTER.md), [provenance](docs/PROVENANCE.md), [glossary](docs/GLOSSARY.md) |
-| `HURON_MAPPING_GUIDE.md` | Orientation for Huron / external consumers |
+| Talk to Huron about mapping | [HURON_MAPPING_GUIDE.md](HURON_MAPPING_GUIDE.md) · [reference/HURON_REVIEW_ITEMS.md](reference/HURON_REVIEW_ITEMS.md) |
+| Understand the data model | [docs/DATA_MODEL.md](docs/DATA_MODEL.md) |
+| Understand one business object | `modules/<object>/README.md` then `modules/<object>/*_GRAPH.md` |
+| Map front-end fields | [reference/KUALI_FIELD_DICTIONARY.csv](reference/KUALI_FIELD_DICTIONARY.csv) · `modules/<object>/*_FRONTEND_DATABASE_MAPPING.csv` |
+| Understand or run the SQL | [docs/SQL_INTERFACE.md](docs/SQL_INTERFACE.md) · `modules/<object>/sql/` |
+| Set the repo up | [docs/ONBOARDING.md](docs/ONBOARDING.md) |
+| See what is still open internally | [docs/DECISION_REGISTER.md](docs/DECISION_REGISTER.md) |
+| Look at the broad KC discovery | [discovery/README.md](discovery/README.md) |
 
-New here? [docs/DATA_MODEL.md](docs/DATA_MODEL.md) is the cross-module picture,
-[docs/SQL_INTERFACE.md](docs/SQL_INTERFACE.md) explains the query datasets, and
-[docs/ONBOARDING.md](docs/ONBOARDING.md) covers setup and regenerating the artifacts.
+Five documents carry most of the meaning, and they do different jobs:
+
+| Document | What it is for |
+|---|---|
+| `README.md` | Where everything is |
+| [HURON_MAPPING_GUIDE.md](HURON_MAPPING_GUIDE.md) | What Huron should understand about the package |
+| [reference/HURON_REVIEW_ITEMS.md](reference/HURON_REVIEW_ITEMS.md) | What BU and Huron still need to decide together |
+| [docs/DECISION_REGISTER.md](docs/DECISION_REGISTER.md) | The complete internal record of decisions and anomalies |
+| `modules/*/*_GRAPH.md` | The detailed evidence behind each business object |
+
+Also in `docs/`: a [worked walkthrough](docs/WALKTHROUGH.md) of one real award, the
+[data contract](docs/DATA_CONTRACT.md), [provenance](docs/PROVENANCE.md) and a
+[glossary](docs/GLOSSARY.md). Tooling lives in [scripts/](scripts/README.md).
+
+### Where new findings go
+
+The structure above is finished. New work belongs in one of these, rather than in a new
+top-level document:
+
+| What you found | Where it goes |
+|---|---|
+| A new source finding | that module's `*_GRAPH.md` |
+| An internal decision or anomaly | [docs/DECISION_REGISTER.md](docs/DECISION_REGISTER.md) |
+| Something needing Huron discussion | [reference/HURON_REVIEW_ITEMS.md](reference/HURON_REVIEW_ITEMS.md) |
+| Partner-facing orientation | [HURON_MAPPING_GUIDE.md](HURON_MAPPING_GUIDE.md) |
 
 ## Database access
 

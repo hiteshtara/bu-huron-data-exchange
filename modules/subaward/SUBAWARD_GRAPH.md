@@ -238,3 +238,9 @@ the graph because knowing the structure exists is still useful when mapping.
   recorded, but whether Huron wants the historical version or the current one when
   loading is a migration decision rather than a mapping one.
 - One SAWD custom attribute has rows but no values anywhere.
+
+## Items for joint BU/Huron review
+
+The findings above stay here — this is the evidence file. The ones that need a
+joint decision are summarized, with the meeting-level question, in
+[reference/HURON_REVIEW_ITEMS.md](../../reference/HURON_REVIEW_ITEMS.md) (D-01, D-10 and D-11).

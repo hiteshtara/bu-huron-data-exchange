@@ -4,7 +4,9 @@ Status: **Technical mapping complete · BU validation pending**
 
 The graph, field mapping and SQL are built and verified against production. That is
 not the same as the business decisions being settled — see
-[the decision register](../../docs/DECISION_REGISTER.md) for what is still open.
+[the decision register](../../docs/DECISION_REGISTER.md) for what is still open, and
+[the Huron review items](../../reference/HURON_REVIEW_ITEMS.md) for the subset we want to
+work through with Huron.
 Counts measured 2026-08-07 ([provenance](../../docs/PROVENANCE.md)).
 
 Root is `org.kuali.kra.negotiations.bo.Negotiation` → `KCOEUS.NEGOTIATION`. One class,
@@ -48,7 +50,7 @@ Everything BU-specific here is one of the 8 `NGT` custom attributes.
 
 | Check | Result |
 |---|---|
-| SQL files running against production | 5/5 |
+| SQL files running against production | 6/6 |
 | Row-preservation tests | 4/4 exact |
 | Association keys resolving to their parent | 11,842/11,842 |
 | NGT custom attributes | 8 configured, 8 in use, no orphans |

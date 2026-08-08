@@ -144,3 +144,9 @@ everything BU-specific here is a custom attribute.
 - Two NGT custom attributes have rows but no values anywhere.
 - Only 3 negotiations are associated with an Institutional Proposal and 16 with a
   Subaward. Those are small enough numbers to be worth a sanity check with the office.
+
+## Items for joint BU/Huron review
+
+The findings above stay here — this is the evidence file. The ones that need a
+joint decision are summarized, with the meeting-level question, in
+[reference/HURON_REVIEW_ITEMS.md](../../reference/HURON_REVIEW_ITEMS.md) (D-08, D-09 and D-11).

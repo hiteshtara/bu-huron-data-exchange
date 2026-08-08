@@ -285,3 +285,9 @@ Agreed with BU. Recorded here so the reasoning does not get lost:
 Nothing blocking. The two worth raising are whether the 1,136 orphan intake logs are in
 migration scope, and whether the legacy `INST_PROPOSAL_NUMBER` needs to come across as a
 cross-reference.
+
+## Items for joint BU/Huron review
+
+The findings above stay here — this is the evidence file. The ones that need a
+joint decision are summarized, with the meeting-level question, in
+[reference/HURON_REVIEW_ITEMS.md](../../reference/HURON_REVIEW_ITEMS.md) (D-05, D-03, D-07 and D-11).
