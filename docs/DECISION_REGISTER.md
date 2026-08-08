@@ -38,6 +38,7 @@ Counts measured 2026-08-07 ([provenance](PROVENANCE.md)).
 | D-14 | Award | `204946-00004` appears in `AWARD_HIERARCHY` but not in `AWARD`. | Low | BU | Open | |
 | D-15 | Award | 30 award numbers have hierarchy rows that differ only by the `ACTIVE` flag, and 2 of those (`200431-00004`, `201514-00005`) also disagree about the parent. We take the active placement. Confirm that is the intended current structure. | Low | BU | Open | |
 | D-16 | Award | BU's 2012 KCRM-SAP specification says an account number may only sit on an award with no children, and that it must be handed down if that award later gains children. 16 non-leaf awards still hold one. Stale from before a re-parenting, or meaningful? | Low | BU | Open | |
+| D-19 | Internal access / security | Should BU provision a dedicated database-enforced read-only identity for running the migration and discovery queries, instead of relying only on the client-side read-only controls in the repository runner? A least-privilege identity would make the boundary independent of which client executes the query. Internal BU access management — **not** a prerequisite for documenting Huron's mapping, and no specific privilege design is proposed yet. | Medium — internal posture, no effect on the datasets | BU | Open | |
 | D-18 | Delivery | What physical delivery/connectivity method should Huron use to consume BU's curated migration datasets? The logical source interface is complete; how the datasets cross the BU/Huron boundary is not decided. Detail below. | **High** — gates provisioning, security approval and how every extract cycle works | BU + Huron | Open | |
 | D-17 | Award | Does HRS expect the Award family, the individual Award/account, or both as distinct objects? This sets the grain of the whole Award migration — 15,729 families against 43,202 awards. Detail below. | **High** — decides what an Award record *is* in HRS | BU + Huron | Open | |
 
@@ -155,6 +156,7 @@ evidence lives. This table is for tracking the answer.
 | [Negotiation](../modules/negotiation/NEGOTIATION_GRAPH.md) | 2 | D-08, D-09 |
 | Cross-module | 1 | D-11 |
 | Delivery / connectivity | 1 | D-18 |
+| Internal access / security | 1 | D-19 |
 
 ## The three to settle first
 

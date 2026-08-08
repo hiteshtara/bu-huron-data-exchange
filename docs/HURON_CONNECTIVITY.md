@@ -106,6 +106,72 @@ object-storage location, managed file transfer, or something else agreed with Hu
 We have not built any of this and are not assuming it exists. It is here because it may
 be what Huron's tooling already expects, and that would be worth knowing early.
 
+## Why BU's internal query connection is not the Huron connection
+
+A fair question if you have used this repository: BU already connects to KC production and
+runs these queries every day, so why is that not simply listed as the answer?
+
+Because the safety in that arrangement belongs to the tool, not to the account.
+
+BU developers run the repository queries through
+`scripts/kc_prod_readonly_query.py`. That runner:
+
+- accepts only `SELECT` and `WITH` statements,
+- opens the database transaction read-only, and
+- reads its credentials from outside Git.
+
+Those are real controls and they work for what they are — an internal development
+workflow, using one reviewed script. But every one of them is a property of the runner. A
+different client using the same connection details would not inherit any of them, so BU
+cannot hand those details to Huron and expect the same boundary to exist. There would be
+no boundary; there would be a script that Huron was not running.
+
+That is the whole distinction:
+
+```
+BU internal development
+    BU developer
+        ↓
+    controlled read-only runner        <- the safety lives here
+        ↓
+    KC production
+```
+
+```
+Possible future direct Huron access (Option B)
+    Huron tooling
+        ↓
+    dedicated database identity        <- the safety would live here
+        ↓
+    SELECT only, on approved migration datasets/views
+        ↓
+    BU-controlled database boundary
+```
+
+**The existing BU developer connection is not Option B as it would be provisioned for
+Huron. It is an internal development mechanism used to build and verify the migration
+interface.**
+
+If BU and Huron choose direct database access, it would need a separate least-privilege
+design. Conceptually that means a dedicated migration database identity, `SELECT` access
+only, scoped to approved curated datasets or views, with no reliance on client-side query
+filtering for database security, and BU-approved authentication and network controls.
+
+None of that is provisioned. Those are design requirements to work through if Option B is
+selected, not a description of anything that exists.
+
+### Three different things
+
+Worth separating, because they are easy to blur together:
+
+| | What it is |
+|---|---|
+| `scripts/kc_prod_readonly_query.py` | A BU development safety tool |
+| `modules/<object>/sql/` | The logical migration dataset definitions |
+| A future Huron database identity and network path | The physical connectivity, if Option B is selected |
+
+Only the middle one is finished.
+
 ## Where BU stands
 
 BU has completed the logical source interface. The physical delivery method should be
