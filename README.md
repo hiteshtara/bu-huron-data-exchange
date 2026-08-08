@@ -10,6 +10,10 @@ extraction, loading and reconciliation workflow.
 **For the upcoming BU/Huron review:**
 [reference/HURON_REVIEW_ITEMS.md](reference/HURON_REVIEW_ITEMS.md)
 
+This repository defines the source datasets. The physical Huron-to-BU
+connectivity/delivery method is still to be agreed — see
+[docs/HURON_CONNECTIVITY.md](docs/HURON_CONNECTIVITY.md).
+
 ## Status
 
 | Module | State | Business records | Physical rows |
@@ -69,6 +73,7 @@ and the exceptions behind it.
 | If you want to | Go to |
 |---|---|
 | Talk to Huron about mapping | [HURON_MAPPING_GUIDE.md](HURON_MAPPING_GUIDE.md) · [reference/HURON_REVIEW_ITEMS.md](reference/HURON_REVIEW_ITEMS.md) |
+| Understand how Huron will receive BU data | [docs/HURON_CONNECTIVITY.md](docs/HURON_CONNECTIVITY.md) — **not decided yet** |
 | Understand the data model | [docs/DATA_MODEL.md](docs/DATA_MODEL.md) |
 | Understand one business object | `modules/<object>/README.md` then `modules/<object>/*_GRAPH.md` |
 | Map front-end fields | [reference/KUALI_FIELD_DICTIONARY.csv](reference/KUALI_FIELD_DICTIONARY.csv) · `modules/<object>/*_FRONTEND_DATABASE_MAPPING.csv` |

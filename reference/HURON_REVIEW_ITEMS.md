@@ -21,6 +21,7 @@ organised.
 
 | # | Object | Decision needed | Priority |
 |---|---|---|---|
+| D-18 | Delivery | How should Huron receive BU's curated datasets? | **High** |
 | D-17 | Award | Grain: Award family, Award/account, or both? | **High** |
 | D-01 | Subaward | Historical or current Award version on a funding link? | **High** |
 | D-08 | Negotiation | Is it expected that 78% are attached to nothing? | **High** |
@@ -31,6 +32,31 @@ organised.
 | D-09 | Negotiation | So few links to Proposal and Subaward — is that right? | Medium |
 | D-07 | Proposal | Values on a module the attribute is not configured for | Low |
 | D-11 | All three | Configured custom attributes that were never populated | Low |
+
+---
+
+## Delivery
+
+### D-18 — How should Huron receive BU's curated datasets? · **High**
+
+BU has finished the logical source interface — the curated SQL under
+`modules/award/sql/` and its equivalents for the other three objects. What is not decided
+is the physical delivery method: whether Huron consumes those datasets as files, as
+tables in a BU-controlled staging schema, through read-only database access to curated
+views, or through an API or managed transfer.
+
+**Why it matters.** It determines what BU has to provision, how long that takes, and
+whether extracts need to be repeatable for mock conversions and cutover. It also has a
+security-approval path on the BU side that is worth starting early rather than late.
+
+**Where BU stands.** No commitment. We would rather agree the approach than build a
+delivery mechanism that turns out to be the wrong shape for Huron's tooling. The module
+SQL stays the contract regardless — how the results travel should not change what any
+column means.
+
+**Evidence:** [docs/HURON_CONNECTIVITY.md](../docs/HURON_CONNECTIVITY.md) sets out the
+four options with their trade-offs, and the specific questions BU needs answered to move
+this forward.
 
 ---
 

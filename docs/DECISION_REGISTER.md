@@ -38,7 +38,44 @@ Counts measured 2026-08-07 ([provenance](PROVENANCE.md)).
 | D-14 | Award | `204946-00004` appears in `AWARD_HIERARCHY` but not in `AWARD`. | Low | BU | Open | |
 | D-15 | Award | 30 award numbers have hierarchy rows that differ only by the `ACTIVE` flag, and 2 of those (`200431-00004`, `201514-00005`) also disagree about the parent. We take the active placement. Confirm that is the intended current structure. | Low | BU | Open | |
 | D-16 | Award | BU's 2012 KCRM-SAP specification says an account number may only sit on an award with no children, and that it must be handed down if that award later gains children. 16 non-leaf awards still hold one. Stale from before a re-parenting, or meaningful? | Low | BU | Open | |
+| D-18 | Delivery | What physical delivery/connectivity method should Huron use to consume BU's curated migration datasets? The logical source interface is complete; how the datasets cross the BU/Huron boundary is not decided. Detail below. | **High** — gates provisioning, security approval and how every extract cycle works | BU + Huron | Open | |
 | D-17 | Award | Does HRS expect the Award family, the individual Award/account, or both as distinct objects? This sets the grain of the whole Award migration — 15,729 families against 43,202 awards. Detail below. | **High** — decides what an Award record *is* in HRS | BU + Huron | Open | |
+
+## How will Huron receive the data? (D-18)
+
+Like D-17 this is not a source-system anomaly, so it gets a note here rather than a module
+graph document. Unlike D-17 the detail has a proper home —
+[docs/HURON_CONNECTIVITY.md](HURON_CONNECTIVITY.md) — so this stays short.
+
+**The question.** What physical delivery/connectivity method should Huron use to consume
+BU's curated KC migration datasets?
+
+**Current state.** BU has completed the logical source interface:
+
+```
+KCOEUS production
+    ↓  BU-controlled read-only migration SQL
+Award / Institutional Proposal / Subaward / Negotiation datasets
+```
+
+What has not been decided is how those datasets cross the BU/Huron boundary. The
+connectivity document sets out four possible models — BU-generated files delivered
+securely, Huron read-only access to BU-controlled views, a BU-owned migration staging
+schema, or API/managed transfer. **No option is approved.**
+
+**Why it matters.** The delivery decision determines whether Huron needs any database
+connectivity to BU at all, whether BU provisions a dedicated read-only account, whether
+network and security approvals are needed, whether mock conversions run off files or live
+and staged datasets, how repeated extracts and the final cutover data are delivered, and
+how reconciliation snapshots are retained. Several of those have lead times, which is why
+it is High.
+
+**Do not read the SQL in this repository as evidence that direct database access has been
+approved or provisioned.** It has not been. Those files define datasets, not access.
+
+**What we need from Huron.** Confirmation of the source format and connectivity their
+migration tooling supports and prefers, including whether Huron pulls the data or BU
+pushes it.
 
 ## What grain does HRS expect for Awards? (D-17)
 
@@ -117,6 +154,7 @@ evidence lives. This table is for tracking the answer.
 | [Subaward](../modules/subaward/SUBAWARD_GRAPH.md) | 2 | D-01, D-10 |
 | [Negotiation](../modules/negotiation/NEGOTIATION_GRAPH.md) | 2 | D-08, D-09 |
 | Cross-module | 1 | D-11 |
+| Delivery / connectivity | 1 | D-18 |
 
 ## The three to settle first
 
@@ -125,3 +163,7 @@ how much of it there is. D-17 decides the grain of the Award migration and shoul
 first, because the answer affects how everything else in the Award module is presented.
 D-01 decides what a subaward is attached to in HRS. D-08 covers 78% of all negotiations.
 The rest can wait for conversion planning.
+
+**D-18** runs alongside them on a different track. It does not change what the data
+means, but it gates provisioning and security approval, and those have lead times — so
+it is worth opening early rather than late.
