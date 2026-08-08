@@ -24,11 +24,12 @@ the [root README](../README.md) and [DATA_MODEL.md](DATA_MODEL.md) instead.
 graph LR
     A["clone the repo"] --> B["uv venv .venv"]
     B --> C["install oracledb"]
-    C --> D["store password<br/>in Keychain"]
+    C --> G["activate .venv"]
+    G --> D["store password<br/>in Keychain"]
     D --> E["--test<br/>confirms read-only"]
     E --> F["run any query"]
     classDef step fill:#1f4e79,stroke:#0d2b45,color:#fff
-    class A,B,C,D,E,F step
+    class A,B,C,D,E,F,G step
 ```
 
 Create the virtual environment and install the Oracle driver:
@@ -40,6 +41,19 @@ uv pip install --python .venv/bin/python oracledb
 
 `oracledb` (python-oracledb) is the only hard dependency of the runners. There is no pinned
 requirements file in the repo yet — if you add more tooling, that is worth fixing.
+
+Activate it for the rest of your session:
+
+```bash
+source .venv/bin/activate
+```
+
+Your prompt picks up a `(.venv)` prefix once it works, and plain `python` is then the
+right interpreter. **Everything below assumes the environment is active.**
+
+You can skip activation entirely by calling `.venv/bin/python` instead of `python` — same
+result, and that is the form most of the other documents in this repo use because it works
+from any shell without setup. Use whichever you prefer; the two are interchangeable.
 
 Store the passwords in the Keychain. Production and staging use different Keychain entries,
 so set up whichever you need.
@@ -63,7 +77,7 @@ Both runners have a `--test` mode that connects, sets the transaction read-only,
 which database and schema it landed on. Run this before anything else:
 
 ```bash
-.venv/bin/python scripts/kc_prod_readonly_query.py --test
+python scripts/kc_prod_readonly_query.py --test
 ```
 
 It should report `Database: KUALI`, the current schema, and `Mode: READ ONLY`. If the
@@ -76,16 +90,25 @@ writes a CSV instead of printing to the screen.
 
 ```bash
 # one of the module queries, first 20 rows to the screen
-.venv/bin/python scripts/kc_prod_readonly_query.py --file modules/award/sql/huron_award.sql --limit 20
+python scripts/kc_prod_readonly_query.py --file modules/award/sql/huron_award.sql --limit 20
 
 # inline
-.venv/bin/python scripts/kc_prod_readonly_query.py --sql "SELECT COUNT(*) FROM kcoeus.award"
+python scripts/kc_prod_readonly_query.py --sql "SELECT COUNT(*) FROM kcoeus.award"
 
 # write a full result to CSV
-.venv/bin/python scripts/kc_prod_readonly_query.py --file modules/award/sql/huron_award.sql --output /tmp/award.csv
+python scripts/kc_prod_readonly_query.py --file modules/award/sql/huron_award.sql --output /tmp/award.csv
 ```
 
 Staging works the same way through `scripts/kc_staging_query.py`.
+
+### When you are done
+
+```bash
+deactivate
+```
+
+That returns your shell to the system Python. Nothing needs cleaning up on the database
+side — the runner opens a read-only transaction per query and closes it.
 
 ## What "read only" actually means here
 

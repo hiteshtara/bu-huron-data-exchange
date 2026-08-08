@@ -108,13 +108,33 @@ top-level document:
 | Something needing Huron discussion | [reference/HURON_REVIEW_ITEMS.md](reference/HURON_REVIEW_ITEMS.md) |
 | Partner-facing orientation | [HURON_MAPPING_GUIDE.md](HURON_MAPPING_GUIDE.md) |
 
-## Database access
+## Running the source queries
 
-Production is **read only**, through one controlled runner:
+The SQL in this repository is tested against BU's Kuali Coeus production database, but
+database access is a BU-internal development process.
+
+This repository does not provide database credentials or give Huron access to KCOEUS.
+
+BU developers who need to run the queries should follow the complete setup and access
+instructions in [docs/ONBOARDING.md](docs/ONBOARDING.md). That guide covers:
+
+- Python environment setup
+- Oracle driver installation
+- BU database credentials
+- macOS Keychain setup
+- testing the production connection
+- running individual SQL files
+- rebuilding generated artifacts
+
+After setup, queries are run through the repository's read-only runner:
 
 ```bash
-.venv/bin/python scripts/kc_prod_readonly_query.py --file <query.sql> --limit 20
+python scripts/kc_prod_readonly_query.py --file <query.sql> --limit 20
 ```
 
-It sets `SET TRANSACTION READ ONLY` and rejects anything that is not `SELECT`/`WITH`.
-No DML or DDL is ever executed. No production row extracts are committed.
+The runner opens the Oracle session read-only and accepts only `SELECT`/`WITH` queries.
+No DML or DDL is ever executed, and no production row extracts are committed.
+
+For how Huron will receive these datasets, see
+[docs/HURON_CONNECTIVITY.md](docs/HURON_CONNECTIVITY.md). The physical BU-to-Huron
+delivery method is still an open joint decision.
