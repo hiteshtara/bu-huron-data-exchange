@@ -23,6 +23,7 @@ Exit code is non-zero if anything fails, so it can gate a commit or run in CI.
 """
 
 import csv
+import functools
 import hashlib
 import json
 import re
@@ -79,7 +80,38 @@ def check_paths():
                 fail.append(f"missing path in {p.relative_to(REPO)}: {t}")
 
 
+@functools.lru_cache(maxsize=1)
+def tracked_files():
+    """Paths git knows about, so an untracked scratch query does not skew a count.
+
+    Every check that counts files in the repository goes through this, so they all
+    agree on what counts as a repository artifact.
+    """
+    try:
+        out = subprocess.run(["git", "-C", str(REPO), "ls-files"],
+                             capture_output=True, text=True, timeout=30)
+        if out.returncode == 0:
+            return frozenset(REPO / line for line in out.stdout.split("\n") if line)
+    except (OSError, subprocess.SubprocessError):
+        pass
+    return None          # not a git checkout - fall back to the filesystem
+
+
+def module_sql_files(mod, tracked, recursive=True):
+    """Tracked .sql files in a module.
+
+    recursive=True includes sql/json, which is what the module SQL count means.
+    recursive=False is the top-level queries only, which is what a child collection
+    count is derived from.
+    """
+    base = REPO / "modules" / mod / "sql"
+    found = sorted(base.rglob("*.sql") if recursive else base.glob("*.sql"))
+    return [p for p in found if tracked is None or p in tracked]
+
+
 def check_counts():
+    tracked = tracked_files()
+
     for mod, (graph, fm) in MODULES.items():
         d = REPO / "modules" / mod
         rows = list(csv.DictReader((d / graph).open(encoding="utf-8")))
@@ -87,7 +119,9 @@ def check_counts():
         exposed = sum(1 for r in rows if r["HURON_EXPOSE"] == "Y")
         fields = sum(1 for _ in csv.DictReader((d / fm).open(encoding="utf-8")))
 
-        sqls = sorted((d / "sql").glob("*.sql"))
+        # Child collections are the top-level queries only - the root and the
+        # validation query are not collections, and sql/json is a whole-object POC.
+        sqls = module_sql_files(mod, tracked, recursive=False)
         children = len([f for f in sqls
                         if f.name != f"huron_{mod}.sql" and "validation" not in f.name])
 
@@ -106,24 +140,6 @@ def check_counts():
                         fail.append(
                             f"{doc.relative_to(REPO)} says {m.group(1)} {label}, "
                             f"actual is {actual}")
-
-
-def tracked_files():
-    """Paths git knows about, so an untracked scratch query does not skew a count."""
-    try:
-        out = subprocess.run(["git", "-C", str(REPO), "ls-files"],
-                             capture_output=True, text=True, timeout=30)
-        if out.returncode == 0:
-            return {REPO / line for line in out.stdout.split("\n") if line}
-    except (OSError, subprocess.SubprocessError):
-        pass
-    return None          # not a git checkout - fall back to the filesystem
-
-
-def module_sql_files(mod, tracked):
-    """Every runnable .sql in the module, including sql/json - those count too."""
-    found = sorted((REPO / "modules" / mod / "sql").rglob("*.sql"))
-    return [p for p in found if tracked is None or p in tracked]
 
 
 def check_sql_counts():
