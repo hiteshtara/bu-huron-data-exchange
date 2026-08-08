@@ -1,0 +1,16 @@
+PARENT_OBJECT,RELATIONSHIP_NAME,RELATIONSHIP_TYPE,CHILD_OBJECT,PARENT_TABLE,CHILD_TABLE,JOIN_COLUMNS,BUSINESS_PURPOSE,HURON_EXPOSE,NOTES
+Negotiation,negotiationAgreementType,MANY_TO_ONE,NegotiationAgreementType,NEGOTIATION,NEGOTIATION_AGREEMENT_TYPE,negotiationAgreementTypeId,Agreement type decode,Y, | child rows: 9
+Negotiation,negotiationAssociationType,MANY_TO_ONE,NegotiationAssociationType,NEGOTIATION,NEGOTIATION_ASSOCIATION_TYPE,negotiationAssociationTypeId,What the negotiation is associated with,Y, | child rows: 5
+Negotiation,negotiationDocument,MANY_TO_ONE,NegotiationDocument,NEGOTIATION,NEGOTIATION_DOCUMENT,documentNumber,KEW routing document header,N,"KEW workflow routing header - platform infrastructure | child rows: 11,842"
+Negotiation,negotiationStatus,MANY_TO_ONE,NegotiationStatus,NEGOTIATION,NEGOTIATION_STATUS,negotiationStatusId,Negotiation status decode,Y, | child rows: 8
+Negotiation,activities,ONE_TO_MANY,NegotiationActivity,NEGOTIATION,NEGOTIATION_ACTIVITY,negotiationId,Negotiation activity log,Y," | child rows: 30,475"
+Negotiation,negotiationCustomDataList,ONE_TO_MANY,NegotiationCustomData,NEGOTIATION,NEGOTIATION_CUSTOM_DATA,negotiationId,BU custom attribute values (EAV),Y," | child rows: 94,736"
+Negotiation,negotiationNotifications,ONE_TO_MANY,NegotiationNotification,NEGOTIATION,NEGOTIATION_NOTIFICATION,owningDocumentIdFk,Notification log,N,notification send log - operational | child rows: 0
+Negotiation,unassociatedDetail,ONE_TO_ONE,NegotiationUnassociatedDetail,NEGOTIATION,NEGOTIATION_UNASSOC_DETAIL,negotiationId,"Details for a negotiation not associated with an existing Award, Proposal or Subaward",Y,"not declared as a collection on Negotiation - KC navigates it through NegotiationService. 1:1 in production: 9,270 rows, 9,270 distinct negotiation ids, covering the 9,249 negotiations whose association type is None | child rows: 9,270"
+NegotiationActivity,activityType,MANY_TO_ONE,NegotiationActivityType,NEGOTIATION_ACTIVITY,NEGOTIATION_ACTIVITY_TYPE,activityTypeId,Activity type decode,Y, | child rows: 20
+NegotiationCustomData,customAttribute,MANY_TO_ONE,CustomAttribute,NEGOTIATION_CUSTOM_DATA,CUSTOM_ATTRIBUTE,customAttributeId,CustomAttribute,Y, | child rows: 107
+NegotiationActivity,location,MANY_TO_ONE,NegotiationLocation,NEGOTIATION_ACTIVITY,NEGOTIATION_LOCATION,locationId,Where the activity took place,Y, | child rows: 12
+NegotiationActivity,negotiation,MANY_TO_ONE_INVERSE,Negotiation,NEGOTIATION_ACTIVITY,NEGOTIATION,negotiationId,Negotiation,N,"inverse navigation back to the root; the child dataset already carries the root keys | child rows: 11,842"
+NegotiationActivity,attachments,ONE_TO_MANY,NegotiationActivityAttachment,NEGOTIATION_ACTIVITY,NEGOTIATION_ATTACHMENT,activityId,Activity attachment metadata,Y," | child rows: 32,643"
+NegotiationActivityAttachment,activity,MANY_TO_ONE,NegotiationActivity,NEGOTIATION_ATTACHMENT,NEGOTIATION_ACTIVITY,activityId,NegotiationActivity,Y," | child rows: 30,475"
+NegotiationActivityAttachment,file,MANY_TO_ONE,AttachmentFile,NEGOTIATION_ATTACHMENT,ATTACHMENT_FILE,fileId,AttachmentFile,Y," | child rows: 171,959"

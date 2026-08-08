@@ -118,7 +118,7 @@ question calls for deeper investigation of the source schema.
 | Award | Complete |
 | Institutional Proposal | Complete |
 | Subaward | Complete |
-| Negotiation | Not started |
+| Negotiation | Complete |
 
 ## Joint review items
 

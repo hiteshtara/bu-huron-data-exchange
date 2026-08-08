@@ -104,6 +104,18 @@ MODULES = {
         "custom_panel": "award Custom Data",
         "personnel_section": "Award Contacts",
     },
+    "negotiation": {
+        "tag_dir": "tags/negotiation",
+        "jsp_dir": "jsp/negotiation",
+        "root_path": "document.negotiationList[0]",
+        "root_prefixes": ("document.negotiationList",),
+        "custom_doc_type": "NGT",
+        "custom_table": "NEGOTIATION_CUSTOM_DATA",
+        "custom_java_class": "org.kuali.kra.negotiations.customdata.NegotiationCustomData",
+        "custom_section": "Negotiation Custom Data",
+        "custom_panel": "negotiation Custom Data",
+        "personnel_section": "Negotiation Contacts",
+    },
     "subaward": {
         "tag_dir": "tags/subaward",
         "jsp_dir": "jsp/subaward",
@@ -199,6 +211,18 @@ PROPOSAL_PATH_TO_ENTRY = [
     ("document.institutionalProposal.allFundingProposals", "AwardFundingProposal"),
     ("document.institutionalProposal.", "InstitutionalProposal"),
 ]
+NEGOTIATION_PATH_TO_ENTRY = [
+    ("document.negotiationList[0].activities", "NegotiationActivity"),
+    ("document.negotiationList[0].negotiationCustomDataList", "NegotiationCustomData"),
+    ("document.negotiationList[0].unassociatedDetail", "NegotiationUnassociatedDetail"),
+    ("document.negotiationList[0].", "Negotiation"),
+]
+
+NEGOTIATION_FORM_BEAN_ENTRY = [
+    ("negotiationActivityHelper.allAttachments", "NegotiationActivityAttachment"),
+    ("negotiationActivityHelper", "NegotiationActivity"),
+]
+
 SUBAWARD_PATH_TO_ENTRY = [
     ("document.subAwardList[0].extension.", "SubAwardExtension"),
     ("document.subAwardList[0].subAwardFundingSourceList", "SubAwardFundingSource"),
@@ -271,10 +295,12 @@ def main():
     cfg = MODULES[args.module]
     path_to_entry = {"award": AWARD_PATH_TO_ENTRY,
                      "proposal": PROPOSAL_PATH_TO_ENTRY,
-                     "subaward": SUBAWARD_PATH_TO_ENTRY}[args.module]
+                     "subaward": SUBAWARD_PATH_TO_ENTRY,
+                     "negotiation": NEGOTIATION_PATH_TO_ENTRY}[args.module]
     form_beans = {"award": FORM_BEAN_ENTRY,
                   "proposal": PROPOSAL_FORM_BEAN_ENTRY,
-                  "subaward": SUBAWARD_FORM_BEAN_ENTRY}[args.module]
+                  "subaward": SUBAWARD_FORM_BEAN_ENTRY,
+                  "negotiation": NEGOTIATION_FORM_BEAN_ENTRY}[args.module]
     root_prefixes = cfg["root_prefixes"]
 
     root = Path(args.source).expanduser()
@@ -346,6 +372,7 @@ def main():
                              .replace("${cgbPath}", rp)
                              .replace("${awardPath}", rp)
                              .replace("${docIP}", rp)
+                             .replace("${activityPath}", rp + ".activities[0]")
                              .replace("${proposalPath}", rp))
                 # "Add new row" form beans address the same business object as the
                 # collection they feed, e.g. costShareFormHelper.newAwardCostShare.<x>

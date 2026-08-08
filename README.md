@@ -12,7 +12,7 @@ Huron mapping.
 | Award | **COMPLETE** |
 | Institutional Proposal | **COMPLETE** |
 | Subaward | **COMPLETE** |
-| Negotiation | **NEXT** |
+| Negotiation | **COMPLETE** |
 
 ## How it works
 

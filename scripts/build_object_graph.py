@@ -134,6 +134,44 @@ MODULES = {
                      "AwardHierarchyService",
         }],
     },
+    "negotiation": {
+        "root_class": "org.kuali.kra.negotiations.bo.Negotiation",
+        "root_table": "NEGOTIATION",
+        "root_pk_property": "negotiationId",
+        "purpose": {
+            "negotiationStatus": "Negotiation status decode",
+            "negotiationAgreementType": "Agreement type decode",
+            "negotiationAssociationType": "What the negotiation is associated with",
+            "negotiationDocument": "KEW routing document header",
+            "activities": "Negotiation activity log",
+            "negotiationCustomDataList": "BU custom attribute values (EAV)",
+            "negotiationNotifications": "Notification log",
+            "unassociatedDetail": "Details captured when the negotiation is not tied "
+                                  "to an existing Award, Proposal or Subaward",
+            "attachments": "Activity attachment metadata",
+            "location": "Where the activity took place",
+            "activityType": "Activity type decode",
+        },
+        "exclude": {
+            "negotiationDocument": "KEW workflow routing header - platform infrastructure",
+            "negotiationNotifications": "notification send log - operational",
+        },
+        "core_entities": {"NEGOTIATION"},
+        "extra_edges": [{
+            "relationship_name": "unassociatedDetail",
+            "relationship_type": "ONE_TO_ONE",
+            "child_object": "NegotiationUnassociatedDetail",
+            "child_class": "org.kuali.kra.negotiations.bo.NegotiationUnassociatedDetail",
+            "join_columns": "negotiationId",
+            "business_purpose": "Details for a negotiation not associated with an "
+                                "existing Award, Proposal or Subaward",
+            "expose": "Y",
+            "notes": "not declared as a collection on Negotiation - KC navigates it "
+                     "through NegotiationService. 1:1 in production: 9,270 rows, 9,270 "
+                     "distinct negotiation ids, covering the 9,249 negotiations whose "
+                     "association type is None",
+        }],
+    },
     "subaward": {
         "root_class": "org.kuali.kra.subaward.bo.SubAward",
         "root_table": "SUBAWARD",
