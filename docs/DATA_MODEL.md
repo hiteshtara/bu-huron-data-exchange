@@ -14,10 +14,11 @@ shape and relationships, not field-level meaning.
 ## Awards roll up into families
 
 One thing the per-module docs only cover from the Award side, but which matters as soon
-as you look at the whole picture: BU's awards are not flat.
+as you look at the whole picture: BU's awards are not flat. An **Award family** (the BU
+grant family) is the root `-00001` award together with its child/subaccount awards.
 
 ```
-GRANT FAMILY (one funded project)
+AWARD FAMILY (one funded project)
     |
     +-- 123456-00001   root award — the family
     |
@@ -30,7 +31,7 @@ this data:
 
 | Level | Key | What changes | Same record? |
 |---|---|---|---|
-| Grant family | `ROOT_AWARD_NUMBER` | nothing — it is the grouping | — |
+| Award family | `ROOT_AWARD_NUMBER` | nothing — it is the grouping | — |
 | Award / account | `AWARD_NUMBER` | the account | No, different awards |
 | Version | `SEQUENCE_NUMBER` | one award over time | Yes, same award |
 
@@ -39,7 +40,7 @@ So the counts stack up like this:
 ```
 282,468  physical AWARD rows
  43,202  award business records   (one per AWARD_NUMBER)
- 15,729  award families           (one per funded project)
+ 15,729  Award families           (one per funded project)
 ```
 
 Every family root ends in `-00001`, every award shares its root's base number, and the

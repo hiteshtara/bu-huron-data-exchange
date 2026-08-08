@@ -238,10 +238,14 @@ captures: how individual awards roll up into one funded project.
 There are three separate things here, and conflating any two of them produces wrong
 counts. They are worth naming before anything else.
 
-**1. The grant family** — one funded project, identified by the root award number.
+**Award family** (the BU grant family) means the root `-00001` award together with its
+child/subaccount awards. We use that term rather than "grant" so it does not collide with
+whatever HRS calls its own object — see D-17.
+
+**1. The Award family** — one funded project, identified by the root award number.
 
 ```
-123456-00001   root award — the family, and what BU calls the Grant
+123456-00001   root award — the family
       |
       +-- 123456-00002   award / account
       +-- 123456-00003   award / account
@@ -266,7 +270,7 @@ Side by side:
 
 | Level | Key | What changes across it | Different award? |
 |---|---|---|---|
-| Grant family | `ROOT_AWARD_NUMBER` | nothing — it is the grouping | — |
+| Award family | `ROOT_AWARD_NUMBER` | nothing — it is the grouping | — |
 | Award / account | `AWARD_NUMBER` | the account | **Yes** |
 | Version | `SEQUENCE_NUMBER` | the state of one award over time | No |
 

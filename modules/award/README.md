@@ -35,12 +35,13 @@ those out.
 ## Award families: how awards roll up into one funded project
 
 There are three levels in this data, not two, and mixing any of them up is the biggest
-risk in the module.
+risk in the module. **Award family** (the BU grant family) means the root `-00001` award
+together with its child/subaccount awards.
 
 ```
-GRANT FAMILY (one funded project)
+AWARD FAMILY (one funded project)
     |
-    +-- 123456-00001   root award — the family, and what BU calls the Grant
+    +-- 123456-00001   root award — the family
     |
     +-- 123456-00002   award / account
     +-- 123456-00003   award / account
@@ -49,7 +50,7 @@ GRANT FAMILY (one funded project)
              +-- 123456-00005   a child can have children of its own
 ```
 
-**1. The grant family** is the funded project, identified by the root award number.
+**1. The Award family** is the funded project, identified by the root award number.
 
 **2. The award, or account, within it.** `123456-00002` and `-00003` are separate awards
 belonging to the same project, each with its own account number and money. These are
@@ -59,7 +60,7 @@ belonging to the same project, each with its own account number and money. These
 edited over time. These are the *same* record.
 
 So the 43,202 award business records — already one row per award, versions collapsed —
-roll up into **15,729 grant families**, about 2.7 awards each. If Huron expects one row
+roll up into **15,729 Award families**, about 2.7 awards each. If Huron expects one row
 per funded project rather than one per account, 15,729 is the number to work from.
 
 BU's original 2012 KCRM-SAP functional specification describes exactly this structure:

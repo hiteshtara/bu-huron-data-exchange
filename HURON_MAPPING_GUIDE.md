@@ -108,11 +108,13 @@ turned out differently: Award, Institutional Proposal and Subaward each needed t
 rule, and Negotiation is not versioned at all — one row is one negotiation. Each module's
 validation query shows the counts and exceptions behind its rule.
 
-**Awards roll up into grant families.** There are three levels in an award, and they are
-easy to collapse into each other by accident:
+**Awards roll up into Award families.** An **Award family** (what BU has historically
+called a grant family) is the root `-00001` award together with its child/subaccount
+awards. There are three levels in an award, and they are easy to collapse into each other
+by accident:
 
 ```
-GRANT FAMILY (one funded project)
+AWARD FAMILY (one funded project)
     |
     +-- 123456-00001   root award — the family
     +-- 123456-00002   award / account
@@ -121,7 +123,7 @@ GRANT FAMILY (one funded project)
 
 | Level | Key | Different award? |
 |---|---|---|
-| Grant family | `ROOT_AWARD_NUMBER` | — |
+| Award family | `ROOT_AWARD_NUMBER` | — |
 | Award / account | `AWARD_NUMBER` | Yes |
 | Version | `SEQUENCE_NUMBER` | No, same award over time |
 
