@@ -97,7 +97,7 @@ row counts are considerably larger than business record counts:
 
 | | Physical rows | Business records |
 |---|---|---|
-| Award | 282,468 | 43,202 |
+| Award | 282,468 | 43,202 (in 15,729 families — see below) |
 | Institutional Proposal | 130,122 | 36,863 |
 | Subaward | 93,061 | 3,466 |
 | Negotiation | 11,842 | 11,842 |
@@ -107,6 +107,34 @@ production evidence rather than assuming `MAX(SEQUENCE_NUMBER)` is always right.
 turned out differently: Award, Institutional Proposal and Subaward each needed their own
 rule, and Negotiation is not versioned at all — one row is one negotiation. Each module's
 validation query shows the counts and exceptions behind its rule.
+
+**Awards roll up into grant families.** There are three levels in an award, and they are
+easy to collapse into each other by accident:
+
+```
+GRANT FAMILY (one funded project)
+    |
+    +-- 123456-00001   root award — the family
+    +-- 123456-00002   award / account
+    +-- 123456-00003   award / account
+```
+
+| Level | Key | Different award? |
+|---|---|---|
+| Grant family | `ROOT_AWARD_NUMBER` | — |
+| Award / account | `AWARD_NUMBER` | Yes |
+| Version | `SEQUENCE_NUMBER` | No, same award over time |
+
+So the 43,202 award records — versions already collapsed — roll up into **15,729
+families**, about 2.7 awards each. If HRS expects one record per funded project rather
+than one per account, that second number is the one to map against.
+`modules/award/sql/huron_award_hierarchy.sql` gives one row per award with
+`IS_ROOT_AWARD`, `HIERARCHY_LEVEL`, `ROOT_AWARD_NUMBER` and `PARENT_AWARD_NUMBER`;
+nesting beyond two levels exists but is rare.
+
+BU's 2012 KCRM-SAP functional specification confirms the intent: the parent award was the
+SAP Grant, each child a Sponsored Program. Production still shows it — no root award
+carries an `ACCOUNT_NUMBER`, and `BU_GRANT_NUMBER` is constant across a family.
 
 **BU custom fields.** KC stores institution-specific fields in an
 entity-attribute-value model: `CUSTOM_ATTRIBUTE` holds the field definitions and

@@ -12,7 +12,7 @@ Regenerate it with `scripts/build_provenance.py` after rebuilding any artifact.
 |---|---|
 | Validated against production | **2026-08-07** |
 | Database | KCOEUS on prod.db.kuali.research.bu.edu |
-| Repository revision | `b6cf65630ec9` |
+| Repository revision | `8c990042ab3a` |
 | Kuali source branch | `bu-master` |
 | Kuali source revision | not available — the source is an extracted zip, not a clone |
 | Kuali `pom.xml` version | `2001.0040` |

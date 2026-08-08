@@ -32,6 +32,73 @@ award numbers. `sql/huron_award_latest_version_validation.sql` shows the counts.
 the same highest sequence, one ACTIVE and one ARCHIVED. Checking ACTIVE first sorts
 those out.
 
+## Award families: how awards roll up into one funded project
+
+There are three levels in this data, not two, and mixing any of them up is the biggest
+risk in the module.
+
+```
+GRANT FAMILY (one funded project)
+    |
+    +-- 123456-00001   root award — the family, and what BU calls the Grant
+    |
+    +-- 123456-00002   award / account
+    +-- 123456-00003   award / account
+    +-- 123456-00004   award / account
+             |
+             +-- 123456-00005   a child can have children of its own
+```
+
+**1. The grant family** is the funded project, identified by the root award number.
+
+**2. The award, or account, within it.** `123456-00002` and `-00003` are separate awards
+belonging to the same project, each with its own account number and money. These are
+*different* records. A child can itself become a parent.
+
+**3. The version of one award.** `123456-00002` sequence 1, 2 and 3 are that one award
+edited over time. These are the *same* record.
+
+So the 43,202 award business records — already one row per award, versions collapsed —
+roll up into **15,729 grant families**, about 2.7 awards each. If Huron expects one row
+per funded project rather than one per account, 15,729 is the number to work from.
+
+BU's original 2012 KCRM-SAP functional specification describes exactly this structure:
+the parent award became the SAP Grant, each child became a Sponsored Program, and
+grandchildren were explicitly supported. The evidence, and where it disagrees with
+today's data, is in [AWARD_GRAPH.md](AWARD_GRAPH.md).
+
+### What we checked in production
+
+| Question | Answer |
+|---|---|
+| Is the root always the `-00001` award? | Yes. All 15,729 roots end in `-00001`, and every award ending `-00001` is a root |
+| Does every award share its root's base number? | Yes, all 43,201 |
+| Are the others really separate accounts? | Yes. 27,170 have their own `ACCOUNT_NUMBER` and **none** shares the root's |
+| Does nesting exist? | Yes but rarely — 101 awards at level 3, 3 at level 4, in 21 of 15,729 families |
+| Family sizes | 199 families hold one award, 14,839 hold 2–5, 612 hold 6–20, 75 hold 21–100, 4 hold over 100. Largest is `207805-00001` with 216 |
+
+Two details worth knowing. Root rows do not have a NULL parent — they carry the sentinel
+`000000-00000`. And suffixes go well past `-00003`; we see up to `-00216`.
+
+Although the `-00001` rule holds perfectly today, `huron_award_hierarchy.sql` derives
+`IS_ROOT_AWARD` from `AWARD_NUMBER = ROOT_AWARD_NUMBER` rather than from the suffix. That
+is what KC actually stores; the numbering is a convention that could drift.
+
+### One row per award number
+
+`AWARD_HIERARCHY` holds 43,241 rows for 43,201 award numbers, so 40 award numbers appear
+twice. The interface returns exactly one row each — preferring `ACTIVE = 'Y'`, then the
+latest `UPDATE_TIMESTAMP`, then the highest `AWARD_HIERARCHY_ID`, which we confirmed is
+deterministic.
+
+That choice is not cosmetic for two of them. `200431-00004` and `201514-00005` each have
+an inactive row placing them a level deeper and an active row re-parenting them directly
+under the root. We take the active placement, which is why level 3 shows 101 here and
+103 in the raw table.
+
+Nothing is hidden. `sql/huron_award_hierarchy_validation.sql` reports every duplicate,
+both parent conflicts, and the awards missing from the hierarchy entirely.
+
 ## Why the queries are separate
 
 We keep people, amounts, terms, special reviews and custom fields in their own queries
@@ -48,9 +115,9 @@ award versions.
 ## Things that would be easy to get wrong
 
 **`AWARD_HIERARCHY` keys on `AWARD_NUMBER`, not `AWARD_ID`.** The hierarchy describes the
-award, not one of its versions. It is also not an OJB collection — KC reaches it through
-`AwardHierarchyService` — so we added it to the graph by hand rather than let it be
-missed.
+award, not one of its versions — see the award families section above. It is also not an
+OJB collection; KC reaches it through `AwardHierarchyService`, so we added it to the
+graph by hand rather than let it be missed.
 
 **The person role lookup doubles the dataset.** `EPS_PROP_PERSON_ROLE` holds two rows for
 every role code, one per sponsor hierarchy. Joined unfiltered it takes personnel from

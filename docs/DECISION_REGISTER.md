@@ -34,6 +34,10 @@ Counts measured 2026-08-07 ([provenance](PROVENANCE.md)).
 | D-10 | Subaward | `SUBAWARD_AMT_RELEASED` holds 2 rows in the whole table; `SUBAWARD_CLOSEOUT`, `SUBAWARD_REPORTS` and `SUBAWARD_TEMPLATE_ATTACHMENTS` are empty. Unused KC features, or is the information kept elsewhere? | Medium | BU | Open | |
 | D-11 | All | Custom attributes with rows but no non-NULL values anywhere: 6 on `INPR`, 2 on `NGT`, 1 on `SAWD`. They are marked `NO_POPULATED_VALUES_IN_PRODUCTION` in the field dictionary. Configuration worth keeping, or drop them? | Low | BU + Huron | Open | |
 | D-12 | Award | `ORGANIZATION` (37 of 41 columns) and `UNIT` (5 of 9) resolve UI labels; the rest are technical columns. Confirm no label is expected for those. | Low | BU | Open | |
+| D-13 | Award | Two awards exist in `AWARD` with no `AWARD_HIERARCHY` row at all — `200086-00008` and `211654-00003`. They belong to no family. We did not place them by reading their numbers. Should they be attached to a family, or do they convert standalone? | Low | BU | Open | |
+| D-14 | Award | `204946-00004` appears in `AWARD_HIERARCHY` but not in `AWARD`. | Low | BU | Open | |
+| D-15 | Award | 30 award numbers have hierarchy rows that differ only by the `ACTIVE` flag, and 2 of those (`200431-00004`, `201514-00005`) also disagree about the parent. We take the active placement. Confirm that is the intended current structure. | Low | BU | Open | |
+| D-16 | Award | BU's 2012 KCRM-SAP specification says an account number may only sit on an award with no children, and that it must be handed down if that award later gains children. 16 non-leaf awards still hold one. Stale from before a re-parenting, or meaningful? | Low | BU | Open | |
 
 ## How this connects to the modules
 
@@ -42,7 +46,7 @@ evidence lives. This table is for tracking the answer.
 
 | Module | Findings | IDs |
 |---|---|---|
-| [Award](../modules/award/AWARD_GRAPH.md) | 2 | D-02, D-12 |
+| [Award](../modules/award/AWARD_GRAPH.md) | 6 | D-02, D-12, D-13, D-14, D-15, D-16 |
 | [Institutional Proposal](../modules/proposal/PROPOSAL_GRAPH.md) | 5 | D-03 … D-07 |
 | [Subaward](../modules/subaward/SUBAWARD_GRAPH.md) | 2 | D-01, D-10 |
 | [Negotiation](../modules/negotiation/NEGOTIATION_GRAPH.md) | 2 | D-08, D-09 |

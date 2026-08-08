@@ -10,6 +10,53 @@ If you are mapping fields, `reference/KUALI_FIELD_DICTIONARY.csv` is still the p
 start (see [HURON_MAPPING_GUIDE.md](../HURON_MAPPING_GUIDE.md)). This document is about
 shape and relationships, not field-level meaning.
 
+
+## Awards roll up into families
+
+One thing the per-module docs only cover from the Award side, but which matters as soon
+as you look at the whole picture: BU's awards are not flat.
+
+```
+GRANT FAMILY (one funded project)
+    |
+    +-- 123456-00001   root award — the family
+    |
+    +-- 123456-00002   award / account
+    +-- 123456-00003   award / account
+```
+
+There are three levels, and confusing any two of them is the easiest mistake to make in
+this data:
+
+| Level | Key | What changes | Same record? |
+|---|---|---|---|
+| Grant family | `ROOT_AWARD_NUMBER` | nothing — it is the grouping | — |
+| Award / account | `AWARD_NUMBER` | the account | No, different awards |
+| Version | `SEQUENCE_NUMBER` | one award over time | Yes, same award |
+
+So the counts stack up like this:
+
+```
+282,468  physical AWARD rows
+ 43,202  award business records   (one per AWARD_NUMBER)
+ 15,729  award families           (one per funded project)
+```
+
+Every family root ends in `-00001`, every award shares its root's base number, and the
+subaccounts genuinely are separate accounts — 27,170 have their own `ACCOUNT_NUMBER` and
+none reuses the root's. Nesting exists but is rare: 101 awards sit at level 3 and 3 at
+level 4, across 21 of the 15,729 families.
+
+`modules/award/sql/huron_award_hierarchy.sql` is the machine-readable version, with
+`IS_ROOT_AWARD`, `HIERARCHY_LEVEL`, `ROOT_AWARD_NUMBER` and `PARENT_AWARD_NUMBER`. The
+full evidence is in [AWARD_GRAPH.md](../modules/award/AWARD_GRAPH.md).
+
+This is not only a pattern we spotted in the data. BU's 2012 KCRM-SAP Grants Interface
+functional specification says the parent award maps 1:1 to the SAP Grant and each child
+award becomes a Sponsored Program — which is why no root award in production carries an
+`ACCOUNT_NUMBER` and 27,170 children do. `BU_GRANT_NUMBER` turns out to be a
+family-level identifier: no family holds more than one distinct value.
+
 ## The four business objects
 
 BU has modelled four Grants business objects. Each one is a whole graph — a root table
