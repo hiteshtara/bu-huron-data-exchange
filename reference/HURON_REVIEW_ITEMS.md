@@ -22,6 +22,8 @@ organised.
 | # | Object | Decision needed | Priority |
 |---|---|---|---|
 | D-18 | Delivery | How should Huron receive BU's curated datasets? | **High** |
+| D-20 | All | How will Huron hold KC source keys and the source-to-Huron ID crosswalk? | **High** |
+| D-21 | All | What KC history, if any, migrates alongside the current record? | **High** |
 | D-17 | Award | Grain: Award family, Award/account, or both? | **High** |
 | D-01 | Subaward | Historical or current Award version on a funding link? | **High** |
 | D-08 | Negotiation | Is it expected that 78% are attached to nothing? | **High** |
@@ -57,6 +59,60 @@ column means.
 **Evidence:** [docs/HURON_CONNECTIVITY.md](../docs/HURON_CONNECTIVITY.md) sets out the
 four options with their trade-offs, and the specific questions BU needs answered to move
 this forward.
+
+---
+
+## Across all four objects
+
+### D-20 — How will Huron hold KC source keys and the ID crosswalk? · **High**
+
+Every dataset BU exposes carries its business key (`AWARD_NUMBER`, `PROPOSAL_NUMBER`,
+`SUBAWARD_CODE`, `NEGOTIATION_ID`) and the internal keys needed to reassemble the graph.
+What we would like to agree is what happens to them on the Huron side.
+
+Dean framed the problem:
+
+> Various objects are linked in the current Kuali (e.g., Proposals to Awards, Subawards to
+> Awards). Obviously, these objects link today using the Kuali-based keys. We know when an
+> object is converted over to Huron, it will no longer carry the Kuali-native object key.
+> It will be assigned a key native to Huron. This is where it will be important to include
+> an original source key in any of the converted data.
+
+**The decision.** Which Huron field or structure holds the KC source key, and where does
+the record-level crosswalk live — one row per converted object, KC key to Huron id?
+
+**Why it matters.** After load, the source key is the only thing tying a converted record
+back to KC. It is what re-links objects that were related in KC once Huron has assigned
+its own identifiers, and it is what makes reconciliation possible at all.
+
+**Where BU stands.** That the keys must be preserved is not in question — the data
+contract states it as a requirement. BU has not built a crosswalk, because the Huron half
+of every row does not exist until load.
+
+**Evidence:** [docs/DATA_CONTRACT.md](../docs/DATA_CONTRACT.md), "Source keys have to
+survive the migration" and "The source-to-Huron ID crosswalk".
+
+### D-21 — What KC history, if any, migrates? · **High**
+
+The datasets BU exposes contain the selected current record for each business object.
+Historical KC versions still exist as source data — `AWARD` holds 282,468 physical rows
+behind 43,202 current ones — but they are not the default migration root.
+
+**The decision.** Is migration scope the current record only, the current record plus
+selected historical versions, historical versions represented as documents or reference
+material, or another history mechanism HRS supports?
+
+**Why it matters.** It changes the volume of the conversion, and it decides what "history"
+means to a BU user after go-live.
+
+**Where BU stands.** No position, and we are not deciding it. Exposing history is not the
+obstacle — removing the version join does it. Dean's understanding is that Huron history
+is structurally different from KC's and may appear as document-style history rather than
+prior object versions; we have recorded that as his observation rather than something this
+repository has verified.
+
+**Evidence:** [docs/DATA_CONTRACT.md](../docs/DATA_CONTRACT.md), "Current versus
+historical".
 
 ---
 
@@ -97,7 +153,9 @@ child awards, hierarchy relationships, account numbers and `BU_GRANT_NUMBER` are
 represented. Until it is answered, some downstream mapping decisions are premature.
 
 **Where BU stands.** No position. We are **not** proposing to derive or backfill the 1,282
-missing `BU_GRANT_NUMBER` values — that is part of this decision.
+missing `BU_GRANT_NUMBER` values — that is part of this decision. Dean independently raised the
+same target-model question — "How are the Kuali Award Parent / Child records going to be
+mapped" — which is what the numbers above quantify.
 
 **Evidence:** [modules/award/AWARD_GRAPH.md](../modules/award/AWARD_GRAPH.md), "Award
 families".
@@ -161,6 +219,15 @@ disagrees.
 ---
 
 ## Subaward
+
+Dean asked the broader question directly — "How are Subaward objects going to be mapped" —
+and the two items below are how that breaks down against what we found in production. They
+are the concrete source-model decisions behind it, not a substitute for the wider mapping
+conversation.
+
+One thing worth separating before that conversation: a Subaward is not the same thing as a
+child/subaccount Award. See [docs/DATA_MODEL.md](../docs/DATA_MODEL.md), "A child Award is
+not a Subaward".
 
 ### D-01 — Historical or current Award version on a funding link? · **High**
 

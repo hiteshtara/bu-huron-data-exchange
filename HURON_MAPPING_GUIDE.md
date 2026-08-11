@@ -60,6 +60,19 @@ Each module contains a business-object graph (`*_GRAPH.md` explains it, `*_GRAPH
 machine readable), a UI-to-database field mapping, a read-only SQL representation under
 `sql/`, and the findings and open questions specific to that area.
 
+**Source keys need to survive the conversion.** Every dataset carries its KC business
+identifier — `AWARD_NUMBER`, `PROPOSAL_NUMBER`, `SUBAWARD_CODE`, `NEGOTIATION_ID` — plus
+the internal keys that hold the graph together. Once Huron assigns its own identifiers,
+the KC key is what ties a converted record back to its source and what re-links objects
+that were related in KC. How that is held on the Huron side, and where the source-to-Huron
+crosswalk lives, is D-20 in
+[reference/HURON_REVIEW_ITEMS.md](reference/HURON_REVIEW_ITEMS.md).
+
+**One name worth separating early.** A child/subaccount Award is not a Subaward. The first
+is another BU account inside an Award family; the second is a separate business object
+covering BU's outgoing subaward relationships. [docs/DATA_MODEL.md](docs/DATA_MODEL.md)
+sets out the difference.
+
 A few relationships are worth mentioning because they cross modules. A Subaward connects
 to its funding Award through `SUBAWARD_FUNDING_SOURCE`, which records the specific award
 *version* that funded it — `FUNDING_AWARD_NUMBER` reaches the current Award root. A

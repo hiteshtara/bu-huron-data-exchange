@@ -58,6 +58,36 @@ award becomes a Sponsored Program — which is why no root award in production c
 `ACCOUNT_NUMBER` and 27,170 children do. `BU_GRANT_NUMBER` turns out to be a
 family-level identifier: no family holds more than one distinct value.
 
+## A child Award is not a Subaward
+
+Worth stopping on before the four objects, because the names are almost the same and the
+meanings are opposite. This one is easy to get wrong on a whiteboard and expensive to get
+wrong in a mapping.
+
+```
+Award family                          Subaward business object
+    |                                     |
+    +-- main Award / account              +-- funding relationship
+    +-- child Award / subaccount              back to an Award
+    +-- child Award / subaccount              (SUBAWARD_FUNDING_SOURCE)
+```
+
+A **child Award / subaccount** is a non-root `AWARD_NUMBER` inside an Award family. It is
+another BU award/account in the same family — BU's own money, BU's own account number —
+and it can have children of its own. It lives in `modules/award/`.
+
+A **Subaward** is a different KC business object entirely. It represents BU's outgoing
+subaward relationship, work BU is funding at another institution. It lives in
+`modules/subaward/`, keys on `SUBAWARD_CODE`, and links back to an Award through
+`SUBAWARD_FUNDING_SOURCE`.
+
+One is an account inside BU's award structure. The other is a relationship with an
+external organisation. Different modules, different keys, different meaning.
+
+**We have not tested any correspondence between them.** Nothing here says every child
+Award has a Subaward, or that a Subaward maps one-to-one onto a child Award. If that
+relationship matters for mapping, it needs proving against production first.
+
 ## The four business objects
 
 BU has modelled four Grants business objects. Each one is a whole graph — a root table

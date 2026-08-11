@@ -38,9 +38,68 @@ Counts measured 2026-08-07 ([provenance](PROVENANCE.md)).
 | D-14 | Award | `204946-00004` appears in `AWARD_HIERARCHY` but not in `AWARD`. | Low | BU | Open | |
 | D-15 | Award | 30 award numbers have hierarchy rows that differ only by the `ACTIVE` flag, and 2 of those (`200431-00004`, `201514-00005`) also disagree about the parent. We take the active placement. Confirm that is the intended current structure. | Low | BU | Open | |
 | D-16 | Award | BU's 2012 KCRM-SAP specification says an account number may only sit on an award with no children, and that it must be handed down if that award later gains children. 16 non-leaf awards still hold one. Stale from before a re-parenting, or meaningful? | Low | BU | Open | |
+| D-20 | All | How will Huron retain KC source identifiers, and provide the source-to-Huron ID crosswalk needed for lineage, re-linking and reconciliation? That KC source keys must be preserved is not in question — this is about where they live in the target and who maintains the crosswalk. Detail below. | **High** — without it, converted records cannot be tied back to KC or re-linked to each other | BU + Huron | Open | |
+| D-21 | All | What KC history, if any, should be migrated in addition to the selected current business record? The interface exposes the current record; historical physical versions remain source data. Detail below. | **High** — 282,468 physical Award rows against 43,202 current ones, and the same pattern in Proposal and Subaward | BU + Huron | Open | |
 | D-19 | Internal access / security | Should BU provision a dedicated database-enforced read-only identity for running the migration and discovery queries, instead of relying only on the client-side read-only controls in the repository runner? A least-privilege identity would make the boundary independent of which client executes the query. Internal BU access management — **not** a prerequisite for documenting Huron's mapping, and no specific privilege design is proposed yet. | Medium — internal posture, no effect on the datasets | BU | Open | |
 | D-18 | Delivery | What physical delivery/connectivity method should Huron use to consume BU's curated migration datasets? The logical source interface is complete; how the datasets cross the BU/Huron boundary is not decided. Detail below. | **High** — gates provisioning, security approval and how every extract cycle works | BU + Huron | Open | |
 | D-17 | Award | Does HRS expect the Award family, the individual Award/account, or both as distinct objects? This sets the grain of the whole Award migration — 15,729 families against 43,202 awards. Detail below. | **High** — decides what an Award record *is* in HRS | BU + Huron | Open | |
+
+## Source keys and the ID crosswalk (D-20)
+
+**The question.** How will Huron retain KC source identifiers, and provide the
+source-to-Huron ID crosswalk needed for lineage, re-linking and reconciliation?
+
+**Not the question.** Whether KC source keys should be preserved. They should, and
+[DATA_CONTRACT.md](DATA_CONTRACT.md) now states that as a requirement rather than an
+option. What needs agreeing is the target side: which Huron field or structure holds the
+source key, and where the record-level crosswalk lives.
+
+**Why it matters.** Dean raised this from the target side:
+
+> Various objects are linked in the current Kuali (e.g., Proposals to Awards, Subawards to
+> Awards). Obviously, these objects link today using the Kuali-based keys. We know when an
+> object is converted over to Huron, it will no longer carry the Kuali-native object key.
+> It will be assigned a key native to Huron. This is where it will be important to include
+> an original source key in any of the converted data.
+
+The source key is what re-links converted objects after Huron assigns its own identifiers.
+Without it, an Award and the Proposal that became it arrive as unrelated records, and
+there is no way to reconcile a load against the source.
+
+**Where BU stands.** Every dataset already carries its business key and its lineage keys,
+and the three kinds of identifier are set out in the data contract. BU has not built a
+crosswalk table, because the Huron-side half of every row does not exist until load.
+
+**Detail:** [DATA_CONTRACT.md](DATA_CONTRACT.md), "Source keys have to survive the
+migration" and "The source-to-Huron ID crosswalk".
+
+## What KC history should be migrated? (D-21)
+
+**The question.** What KC history, if any, should be migrated in addition to the selected
+current business record?
+
+**What is true in this repository.** The SQL interface selects the current business record
+for each object. Historical physical versions still exist in KC and remain source data;
+they are simply not the default migration root. Removing the version join exposes them —
+the mechanics are not the obstacle.
+
+**Dean's observation about the target,** which we record as his and have not verified:
+Huron history is structurally different from KC history, and may appear as document or
+PDF-like history rather than as prior first-class object versions. Nothing in this
+repository proves or disproves that; it is a question for Huron.
+
+**What we need decided.** Whether migration scope is:
+
+1. the current record only,
+2. the current record plus selected historical versions,
+3. historical versions represented as documents or reference material, or
+4. another history mechanism Huron supports.
+
+**Why it matters.** `AWARD` holds 282,468 physical rows against 43,202 current records,
+and Institutional Proposal and Subaward have the same shape. The answer changes the volume
+of the conversion and what "history" means to a BU user after go-live.
+
+**Where BU stands.** No position. We are not deciding this for Huron.
 
 ## How will Huron receive the data? (D-18)
 
@@ -128,6 +187,9 @@ If HRS maps at the family level, we also need to know what identifies the family
 `ROOT_AWARD_NUMBER`.** That is a migration decision, not a data fix, and it is part of
 this question rather than something to settle first.
 
+Dean independently raised the same target-model question — "How are the Kuali Award Parent
+/ Child records going to be mapped" — which is what this entry quantifies.
+
 ### Why it matters
 
 It moves the Award migration grain from 43,202 records to 15,729, and it determines how
@@ -157,6 +219,7 @@ evidence lives. This table is for tracking the answer.
 | Cross-module | 1 | D-11 |
 | Delivery / connectivity | 1 | D-18 |
 | Internal access / security | 1 | D-19 |
+| Cross-cutting migration design | 2 | D-20, D-21 |
 
 ## The three to settle first
 
@@ -165,6 +228,11 @@ how much of it there is. D-17 decides the grain of the Award migration and shoul
 first, because the answer affects how everything else in the Award module is presented.
 D-01 decides what a subaward is attached to in HRS. D-08 covers 78% of all negotiations.
 The rest can wait for conversion planning.
+
+**D-20** and **D-21** are also High priority, but they are cross-cutting migration
+decisions rather than source-model decisions. D-20 covers how KC source identifiers will be
+retained and translated to Huron-native IDs; D-21 covers how much KC history, if any, will
+be migrated. D-18 remains a parallel delivery/connectivity decision.
 
 **D-18** runs alongside them on a different track. It does not change what the data
 means, but it gates provisioning and security approval, and those have lead times — so

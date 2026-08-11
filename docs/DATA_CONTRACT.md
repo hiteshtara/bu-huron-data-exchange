@@ -45,6 +45,59 @@ activity, and we join back through the activity to add `NEGOTIATION_ID`.
 award regardless of version, which is what you need when a Subaward's funding link points
 at an older version than the current one.
 
+### Source keys have to survive the migration
+
+There are three different kinds of identifier in play, and they do not have the same
+lifetime:
+
+| Kind | Examples | What happens to it |
+|---|---|---|
+| **Business / source identifier** | `AWARD_NUMBER`, `PROPOSAL_NUMBER`, `SUBAWARD_CODE`, `NEGOTIATION_ID` | **Must survive.** These are how BU refers to the record, and how a converted record can be tied back to KC |
+| **Internal KC relationship / version identifier** | `AWARD_ID`, `PROPOSAL_ID`, `SUBAWARD_ID`, `SEQUENCE_NUMBER` | Needed during staging and reconciliation wherever relationships depend on them. Not necessarily a permanent user-facing field |
+| **Huron-native identifier** | assigned at load | Does not exist yet |
+
+The requirement is that the original KC business identifiers are carried into the
+converted data, not consumed and discarded during load. Once Huron assigns its own keys,
+the KC key is the only thing that ties a converted record back to its source — for
+reconciliation, for investigating a discrepancy, and for re-establishing relationships
+between objects that were linked in KC.
+
+That last point is worth stating plainly, because it is not obvious until a load has
+already happened. Dean put it this way:
+
+> Various objects are linked in the current Kuali (e.g., Proposals to Awards, Subawards to
+> Awards). Obviously, these objects link today using the Kuali-based keys. We know when an
+> object is converted over to Huron, it will no longer carry the Kuali-native object key.
+> It will be assigned a key native to Huron. This is where it will be important to include
+> an original source key in any of the converted data.
+
+To be clear about the limit: this does not mean every internal Oracle primary key needs to
+become a permanent user-facing field in Huron. It means the business identifiers must
+persist, and the internal ones must remain available for as long as the conversion and its
+reconciliation need them.
+
+### The source-to-Huron ID crosswalk
+
+Preserving the keys is half of it. The other half is a record-level crosswalk, so that
+after load there is a direct answer to "which Huron record is this KC award?" and the
+reverse.
+
+Conceptually, one row per converted object:
+
+```
+SOURCE_OBJECT_TYPE     AWARD
+SOURCE_BUSINESS_KEY    123456-00001
+SOURCE_INTERNAL_KEY    <KC AWARD_ID, where a relationship depends on it>
+HURON_OBJECT_TYPE      <target type>
+HURON_ID               <assigned during load>
+```
+
+This is a concept, not something BU has built. Where it lives and who maintains it is
+**D-20**, and it needs Huron's input because the Huron-side half of every row is theirs.
+
+Value crosswalks — translating a KC code into an approved Huron value — are a different
+thing and are covered in [HURON_USAGE_GUIDE.md](HURON_USAGE_GUIDE.md).
+
 ## Current versus historical
 
 The root datasets give you the **current** record. History is not exposed by default.
@@ -53,6 +106,24 @@ Each module documents its own rule and each has a validation query that shows th
 and exceptions. The rules genuinely differ — Award, Proposal and Subaward each needed a
 different one, and Negotiation is not versioned at all. `ROOT_SELECTION_RULE` on the
 root says which branch of the rule chose that row.
+
+**Three words that are not interchangeable.** They get used loosely in conversation and
+mean different things here:
+
+| Term | What it means |
+|---|---|
+| **Selected current record** | The row our module rule chose as the source representation of the business object. This is what the root datasets contain |
+| **ACTIVE** | A KC *sequence-status* value. It is the first test in the Award, Proposal and Subaward rules, but only one input to them |
+| **Finalized** | A KEW *workflow/document* state. It says where a document reached in routing. It is not a synonym for ACTIVE, and not a synonym for current |
+
+The distinction matters because the selected current record cannot be defined as "the
+ACTIVE row" or as `MAX(SEQUENCE_NUMBER)`. Both have real fallback cases: 202 awards and 80
+proposals have no ACTIVE row at all, 10 award numbers have two rows tied at the highest
+sequence, and one subaward code has two ACTIVE rows 92 seconds apart. The rule is the
+whole chain, not its first step — which is why `ROOT_SELECTION_RULE` records which branch
+fired.
+
+Negotiation has none of this. It is not versioned: one row is one negotiation.
 
 If you need history, remove the `huron_<module>_version` join from the query. Everything
 else works unchanged.
