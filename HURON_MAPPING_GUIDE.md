@@ -151,6 +151,17 @@ BU's 2012 KCRM-SAP functional specification confirms the intent: the parent awar
 SAP Grant, each child a Sponsored Program. Production still shows it — no root award
 carries an `ACCOUNT_NUMBER`, and `BU_GRANT_NUMBER` is constant across a family.
 
+**Attachments use two storage patterns.** Award and Negotiation attachments reach their
+file through `ATTACHMENT_FILE`, which holds the bytes either inline or against a separate
+`FILE_DATA` row. Institutional Proposal and Subaward attachments skip `ATTACHMENT_FILE`
+and reference `FILE_DATA` directly. BU has preserved the attachment identifiers in the
+module SQL so a file can be located later, and the datasets remain metadata only.
+
+One thing worth flagging early: `FILE_DATA_ID` looks like a technical surrogate key but is
+a 36-character string — a UUID — rather than a numeric id, so it needs to stay a string
+through any mapping. [docs/DATA_MODEL.md](docs/DATA_MODEL.md) has the full attachment
+model.
+
 **BU custom fields.** KC stores institution-specific fields in an
 entity-attribute-value model: `CUSTOM_ATTRIBUTE` holds the field definitions and
 `*_CUSTOM_DATA` holds the values, linked by `CUSTOM_ATTRIBUTE_ID`.

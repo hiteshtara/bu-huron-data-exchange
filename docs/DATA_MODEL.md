@@ -272,6 +272,98 @@ A few attributes have values in a module they are not configured for — attribu
 We report those rather than discard them. Each module's `*_GRAPH.md` lists its own
 custom-attribute anomalies, and the definitions are in `reference/custom-attributes/`.
 
+## How KC stores attachment content
+
+All four modules expose attachment metadata, and every one of them keeps the file itself
+somewhere else. Two things are worth knowing before mapping any of it: KC has **two
+different attachment implementations**, and the identifier that ties them together is a
+string, not a number.
+
+Counts in this section were measured against production on 2026-08-10, later than the rest
+of this document.
+
+### Two implementations, not one
+
+**Award and Negotiation** go through `ATTACHMENT_FILE`:
+
+```
+AWARD_ATTACHMENT / NEGOTIATION_ATTACHMENT
+    FILE_ID  (NUMBER)
+        |
+        +--> ATTACHMENT_FILE
+                 |
+                 +-- inline    ATTACHMENT_FILE.FILE_DATA  (BLOB)
+                 |
+                 +-- external  ATTACHMENT_FILE.FILE_DATA_ID
+                                    |
+                                    +--> FILE_DATA.ID
+                                              |
+                                              +--> FILE_DATA.DATA
+```
+
+**Institutional Proposal and Subaward do not go through `ATTACHMENT_FILE` at all.** They
+carry the external identifier themselves and reach `FILE_DATA` directly:
+
+```
+PROPOSAL_ATTACHMENTS / SUBAWARD_ATTACHMENTS
+    FILE_DATA_ID  (VARCHAR2(36))
+        |
+        +--> FILE_DATA.ID
+                  |
+                  +--> FILE_DATA.DATA
+```
+
+| Module | Attachment table | Key it carries | Reaches the bytes via |
+|---|---|---|---|
+| Award | `AWARD_ATTACHMENT` | `FILE_ID` NUMBER | `ATTACHMENT_FILE`, then inline or external |
+| Negotiation | `NEGOTIATION_ATTACHMENT` | `FILE_ID` NUMBER | `ATTACHMENT_FILE`, then inline or external |
+| Institutional Proposal | `PROPOSAL_ATTACHMENTS` | `FILE_DATA_ID` VARCHAR2(36) | `FILE_DATA` directly |
+| Subaward | `SUBAWARD_ATTACHMENTS` | `FILE_DATA_ID` VARCHAR2(36) | `FILE_DATA` directly |
+
+So a loader written against the Award pattern will not work for Subaward, and the reverse.
+Both patterns end at `FILE_DATA`, but only one of them passes through `ATTACHMENT_FILE`.
+
+### What production shows
+
+```
+ATTACHMENT_FILE rows                    171,999
+  FILE_DATA_ID populated (external)     137,631
+  FILE_DATA_ID null (inline)             34,368
+  external ids resolving to FILE_DATA   137,631
+  unmatched external ids                      0
+FILE_DATA rows                          368,048
+```
+
+Every external identifier resolves. Nothing is dangling.
+
+### FILE_DATA_ID is a string, not a number
+
+This is the part most likely to be got wrong, because the name looks like a surrogate key.
+
+- `ATTACHMENT_FILE.FILE_DATA_ID` is `VARCHAR2(36)`.
+- `FILE_DATA.ID` is `VARCHAR2(36)`.
+- **All 18 columns named `FILE_DATA_ID` anywhere in KCOEUS are `VARCHAR2(36)`.**
+- All 137,631 populated values match the UUID pattern — for example
+  `8000df77-f8db-471d-9421-5aa60c3fe498`. None is numeric.
+
+It must be carried as a string. Converting it to `INTEGER`, `BIGINT` or `NUMBER` fails on
+every populated row, not on a difficult subset.
+
+Note also that the join is `ATTACHMENT_FILE.FILE_DATA_ID = FILE_DATA.ID`. `FILE_DATA` has
+only two columns, `ID` and `DATA` — there is no `FILE_DATA.FILE_DATA_ID`.
+
+### Two details worth knowing
+
+**18 `ATTACHMENT_FILE` rows have neither.** No external identifier and no usable inline
+content. A tiny number against 171,999, but a loader that assumes one path or the other
+always resolves will meet them.
+
+**368,048 `FILE_DATA` rows against 137,631 referenced from `ATTACHMENT_FILE`.** The
+difference is not orphaned files. `FILE_DATA` is shared storage: Institutional Proposal,
+Subaward and other KC structures reference `FILE_DATA.ID` directly without going through
+`ATTACHMENT_FILE`, so most of those rows belong to something other than an
+`ATTACHMENT_FILE` row.
+
 ## The shape every module shares
 
 All four modules are built the same way, so once you have read one the others read quickly.

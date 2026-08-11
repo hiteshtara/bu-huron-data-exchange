@@ -198,6 +198,29 @@ are truncated.
 `BLOB` columns are never exposed. Attachment datasets carry metadata — file name, mime
 type, type code, `FILE_DATA_ID` — but not file content.
 
+### Attachment identifiers
+
+**`FILE_DATA_ID` is a `VARCHAR2(36)` source identifier and must be preserved as a string.
+It must never be converted to `INTEGER`, `BIGINT` or `NUMBER`.** Every populated value in
+production is a UUID; a numeric conversion fails on all of them, not on an awkward
+minority.
+
+The relationship is:
+
+```
+ATTACHMENT_FILE.FILE_DATA_ID  =  FILE_DATA.ID
+```
+
+`FILE_DATA` holds only `ID` and `DATA`, so there is no `FILE_DATA.FILE_DATA_ID` to join
+to. Institutional Proposal and Subaward attachments carry `FILE_DATA_ID` themselves and
+reference `FILE_DATA.ID` directly, without passing through `ATTACHMENT_FILE`.
+[DATA_MODEL.md](DATA_MODEL.md) sets out both patterns.
+
+Attachment **metadata** and attachment **binary content** are separate concerns. The
+metadata datasets carry the identifiers so the files can be located later; the bytes stay
+out of the field-mapping datasets unless binary migration is explicitly in scope, and
+adding them would change what those datasets are for.
+
 ## What is excluded
 
 Excluded, and why:
