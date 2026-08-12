@@ -4,6 +4,8 @@ We copied these SQL files from the Research Archive Platform because they contai
 
 These are reference copies. The original repository at `/Users/mukadder/projects/research-archive-platform` remains the source of truth. Changes made here do not flow back to that project, and a query that worked for the archive may still need changes for the Huron migration scope, current Oracle grants, schema synonyms, or target mapping.
 
+Start with [How this SQL can help the Huron migration](HURON_MIGRATION_PURPOSE.md) for the practical migration use cases, module-specific value, attachment considerations, and minimum reconciliation package.
+
 ## What was copied
 
 - `oracle/` contains 95 reusable Oracle/Kuali discovery and extraction files. Each file keeps its full original relative path beneath this directory.

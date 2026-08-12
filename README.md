@@ -78,6 +78,7 @@ and the exceptions behind it.
 | Understand one business object | `modules/<object>/README.md` then `modules/<object>/*_GRAPH.md` |
 | Map front-end fields | [reference/KUALI_FIELD_DICTIONARY.csv](reference/KUALI_FIELD_DICTIONARY.csv) · `modules/<object>/*_FRONTEND_DATABASE_MAPPING.csv` |
 | Understand or run the SQL | [docs/SQL_INTERFACE.md](docs/SQL_INTERFACE.md) · `modules/<object>/sql/` |
+| Reuse Research Archive SQL discoveries | [reference/research-archive-platform-sql/HURON_MIGRATION_PURPOSE.md](reference/research-archive-platform-sql/HURON_MIGRATION_PURPOSE.md) |
 | Set the repo up | [docs/ONBOARDING.md](docs/ONBOARDING.md) |
 | See what is still open internally | [docs/DECISION_REGISTER.md](docs/DECISION_REGISTER.md) |
 | Look at the broad KC discovery | [discovery/README.md](discovery/README.md) |
