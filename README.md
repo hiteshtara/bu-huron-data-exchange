@@ -82,6 +82,7 @@ and the exceptions behind it.
 | Set the repo up | [docs/ONBOARDING.md](docs/ONBOARDING.md) |
 | See what is still open internally | [docs/DECISION_REGISTER.md](docs/DECISION_REGISTER.md) |
 | Look at the broad KC discovery | [discovery/README.md](discovery/README.md) |
+| Read up on a production KC/SAP incident or enhancement | `incidents/<ticket>/README.md` |
 
 Five documents carry most of the meaning, and they do different jobs:
 
@@ -108,6 +109,15 @@ top-level document:
 | An internal decision or anomaly | [docs/DECISION_REGISTER.md](docs/DECISION_REGISTER.md) |
 | Something needing Huron discussion | [reference/HURON_REVIEW_ITEMS.md](reference/HURON_REVIEW_ITEMS.md) |
 | Partner-facing orientation | [HURON_MAPPING_GUIDE.md](HURON_MAPPING_GUIDE.md) |
+| A production KC/SAP incident or a ticketed enhancement | `incidents/<ticket>/` |
+
+`incidents/` is the one exception to the rule above. These are production support
+write-ups against the running Kuali system, not migration findings, and they have a
+ticket number rather than a business object. Ticketed enhancements we deliver against
+the running system live here too — `INC*` for something broken, `ENHC*` for a change
+BU asked for. When one of these turns up something the migration needs to know, that
+fact still goes in the module `*_GRAPH.md` or the decision register — with a link back
+to the write-up.
 
 ## Running the source queries
 
