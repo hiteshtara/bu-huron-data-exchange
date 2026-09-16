@@ -3,8 +3,8 @@
   BU Grants Data Exchange - overview dashboard
   =============================================================================
   A single-page view of the Huron migration source package: the four business
-  objects, how the datasets are shaped, what we verified, and the decisions
-  still open with Huron. Built for the BU/Huron review session.
+  objects, how the datasets are shaped, what we verified, what we can show live,
+  and the decisions still open with Huron. Built for the BU/Huron review session.
 
   This file holds no new facts. Everything on it is taken from the Markdown in
   this repository, which stays canonical:
@@ -14,6 +14,7 @@
       docs/DATA_CONTRACT.md            grain, keys, null and date semantics
       docs/HURON_CONNECTIVITY.md       the four delivery options (D-18)
       docs/PROVENANCE.md               what each count was measured against
+      docs/demo/                       the six live demo queries
       modules/<object>/README.md       per-object version rules and checks
 
   Counts are the 2026-08-07 production measurement. Nothing regenerates this
@@ -397,6 +398,7 @@ footer{padding-block:34px 0;color:var(--muted);font-size:12.5px;max-width:70ch}
         <a href="#shape">How the datasets are shaped</a>
         <a href="#fields">The field dictionary</a>
         <a href="#verified">What we verified</a>
+        <a href="#live">Seeing it live</a>
         <a href="#decisions">Open decisions</a>
         <a href="#delivery">Delivery</a>
         <a href="#map">Where it all lives</a>
@@ -935,6 +937,56 @@ footer{padding-block:34px 0;color:var(--muted);font-size:12.5px;max-width:70ch}
               workaround on our side.
             </p>
           </article>
+        </div>
+      </section>
+
+      <!-- ===================== LIVE ===================== -->
+      <section id="live">
+        <div class="sectionhead"><h2>Seeing it live</h2><span class="tag">Demo</span></div>
+        <p class="lede">
+          Nothing above has to be taken on trust. BU can run these six read-only queries
+          against KC production in the session, in this order — they use the same tables and
+          the same version-selection rules as the datasets themselves, so what appears on
+          screen is what the interface does.
+        </p>
+
+        <div class="asks">
+          <div class="ask"><span class="qn">1</span><div>
+            <div class="qt">The whole Grants population in one result</div>
+            <div class="qs">All four objects, physical rows against business records. The gap between those two columns is the versioning problem, measured live rather than quoted.</div>
+          </div></div>
+          <div class="ask"><span class="qn">2</span><div>
+            <div class="qt">Why MAX(SEQUENCE_NUMBER) is not the current award</div>
+            <div class="qs">Returns the award numbers carrying two rows at the same highest sequence, one ACTIVE and one ARCHIVED. Each one is a record where "take the latest" has to guess.</div>
+          </div></div>
+          <div class="ask"><span class="qn">3</span><div>
+            <div class="qt">How awards roll up into families</div>
+            <div class="qs">The family-size distribution behind the 15,729 — how many families hold one award, how many hold hundreds. This is the shape behind decision D-17.</div>
+          </div></div>
+          <div class="ask"><span class="qn">4</span><div>
+            <div class="qt">One real award, hydrated</div>
+            <div class="qs">A single award with every child collection counted, and alongside it the row count a single flat join would have produced. This is the clearest argument for why the child collections ship separately.</div>
+          </div></div>
+          <div class="ask"><span class="qn">5</span><div>
+            <div class="qt">Subaward funding links against Award versions</div>
+            <div class="qs">How many funding rows point at an award version that has since been superseded. The answer is most of them, which is why D-01 is a decision rather than a detail.</div>
+          </div></div>
+          <div class="ask"><span class="qn">6</span><div>
+            <div class="qt">BU custom fields, resolved</div>
+            <div class="qs">The entity-attribute-value tables turned back into BU's real field labels. The raw table is numbers against numbers — this is the part the schema alone cannot tell you.</div>
+          </div></div>
+        </div>
+
+        <div class="callout quiet">
+          <h4>What the demo is and is not</h4>
+          <p>
+            These run through BU's internal read-only query tool, which accepts only
+            <code>SELECT</code> and <code>WITH</code> and opens the transaction read-only. That
+            tool is a BU development mechanism rather than a connection that can be handed
+            over — the controls belong to the runner, not to the account, so a different
+            client using the same details would inherit none of them. How Huron receives the
+            datasets is a separate question, and it is still open as D-18 below.
+          </p>
         </div>
       </section>
 
