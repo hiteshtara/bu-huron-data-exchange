@@ -1,0 +1,1308 @@
+<!doctype html>
+<!--
+  BU Grants Data Exchange - overview dashboard
+  =============================================================================
+  A single-page view of the Huron migration source package: the four business
+  objects, how the datasets are shaped, what we verified, and the decisions
+  still open with Huron. Built for the BU/Huron review session.
+
+  This file holds no new facts. Everything on it is taken from the Markdown in
+  this repository, which stays canonical:
+
+      HURON_MAPPING_GUIDE.md           what Huron should understand
+      reference/HURON_REVIEW_ITEMS.md  the 13 joint decisions
+      docs/DATA_CONTRACT.md            grain, keys, null and date semantics
+      docs/HURON_CONNECTIVITY.md       the four delivery options (D-18)
+      docs/PROVENANCE.md               what each count was measured against
+      modules/<object>/README.md       per-object version rules and checks
+
+  Counts are the 2026-08-07 production measurement. Nothing regenerates this
+  file, so it will drift once those documents change - if you update a count in
+  the Markdown, update it here too or regenerate the page.
+
+  Self-contained: open it in any browser, or host it anywhere. The only external
+  request is the Google Fonts stylesheet, and it falls back to system fonts
+  cleanly without network access.
+
+  Also published as a Claude artifact:
+      https://claude.ai/artifact/DDySpMF1CEr5AQd4Kvj7XJ
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{color-scheme:light dark}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0}
+  img{max-width:100%}
+  [hidden]{display:none!important}
+</style>
+<title>BU Grants Data Exchange</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --ground:#F1F3F5;
+  --surface:#FFFFFF;
+  --surface-2:#F7F8FA;
+  --ink:#14171C;
+  --ink-2:#39414D;
+  --muted:#5B6472;
+  --rule:#DCDFE5;
+  --rule-strong:#C3C9D2;
+  --accent:#CC0000;
+  --accent-soft:rgba(204,0,0,.09);
+  --recess:#6E7F96;
+  --recess-soft:rgba(110,127,150,.14);
+  --good:#1A7048;
+  --good-soft:rgba(26,112,72,.10);
+  --open:#8F5400;
+  --open-soft:rgba(143,84,0,.11);
+  --shadow:0 1px 2px rgba(20,23,28,.05),0 8px 24px -16px rgba(20,23,28,.30);
+
+  --display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --body:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0F1216;
+    --surface:#171B21;
+    --surface-2:#1D222A;
+    --ink:#E9ECF1;
+    --ink-2:#BFC7D2;
+    --muted:#96A0AE;
+    --rule:#272E38;
+    --rule-strong:#39424F;
+    --accent:#E8564E;
+    --accent-soft:rgba(232,86,78,.13);
+    --recess:#7E8DA6;
+    --recess-soft:rgba(126,141,166,.18);
+    --good:#4FB07C;
+    --good-soft:rgba(79,176,124,.13);
+    --open:#D39A42;
+    --open-soft:rgba(211,154,66,.13);
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -16px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0F1216;
+  --surface:#171B21;
+  --surface-2:#1D222A;
+  --ink:#E9ECF1;
+  --ink-2:#BFC7D2;
+  --muted:#96A0AE;
+  --rule:#272E38;
+  --rule-strong:#39424F;
+  --accent:#E8564E;
+  --accent-soft:rgba(232,86,78,.13);
+  --recess:#7E8DA6;
+  --recess-soft:rgba(126,141,166,.18);
+  --good:#4FB07C;
+  --good-soft:rgba(79,176,124,.13);
+  --open:#D39A42;
+  --open-soft:rgba(211,154,66,.13);
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -16px rgba(0,0,0,.8);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--ground);color:var(--ink);
+  font-family:var(--body);font-size:15px;line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance;margin:0;letter-spacing:-.018em}
+p{margin:0}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--accent) 35%,transparent)}
+a:hover{border-bottom-color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+code,.mono{font-family:var(--mono);font-size:.88em}
+
+/* ---------- shell ---------- */
+.shell{max-width:1240px;margin:0 auto;padding-inline:20px;padding-block:0 72px}
+.layout{display:grid;grid-template-columns:212px minmax(0,1fr);gap:48px;align-items:start}
+@media (max-width:1000px){.layout{grid-template-columns:1fr;gap:0}}
+
+/* ---------- masthead ---------- */
+.masthead{padding-block:44px 30px;border-bottom:1px solid var(--rule)}
+.eyebrow{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+}
+.eyebrow .dot{width:4px;height:4px;border-radius:50%;background:var(--rule-strong)}
+h1{font-size:clamp(30px,5vw,44px);line-height:1.08;margin-top:14px;font-weight:700;letter-spacing:-.03em}
+.standfirst{margin-top:16px;max-width:68ch;font-size:17px;color:var(--ink-2)}
+.asof{
+  margin-top:20px;display:inline-flex;align-items:center;gap:9px;
+  font-family:var(--mono);font-size:12px;color:var(--muted);
+  background:var(--surface);border:1px solid var(--rule);border-radius:999px;padding:5px 13px;
+}
+.asof b{color:var(--ink);font-weight:500}
+
+/* ---------- headline stats ---------- */
+.headline{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);
+  border:1px solid var(--rule);border-radius:10px;overflow:hidden;margin-top:30px}
+@media (max-width:760px){.headline{grid-template-columns:repeat(2,1fr)}}
+.hstat{background:var(--surface);padding:18px 18px 16px}
+.hstat .n{font-family:var(--display);font-size:clamp(24px,3.4vw,32px);font-weight:700;
+  letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.hstat .l{margin-top:7px;font-size:12.5px;color:var(--muted);line-height:1.4}
+
+/* ---------- nav rail ---------- */
+.rail{position:sticky;top:0;padding-block:36px 24px;max-height:100vh;overflow-y:auto}
+@media (max-width:1000px){
+  .rail{position:sticky;top:0;z-index:20;background:var(--ground);padding-block:10px;
+    border-bottom:1px solid var(--rule);max-height:none;margin-inline:-20px;padding-inline:20px}
+  .railtitle{display:none}
+  .railnav{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+  .railnav::-webkit-scrollbar{display:none}
+  .railnav a{white-space:nowrap;border-left:0!important;border-bottom:2px solid transparent;
+    padding:7px 10px!important;border-radius:6px 6px 0 0}
+  .railnav a[aria-current="true"]{border-bottom-color:var(--accent);background:var(--accent-soft)}
+}
+.railtitle{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);padding-left:13px;margin-bottom:12px}
+.railnav{display:flex;flex-direction:column;gap:1px}
+.railnav a{
+  border:0;border-left:2px solid var(--rule);padding:6px 13px;color:var(--muted);
+  font-size:13.5px;line-height:1.35;transition:color .12s,border-color .12s;
+}
+.railnav a:hover{color:var(--ink)}
+.railnav a[aria-current="true"]{color:var(--ink);border-left-color:var(--accent);font-weight:500}
+
+/* ---------- sections ---------- */
+section{padding-block:46px;border-bottom:1px solid var(--rule);scroll-margin-top:88px}
+section:last-of-type{border-bottom:0}
+.sectionhead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.sectionhead h2{font-size:clamp(21px,2.6vw,26px)}
+.sectionhead .tag{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.lede{margin-top:14px;max-width:68ch;color:var(--ink-2)}
+.prose{max-width:68ch}
+.prose p+p{margin-top:13px}
+.stack{display:flex;flex-direction:column;gap:22px;margin-top:26px}
+
+/* ---------- pipeline ---------- */
+.pipe{display:flex;align-items:stretch;gap:0;margin-top:28px;flex-wrap:wrap}
+.pipe-node{
+  flex:1 1 150px;min-width:0;background:var(--surface);border:1px solid var(--rule);
+  border-radius:9px;padding:14px 15px;position:relative;
+}
+.pipe-node .step{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+.pipe-node .nm{font-family:var(--display);font-weight:600;font-size:14.5px;margin-top:6px;line-height:1.25}
+.pipe-node .sub{font-size:12.5px;color:var(--muted);margin-top:5px;line-height:1.4}
+.pipe-arrow{flex:0 0 26px;display:grid;place-items:center;color:var(--rule-strong);font-size:15px}
+@media (max-width:720px){
+  .pipe{flex-direction:column}
+  .pipe-arrow{flex:0 0 22px;transform:rotate(90deg)}
+}
+.pipe-node.open{border-color:var(--open);border-style:dashed;background:var(--open-soft)}
+.pipe-node.open .step{color:var(--open)}
+.pipe-node.target{border-color:var(--rule-strong);background:var(--surface-2)}
+
+/* ---------- cards ---------- */
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:28px}
+@media (max-width:820px){.cards{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:11px;
+  padding:20px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:14px}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.card h3{font-size:18px}
+.card .root{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-top:4px}
+.pill{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;
+  padding:4px 8px;border-radius:5px;white-space:nowrap;border:1px solid transparent;font-weight:500;
+}
+.pill.built{background:var(--good-soft);color:var(--good);border-color:color-mix(in srgb,var(--good) 30%,transparent)}
+.pill.decide{background:var(--open-soft);color:var(--open);border-color:color-mix(in srgb,var(--open) 32%,transparent)}
+.pill.high{background:var(--accent-soft);color:var(--accent);border-color:color-mix(in srgb,var(--accent) 32%,transparent)}
+.pill.med{background:var(--recess-soft);color:var(--recess);border-color:color-mix(in srgb,var(--recess) 34%,transparent)}
+.pill.low{background:var(--surface-2);color:var(--muted);border-color:var(--rule)}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);
+  border:1px solid var(--rule);border-radius:8px;overflow:hidden}
+.metric{background:var(--surface-2);padding:10px 11px}
+.metric .n{font-family:var(--display);font-weight:600;font-size:17px;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.metric .l{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.3}
+.rule-note{font-size:13.5px;color:var(--ink-2);line-height:1.55}
+.rule-note b{font-weight:600;color:var(--ink)}
+.chain{font-family:var(--mono);font-size:11.5px;color:var(--ink-2);background:var(--surface-2);
+  border:1px solid var(--rule);border-radius:7px;padding:9px 11px;overflow-x:auto;white-space:nowrap}
+
+/* ---------- chart ---------- */
+.chart{background:var(--surface);border:1px solid var(--rule);border-radius:11px;
+  padding:22px;margin-top:26px;box-shadow:var(--shadow)}
+.chart-head{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:baseline}
+.chart-head h3{font-size:16px}
+.chart-head .unit{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.legend{display:flex;gap:16px;margin-top:12px;flex-wrap:wrap}
+.legend span{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-2)}
+.swatch{width:11px;height:11px;border-radius:3px;flex:none}
+.bars{display:flex;flex-direction:column;gap:16px;margin-top:22px}
+.barrow{display:grid;grid-template-columns:150px minmax(0,1fr);gap:16px;align-items:center}
+@media (max-width:620px){.barrow{grid-template-columns:1fr;gap:6px}}
+.barlabel .nm{font-size:13.5px;font-weight:500}
+.barlabel .vals{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:2px;font-variant-numeric:tabular-nums}
+.barouter{display:grid;grid-template-columns:minmax(0,1fr) 62px;gap:12px;align-items:center}
+.bartrack{display:flex;gap:2px;align-items:center;height:26px}
+.seg{height:26px;border-radius:2px;min-width:3px;transition:filter .12s}
+.seg:first-child{border-radius:3px 2px 2px 3px}
+.seg:last-child{border-radius:2px 3px 3px 2px}
+.seg:only-child{border-radius:3px}
+.seg:hover{filter:brightness(1.12)}
+.seg.cur{background:var(--accent)}
+.seg.hist{background:var(--recess);flex:1 1 0}
+.bartotal{font-family:var(--mono);font-size:11.5px;color:var(--muted);
+  text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.chart-foot{margin-top:20px;padding-top:16px;border-top:1px solid var(--rule);
+  font-size:13px;color:var(--ink-2)}
+.chart-foot span{display:block;max-width:72ch}
+
+/* ---------- callout ---------- */
+.callout{border-left:3px solid var(--accent);background:var(--surface);border-radius:0 9px 9px 0;
+  padding:18px 20px;margin-top:24px;box-shadow:var(--shadow)}
+.callout h4{font-size:15px;margin-bottom:8px}
+.callout p{font-size:14px;color:var(--ink-2);max-width:74ch}
+.callout.quiet{border-left-color:var(--recess)}
+
+/* ---------- hierarchy diagram ---------- */
+.tree{font-family:var(--mono);font-size:12.5px;line-height:1.85;background:var(--surface);
+  border:1px solid var(--rule);border-radius:9px;padding:18px 20px;margin-top:22px;
+  overflow-x:auto;white-space:pre;color:var(--ink-2)}
+.tree b{color:var(--ink);font-weight:500}
+.tree .an{color:var(--accent)}
+
+/* ---------- tables ---------- */
+.tablewrap{overflow-x:auto;margin-top:22px;border:1px solid var(--rule);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:520px}
+th{
+  text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);font-weight:400;padding:11px 14px;border-bottom:1px solid var(--rule);
+  background:var(--surface-2);white-space:nowrap;
+}
+td{padding:11px 14px;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--ink-2)}
+tr:last-child td{border-bottom:0}
+td:first-child{color:var(--ink);font-weight:500}
+td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+td .ok{color:var(--good);font-weight:500}
+
+/* ---------- decision register ---------- */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-top:24px;align-items:center}
+.filters .flabel{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);margin-right:2px}
+.chip{
+  font-family:var(--body);font-size:12.5px;padding:5px 12px;border-radius:999px;
+  border:1px solid var(--rule-strong);background:var(--surface);color:var(--ink-2);
+  cursor:pointer;transition:all .12s;
+}
+.chip:hover{border-color:var(--muted);color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--ground);border-color:var(--ink)}
+.filtercount{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-left:auto}
+.dlist{display:flex;flex-direction:column;gap:10px;margin-top:20px}
+.ditem{background:var(--surface);border:1px solid var(--rule);border-radius:10px;overflow:hidden}
+.ditem[hidden]{display:none!important}
+.dsum{
+  display:grid;grid-template-columns:54px minmax(0,1fr) auto;gap:14px;align-items:center;
+  padding:14px 16px;cursor:pointer;list-style:none;
+}
+.dsum::-webkit-details-marker{display:none}
+.dsum:hover{background:var(--surface-2)}
+.did{font-family:var(--mono);font-size:12.5px;color:var(--muted);font-weight:500}
+.dq{font-size:14px;color:var(--ink);line-height:1.45}
+.dq .obj{font-family:var(--mono);font-size:11px;color:var(--muted);display:block;margin-bottom:3px;
+  letter-spacing:.06em;text-transform:uppercase}
+.dmeta{display:flex;align-items:center;gap:10px}
+.caret{color:var(--muted);font-size:11px;transition:transform .15s}
+details[open] .caret{transform:rotate(90deg)}
+.dbody{padding:2px 16px 18px 84px;border-top:1px solid var(--rule);margin-top:0}
+@media (max-width:620px){
+  .dsum{grid-template-columns:44px minmax(0,1fr);gap:10px}
+  .dmeta{grid-column:1/-1;padding-left:54px}
+  .dbody{padding-left:16px}
+}
+.dbody .row{margin-top:14px}
+.dbody .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.dbody .v{font-size:13.5px;color:var(--ink-2);margin-top:4px;max-width:70ch}
+.figs{display:flex;gap:22px;flex-wrap:wrap;margin-top:12px;padding:12px 14px;
+  background:var(--surface-2);border-radius:8px;border:1px solid var(--rule)}
+.fig .n{font-family:var(--display);font-weight:600;font-size:16px;font-variant-numeric:tabular-nums}
+.fig .l{font-size:11.5px;color:var(--muted);margin-top:1px}
+
+/* ---------- delivery options ---------- */
+.opts{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:24px}
+@media (max-width:820px){.opts{grid-template-columns:1fr}}
+.opt{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:18px}
+.opt .ol{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--accent);text-transform:uppercase}
+.opt h4{font-size:15px;margin-top:6px}
+.opt .flow{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:10px;
+  padding:8px 10px;background:var(--surface-2);border-radius:6px;overflow-x:auto;white-space:nowrap}
+.opt .tr{font-size:13px;color:var(--ink-2);margin-top:11px}
+.opt .tr b{color:var(--ink);font-weight:600}
+.asks{display:flex;flex-direction:column;gap:2px;margin-top:22px;
+  border:1px solid var(--rule);border-radius:10px;overflow:hidden;background:var(--rule)}
+.ask{background:var(--surface);padding:14px 17px;display:grid;grid-template-columns:26px minmax(0,1fr);gap:12px}
+.ask .qn{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:500}
+.ask .qt{font-size:14px;color:var(--ink)}
+.ask .qs{font-size:13px;color:var(--muted);margin-top:4px}
+
+/* ---------- repo map ---------- */
+.maplist{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--rule);
+  border:1px solid var(--rule);border-radius:10px;overflow:hidden;margin-top:24px}
+@media (max-width:760px){.maplist{grid-template-columns:1fr}}
+.mapitem{background:var(--surface);padding:15px 17px}
+.mapitem .p{font-family:var(--mono);font-size:12.5px;color:var(--ink)}
+.mapitem .d{font-size:13px;color:var(--muted);margin-top:4px;line-height:1.45}
+
+footer{padding-block:34px 0;color:var(--muted);font-size:12.5px;max-width:70ch}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+</head>
+<body>
+
+<div class="shell">
+
+  <header class="masthead">
+    <div class="eyebrow">
+      <span>Boston University</span><span class="dot"></span>
+      <span>Kuali Coeus → Huron Research Suite</span><span class="dot"></span>
+      <span>Grants conversion source</span>
+    </div>
+    <h1>BU Grants Data Exchange</h1>
+    <p class="standfirst">
+      BU has modelled its Kuali Coeus Grants data as four business objects — Award,
+      Institutional Proposal, Subaward and Negotiation — and built a read-only SQL
+      interface over them for HRS mapping. Every relationship, label and count on this
+      page was checked against the Kuali source and against KCOEUS production before we
+      wrote it down.
+    </p>
+    <div class="asof"><span>Counts measured against KCOEUS production</span><b>2026-08-07</b></div>
+
+    <div class="headline">
+      <div class="hstat"><div class="n">95,373</div><div class="l">current business records across the four objects</div></div>
+      <div class="hstat"><div class="n">219</div><div class="l">relationships mapped and row-count verified</div></div>
+      <div class="hstat"><div class="n">6,194</div><div class="l">fields catalogued with UI label and lookup</div></div>
+      <div class="hstat"><div class="n">64</div><div class="l">curated SQL datasets, all running in production</div></div>
+    </div>
+  </header>
+
+  <div class="layout">
+
+    <nav class="rail" aria-label="Sections">
+      <div class="railtitle">Contents</div>
+      <div class="railnav">
+        <a href="#overview">What we built</a>
+        <a href="#objects">The four objects</a>
+        <a href="#versions">Versions &amp; current record</a>
+        <a href="#families">Award families</a>
+        <a href="#shape">How the datasets are shaped</a>
+        <a href="#fields">The field dictionary</a>
+        <a href="#verified">What we verified</a>
+        <a href="#decisions">Open decisions</a>
+        <a href="#delivery">Delivery</a>
+        <a href="#map">Where it all lives</a>
+      </div>
+    </nav>
+
+    <main>
+
+      <!-- ===================== OVERVIEW ===================== -->
+      <section id="overview">
+        <div class="sectionhead"><h2>What we built</h2><span class="tag">Scope</span></div>
+        <p class="lede">
+          KC's Oracle schema carries no column comments, so the database on its own gives
+          you names and datatypes and very little meaning. We traced meaning back from the
+          Kuali application itself — its ORM mappings, its DataDictionary and its screens —
+          and checked everything against production. What comes out is a source interface
+          organised around business objects rather than tables.
+        </p>
+
+        <div class="pipe">
+          <div class="pipe-node">
+            <div class="step">Stage 1 · Source</div>
+            <div class="nm">Kuali source + KCOEUS production</div>
+            <div class="sub">OJB/JPA mappings, DataDictionary, JSP screens, live schema and row counts</div>
+          </div>
+          <div class="pipe-arrow" aria-hidden="true">→</div>
+          <div class="pipe-node">
+            <div class="step">Stage 2 · Model</div>
+            <div class="nm">Business-object graph &amp; field map</div>
+            <div class="sub">219 typed relationships, 578 UI fields traced to Oracle columns</div>
+          </div>
+          <div class="pipe-arrow" aria-hidden="true">→</div>
+          <div class="pipe-node">
+            <div class="step">Stage 3 · Interface</div>
+            <div class="nm">Curated read-only SQL</div>
+            <div class="sub">Root plus child collections per object, one row per business record</div>
+          </div>
+          <div class="pipe-arrow" aria-hidden="true">→</div>
+          <div class="pipe-node open">
+            <div class="step">Stage 4 · Delivery</div>
+            <div class="nm">Not decided yet</div>
+            <div class="sub">Files, staging schema, read-only views or managed transfer — this is D-18</div>
+          </div>
+          <div class="pipe-arrow" aria-hidden="true">→</div>
+          <div class="pipe-node target">
+            <div class="step">Target</div>
+            <div class="nm">Huron HRS</div>
+            <div class="sub">Mapping, load and reconciliation</div>
+          </div>
+        </div>
+
+        <div class="callout">
+          <h4>What "technical mapping complete" means, and what it does not</h4>
+          <p>
+            For all four objects the graph, the field mapping and the SQL are built and
+            verified against production. That is not the same as the business decisions
+            being settled. Nothing in this package is marked approved for migration use
+            yet, and the open items are collected further down rather than resolved
+            quietly.
+          </p>
+        </div>
+      </section>
+
+      <!-- ===================== OBJECTS ===================== -->
+      <section id="objects">
+        <div class="sectionhead"><h2>The four business objects</h2><span class="tag">Modules</span></div>
+        <p class="lede">
+          Each object has its own graph, its own UI-to-database field mapping, its own
+          SQL, and its own rule for picking the record that represents it today. The rules
+          genuinely differ — we worked each one out from production evidence rather than
+          reusing the first one that happened to work.
+        </p>
+
+        <div class="cards">
+
+          <article class="card">
+            <div class="card-top">
+              <div>
+                <h3>Award</h3>
+                <div class="root">org.kuali.kra.award.home.Award → KCOEUS.AWARD</div>
+              </div>
+              <span class="pill built">BU validation pending</span>
+            </div>
+            <div class="metrics">
+              <div class="metric"><div class="n">43,202</div><div class="l">awards</div></div>
+              <div class="metric"><div class="n">108</div><div class="l">relationships</div></div>
+              <div class="metric"><div class="n">238</div><div class="l">UI fields</div></div>
+            </div>
+            <p class="rule-note">
+              <b>Current record:</b> the version KC marks <code>ACTIVE</code>, falling back to
+              the highest sequence for the 202 award numbers with no ACTIVE row at all.
+              <code>MAX(SEQUENCE_NUMBER)</code> alone does not work — 10 award numbers have two
+              rows at the same highest sequence, one ACTIVE and one ARCHIVED.
+            </p>
+            <div class="chain">root + 21 child collections · 43,202 rows for 43,202 award numbers</div>
+          </article>
+
+          <article class="card">
+            <div class="card-top">
+              <div>
+                <h3>Institutional Proposal</h3>
+                <div class="root">…institutionalproposal.home.InstitutionalProposal → KCOEUS.PROPOSAL</div>
+              </div>
+              <span class="pill built">BU validation pending</span>
+            </div>
+            <div class="metrics">
+              <div class="metric"><div class="n">36,863</div><div class="l">proposals</div></div>
+              <div class="metric"><div class="n">64</div><div class="l">relationships</div></div>
+              <div class="metric"><div class="n">138</div><div class="l">UI fields</div></div>
+            </div>
+            <p class="rule-note">
+              <b>Current record:</b> the opposite problem to Award.
+              <code>MAX(SEQUENCE_NUMBER)</code> is perfectly unique here, and it picks the wrong
+              row — for 80 proposals the ACTIVE row is not the highest, and the row above it
+              is CANCELED (66), PENDING (10) or ARCHIVED (3). We prefer ACTIVE, then sequence,
+              then <code>PROPOSAL_ID</code>.
+            </p>
+            <div class="chain">root + 16 child collections · 36,811 via ACTIVE + 52 via fallback</div>
+          </article>
+
+          <article class="card">
+            <div class="card-top">
+              <div>
+                <h3>Subaward</h3>
+                <div class="root">org.kuali.kra.subaward.bo.SubAward → KCOEUS.SUBAWARD</div>
+              </div>
+              <span class="pill decide">BU/Huron decision pending</span>
+            </div>
+            <div class="metrics">
+              <div class="metric"><div class="n">3,466</div><div class="l">subawards</div></div>
+              <div class="metric"><div class="n">32</div><div class="l">relationships</div></div>
+              <div class="metric"><div class="n">156</div><div class="l">UI fields</div></div>
+            </div>
+            <p class="rule-note">
+              <b>Current record:</b> ACTIVE → highest sequence → latest
+              <code>UPDATE_TIMESTAMP</code> → highest <code>SUBAWARD_ID</code>. The timestamp is
+              not decoration: subaward 747 has two ACTIVE rows at the same sequence, both
+              finalized in KEW, and the later one carries an amount row the earlier one does
+              not.
+            </p>
+            <div class="chain">root + 11 child collections · 3,463 via ACTIVE + 3 via fallback</div>
+          </article>
+
+          <article class="card">
+            <div class="card-top">
+              <div>
+                <h3>Negotiation</h3>
+                <div class="root">org.kuali.kra.negotiations.bo.Negotiation → KCOEUS.NEGOTIATION</div>
+              </div>
+              <span class="pill built">BU validation pending</span>
+            </div>
+            <div class="metrics">
+              <div class="metric"><div class="n">11,842</div><div class="l">negotiations</div></div>
+              <div class="metric"><div class="n">15</div><div class="l">relationships</div></div>
+              <div class="metric"><div class="n">46</div><div class="l">UI fields</div></div>
+            </div>
+            <p class="rule-note">
+              <b>Current record:</b> there is no rule, because Negotiation is not versioned.
+              No <code>SEQUENCE_NUMBER</code>, no sequence status, and zero rows in
+              <code>VERSION_HISTORY</code> for the class. One row is one negotiation — the only
+              one of the four like this.
+            </p>
+            <div class="chain">root + 3 child collections · 11,842 rows, 11,842 ids</div>
+          </article>
+
+        </div>
+      </section>
+
+      <!-- ===================== VERSIONS ===================== -->
+      <section id="versions">
+        <div class="sectionhead"><h2>Versions, and why the row counts look large</h2><span class="tag">Grain</span></div>
+        <p class="lede">
+          Three of the four objects store every edit as a new sequence, so the physical
+          table is much bigger than the business population. The root datasets are already
+          collapsed to one current record — there is no need to apply a status filter or a
+          <code>MAX(SEQUENCE_NUMBER)</code> on top, and doing so would drop real rows.
+        </p>
+
+        <div class="chart">
+          <div class="chart-head">
+            <h3>Physical rows behind each current business record</h3>
+            <span class="unit">Rows in KCOEUS · shared scale</span>
+          </div>
+          <div class="legend">
+            <span><i class="swatch" style="background:var(--accent)"></i>Current business record</span>
+            <span><i class="swatch" style="background:var(--recess)"></i>Superseded versions still in the table</span>
+          </div>
+          <div class="bars">
+
+            <div class="barrow">
+              <div class="barlabel">
+                <div class="nm">Award</div>
+                <div class="vals">43,202 current · 239,266 superseded</div>
+              </div>
+              <div class="barouter">
+                <div class="bartrack" style="width:100%">
+                  <div class="seg cur" style="flex:0 0 15.29%" title="Award — 43,202 current records"></div>
+                  <div class="seg hist" title="Award — 239,266 superseded versions"></div>
+                </div>
+                <div class="bartotal">282,468</div>
+              </div>
+            </div>
+
+            <div class="barrow">
+              <div class="barlabel">
+                <div class="nm">Institutional Proposal</div>
+                <div class="vals">36,863 current · 93,259 superseded</div>
+              </div>
+              <div class="barouter">
+                <div class="bartrack" style="width:46.06%">
+                  <div class="seg cur" style="flex:0 0 28.33%" title="Institutional Proposal — 36,863 current records"></div>
+                  <div class="seg hist" title="Institutional Proposal — 93,259 superseded versions"></div>
+                </div>
+                <div class="bartotal">130,122</div>
+              </div>
+            </div>
+
+            <div class="barrow">
+              <div class="barlabel">
+                <div class="nm">Subaward</div>
+                <div class="vals">3,466 current · 89,595 superseded</div>
+              </div>
+              <div class="barouter">
+                <div class="bartrack" style="width:32.95%">
+                  <div class="seg cur" style="flex:0 0 3.72%" title="Subaward — 3,466 current records"></div>
+                  <div class="seg hist" title="Subaward — 89,595 superseded versions"></div>
+                </div>
+                <div class="bartotal">93,061</div>
+              </div>
+            </div>
+
+            <div class="barrow">
+              <div class="barlabel">
+                <div class="nm">Negotiation</div>
+                <div class="vals">11,842 current · not versioned</div>
+              </div>
+              <div class="barouter">
+                <div class="bartrack" style="width:4.19%">
+                  <div class="seg cur" style="flex:1 1 0" title="Negotiation — 11,842 records, not versioned"></div>
+                </div>
+                <div class="bartotal">11,842</div>
+              </div>
+            </div>
+
+          </div>
+          <p class="chart-foot">
+            <span>Subaward is the sharpest case: 93,061 rows stand behind 3,466 subawards,
+            about 27 versions each. Negotiation is the only object where the physical table
+            and the business population are the same thing.</span>
+          </p>
+        </div>
+
+        <div class="callout quiet">
+          <h4>Three words that are not interchangeable</h4>
+          <p>
+            <b>Selected current record</b> is the row our module rule chose — that is what the
+            root datasets contain. <b>ACTIVE</b> is a KC sequence-status value, and it is only
+            the first test in three of the four rules. <b>Finalized</b> is a KEW workflow state
+            and says where a document reached in routing. The selected current record cannot
+            be defined as "the ACTIVE row", and it cannot be defined as the highest sequence
+            — both have real fallback cases. Every root dataset carries
+            <code>ROOT_SELECTION_RULE</code> saying which branch chose that row.
+          </p>
+        </div>
+      </section>
+
+      <!-- ===================== FAMILIES ===================== -->
+      <section id="families">
+        <div class="sectionhead"><h2>Award families</h2><span class="tag">Highest risk of being misread</span></div>
+        <p class="lede">
+          There are three levels in BU's award data, not two, and collapsing any two of them
+          into each other is the biggest risk in the Award module. An <b>Award family</b> —
+          what BU has historically called a grant family — is the root <code>-00001</code> award
+          together with its child/subaccount awards.
+        </p>
+
+        <div class="tree"><b>AWARD FAMILY</b>  one funded project
+    │
+    ├── <span class="an">123456-00001</span>   root award — the family
+    ├── <span class="an">123456-00002</span>   award / account — a <b>different</b> award, its own account and money
+    ├── <span class="an">123456-00003</span>   award / account
+    └── <span class="an">123456-00004</span>
+            └── <span class="an">123456-00005</span>   a child can have children of its own
+
+        <span class="an">123456-00002</span> seq 1, 2, 3   the <b>same</b> award edited over time</div>
+
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Level</th><th>Key</th><th>A different award?</th><th class="num">Count</th></tr></thead>
+            <tbody>
+              <tr><td>Award family</td><td class="mono">ROOT_AWARD_NUMBER</td><td>—</td><td class="num">15,729</td></tr>
+              <tr><td>Award / account</td><td class="mono">AWARD_NUMBER</td><td>Yes</td><td class="num">43,202</td></tr>
+              <tr><td>Version</td><td class="mono">SEQUENCE_NUMBER</td><td>No — same award over time</td><td class="num">282,468</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="stack">
+          <div class="prose">
+            <p>
+              So the 43,202 award records roll up into <b>15,729 families</b>, about 2.7 awards
+              each. If HRS expects one record per funded project rather than one per account,
+              15,729 is the number to map against. That choice is open — it is D-17 below.
+            </p>
+            <p>
+              We checked the structure rather than assuming it. All 15,729 roots end in
+              <code>-00001</code> and every award ending <code>-00001</code> is a root. All 43,201
+              awards share their root's base number. 27,170 non-root awards carry their own
+              <code>ACCOUNT_NUMBER</code> and none shares the root's. Nesting past two levels
+              exists but is rare — 101 awards at level 2 and 3 at level 3, in 21 of 15,729
+              families. The largest family is <code>207805-00001</code> with 216 awards.
+            </p>
+            <p>
+              BU's 2012 KCRM-SAP functional specification describes the same structure: the
+              parent award became the SAP Grant and each child a Sponsored Program. Production
+              still shows it — no root award carries an <code>ACCOUNT_NUMBER</code>, and
+              <code>BU_GRANT_NUMBER</code> is constant within a family.
+            </p>
+          </div>
+        </div>
+
+        <div class="callout">
+          <h4>A child Award is not a Subaward</h4>
+          <p>
+            A child/subaccount Award is another BU account inside an Award family. A Subaward
+            is a separate business object covering BU's outgoing subaward relationships.
+            They are easy to blur together in conversation, and they map to different places.
+          </p>
+        </div>
+      </section>
+
+      <!-- ===================== SHAPE ===================== -->
+      <section id="shape">
+        <div class="sectionhead"><h2>How the datasets are shaped</h2><span class="tag">Data contract</span></div>
+
+        <div class="cards">
+          <article class="card">
+            <div class="card-top"><div><h3>Why the queries are separate</h3></div></div>
+            <p class="rule-note">
+              We keep people, amounts, terms, special reviews and custom fields in their own
+              queries rather than joining them onto the root. One award with 5 people, 12 terms
+              and 40 custom fields would otherwise come back as <b>2,400 duplicate award
+              rows</b>. Many-to-one lookups are different — a status or a sponsor cannot
+              multiply anything — so those are folded into the root as code plus description.
+            </p>
+            <div class="chain">Award root → people → amounts → terms → special reviews → custom fields</div>
+          </article>
+
+          <article class="card">
+            <div class="card-top"><div><h3>Every child carries the root keys</h3></div></div>
+            <p class="rule-note">
+              So the graph can be reassembled after extraction. Join on the surrogate id
+              (<code>AWARD_ID</code>) when you want exactly the version you are holding; join on
+              the business key (<code>AWARD_NUMBER</code>) across modules, which is what you need
+              when a Subaward's funding link points at an older version than the current one.
+            </p>
+            <div class="chain">AWARD_ID · AWARD_NUMBER · SEQUENCE_NUMBER on every Award child</div>
+          </article>
+
+          <article class="card">
+            <div class="card-top"><div><h3>BU custom fields</h3></div></div>
+            <p class="rule-note">
+              KC stores institution-specific fields entity-attribute-value:
+              <code>CUSTOM_ATTRIBUTE</code> holds the definitions,
+              <code>*_CUSTOM_DATA</code> holds the values, linked by
+              <code>CUSTOM_ATTRIBUTE_ID</code>. We resolved BU's <b>107 configured custom
+              attributes</b> into their labels, groups and datatypes, so the custom datasets
+              present each field by name alongside its value.
+            </p>
+            <div class="chain">AWARD_CUSTOM_DATA 1542 = 'Yes' → CUSTOM_ATTRIBUTE 1542 → "IRB Multi-Site"</div>
+          </article>
+
+          <article class="card">
+            <div class="card-top"><div><h3>Attachments, and one key that looks numeric</h3></div></div>
+            <p class="rule-note">
+              Award and Negotiation attachments reach their file through
+              <code>ATTACHMENT_FILE</code>; Institutional Proposal and Subaward attachments
+              reference <code>FILE_DATA</code> directly. The datasets stay metadata only, with
+              identifiers preserved so a file can be located later.
+              <code>FILE_DATA_ID</code> looks like a surrogate key but is a 36-character UUID, so
+              it needs to stay a string through any mapping.
+            </p>
+          </article>
+        </div>
+
+        <div class="callout">
+          <h4>Source keys need to survive the conversion</h4>
+          <p>
+            Every dataset carries its KC business identifier — <code>AWARD_NUMBER</code>,
+            <code>PROPOSAL_NUMBER</code>, <code>SUBAWARD_CODE</code>, <code>NEGOTIATION_ID</code> —
+            plus the internal keys that hold the graph together. Once HRS assigns its own
+            identifiers, the KC key is what ties a converted record back to its source and what
+            re-links objects that were related in KC. Where that key lives on the Huron side,
+            and where the record-level crosswalk lives, is D-20 — we have not built a crosswalk
+            because the Huron half of every row does not exist until load.
+          </p>
+        </div>
+      </section>
+
+      <!-- ===================== FIELDS ===================== -->
+      <section id="fields">
+        <div class="sectionhead"><h2>The field dictionary</h2><span class="tag">6,194 fields</span></div>
+        <p class="lede">
+          Screen labels frequently differ from the underlying property name —
+          <code>AWARD.AWARD_NUMBER</code> appears as "Award ID", and <code>PROPOSAL.TITLE</code>
+          as "Project Title". That gap is much of the value in this file. Where
+          <code>UI_FIELD_NAME</code> is blank we did not find enough evidence in the source to
+          assert a label, so we recorded none rather than guessing.
+        </p>
+
+        <div class="headline" style="margin-top:26px">
+          <div class="hstat"><div class="n">2,548</div><div class="l">marked HIGH mapping priority</div></div>
+          <div class="hstat"><div class="n">1,239</div><div class="l">MEDIUM · 238 LOW</div></div>
+          <div class="hstat"><div class="n">2,169</div><div class="l">technical columns marked NOT_FOR_HURON</div></div>
+          <div class="hstat"><div class="n">193</div><div class="l">BU extension and custom-attribute fields</div></div>
+        </div>
+
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Column</th><th>What it gives you</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">DB_TABLE / DB_COLUMN</td><td>Oracle storage</td></tr>
+              <tr><td class="mono">JAVA_OBJECT / JAVA_PROPERTY</td><td>The application property behind it</td></tr>
+              <tr><td class="mono">UI_FIELD_NAME</td><td>The label BU users actually see on screen</td></tr>
+              <tr><td class="mono">LOOKUP_TABLE / LOOKUP_COLUMN</td><td>The reference object that decodes a coded value</td></tr>
+              <tr><td class="mono">FIELD_ORIGIN</td><td>CORE_KUALI (4,086) · LOOKUP_REFERENCE (1,915) · BU_CUSTOM_ATTRIBUTE (149) · BU_EXTENSION (44)</td></tr>
+              <tr><td class="mono">MAPPING_PRIORITY</td><td>Business relevance, with technical columns marked NOT_FOR_HURON</td></tr>
+              <tr><td class="mono">CONFIDENCE</td><td>Whether the column was verified in production and a label resolved</td></tr>
+              <tr><td class="mono">SOURCE_FILE</td><td>Where each label and mapping was traced from, if a field is ever worth auditing</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="lede" style="margin-top:22px">
+          Behind the dictionary sits a broader sweep of the whole schema: all 901 tables in
+          KCOEUS classified into a Grants domain or an exclusion reason — 359 in scope
+          (164 full, 76 sampled, 119 empty), 542 excluded, and 4,074 columns documented.
+          That work answered "what is in KC?"; the module work answers "what does Huron
+          need?".
+        </p>
+      </section>
+
+      <!-- ===================== VERIFIED ===================== -->
+      <section id="verified">
+        <div class="sectionhead"><h2>What we verified</h2><span class="tag">Evidence</span></div>
+        <p class="lede">
+          We do not infer relationships from table names. Every SQL file runs against
+          production, every dataset is tested for row multiplication, and every mapped
+          column is confirmed to exist.
+        </p>
+
+        <div class="tablewrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Module</th>
+                <th class="num">SQL running in prod</th>
+                <th>Row preservation</th>
+                <th class="num">Columns verified</th>
+                <th>Labels / keys</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Award</td><td class="num">25 / 25</td>
+                <td>No dataset multiplies</td><td class="num">147 / 147</td>
+                <td><span class="ok">15 / 15</span> UI labels matched a live Award screen</td>
+              </tr>
+              <tr>
+                <td>Institutional Proposal</td><td class="num">19 / 19</td>
+                <td>9 / 9 exact</td><td class="num">83 / 83</td>
+                <td>131 of 138 UI fields have a source-supported label</td>
+              </tr>
+              <tr>
+                <td>Subaward</td><td class="num">14 / 14</td>
+                <td>8 / 8 exact</td><td class="num">103 / 103</td>
+                <td>15 SAWD custom attributes configured, 15 in use, no orphans</td>
+              </tr>
+              <tr>
+                <td>Negotiation</td><td class="num">6 / 6</td>
+                <td>4 / 4 exact</td><td class="num">—</td>
+                <td><span class="ok">11,842 / 11,842</span> association keys resolve to their parent</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="stack">
+          <div class="prose">
+            <p>
+              A few things we got wrong first, kept because they are the kind of thing that
+              costs someone a day:
+            </p>
+          </div>
+        </div>
+
+        <div class="cards">
+          <article class="card">
+            <div class="card-top"><div><h3>The person role lookup doubles the dataset</h3></div></div>
+            <p class="rule-note">
+              <code>EPS_PROP_PERSON_ROLE</code> holds two rows per role code, one per sponsor
+              hierarchy. Joined unfiltered it takes Award personnel from 345,600 rows to
+              691,200. We pin it to the <code>DEFAULT</code> hierarchy, which resolves all
+              345,600 with nothing unmatched. Institutional Proposal has the same problem —
+              147,795 rows becoming 295,590.
+            </p>
+          </article>
+          <article class="card">
+            <div class="card-top"><div><h3>Do not join PROPOSAL_LOG on INST_PROPOSAL_NUMBER</h3></div></div>
+            <p class="rule-note">
+              It looks like the link to the Institutional Proposal and it is not. We tested
+              all 30,646 populated values and none matches a
+              <code>PROPOSAL.PROPOSAL_NUMBER</code> — it is a 7-character legacy identifier
+              where proposal numbers are 8 characters. The real link is the shared
+              <code>PROPOSAL_NUMBER</code>.
+            </p>
+          </article>
+          <article class="card">
+            <div class="card-top"><div><h3>FULL_NAME is a copy, not the source</h3></div></div>
+            <p class="rule-note">
+              <code>AWARD_PERSONS.FULL_NAME</code> is refreshed from the person record on read.
+              The real person is a KIM identity resolved at runtime and there is no ORM
+              relationship to any person table, so we expose <code>PERSON_SOURCE</code> to make
+              that explicit. <code>SUBAWARD_CONTACT</code> is the same story — no
+              <code>PERSON_ID</code> column at all, and <code>REQUISITIONER_ID</code> populated on
+              all 194,207 rows.
+            </p>
+          </article>
+          <article class="card">
+            <div class="card-top"><div><h3>SUBAWARD_TYPE_CODE reuses the Award lookup</h3></div></div>
+            <p class="rule-note">
+              There is no <code>SUBAWARD_TYPE</code> table in KCOEUS, which looks like a gap until
+              you read the ORM: <code>subAwardType</code> on <code>SubAward</code> points at
+              <code>AwardType</code>. All 11 codes in production resolve against
+              <code>AWARD_TYPE</code> with nothing unmatched. This is how KC is built, not a
+              workaround on our side.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <!-- ===================== DECISIONS ===================== -->
+      <section id="decisions">
+        <div class="sectionhead"><h2>Open decisions</h2><span class="tag">13 items · 6 high priority</span></div>
+        <p class="lede">
+          These are documented rather than resolved, because they are questions of migration
+          scope or target-model shape rather than mapping decisions. Each one gives the
+          decision needed, why it matters, the numbers required to discuss it, and where BU
+          currently stands. The three we would most like to settle early are the Award grain,
+          the subaward funding link, and the unassociated negotiations.
+        </p>
+
+        <div class="filters" id="filters">
+          <span class="flabel">Priority</span>
+          <button class="chip" data-f="pri" data-v="all" aria-pressed="true">All</button>
+          <button class="chip" data-f="pri" data-v="high" aria-pressed="false">High</button>
+          <button class="chip" data-f="pri" data-v="med" aria-pressed="false">Medium</button>
+          <button class="chip" data-f="pri" data-v="low" aria-pressed="false">Low</button>
+          <span class="flabel" style="margin-left:14px">Object</span>
+          <button class="chip" data-f="obj" data-v="all" aria-pressed="true">All</button>
+          <button class="chip" data-f="obj" data-v="award" aria-pressed="false">Award</button>
+          <button class="chip" data-f="obj" data-v="proposal" aria-pressed="false">Proposal</button>
+          <button class="chip" data-f="obj" data-v="subaward" aria-pressed="false">Subaward</button>
+          <button class="chip" data-f="obj" data-v="negotiation" aria-pressed="false">Negotiation</button>
+          <button class="chip" data-f="obj" data-v="cross" aria-pressed="false">Cross-cutting</button>
+          <span class="filtercount" id="filtercount">13 shown</span>
+        </div>
+
+        <div class="dlist" id="dlist">
+
+          <details class="ditem" data-pri="high" data-obj="cross">
+            <summary class="dsum">
+              <span class="did">D-18</span>
+              <span class="dq"><span class="obj">Delivery</span>How should Huron receive BU's curated datasets?</span>
+              <span class="dmeta"><span class="pill high">High</span><span class="caret">▶</span></span>
+            </summary>
+            <div class="dbody">
+              <div class="row"><div class="k">Why it matters</div><div class="v">It decides what BU has to provision, how long that takes, and whether extracts need to be repeatable for mock conversions and cutover. It also has a security-approval path on the BU side that is worth starting early rather than late.</div></div>
+              <div class="row"><div class="k">Where BU stands</div><div class="v">No commitment. We would rather agree the approach than build a delivery mechanism that turns out to be the wrong shape for Huron's tooling. The module SQL stays the contract either way — how the results travel should not change what any column means.</div></div>
+            </div>
+          </details>
+
+          <details class="ditem" data-pri="high" data-obj="cross">
+            <summary class="dsum">
+              <span class="did">D-20</span>
+              <span class="dq"><span class="obj">All four objects</span>How will Huron hold KC source keys and the source-to-Huron ID crosswalk?</span>
+              <span class="dmeta"><span class="pill high">High</span><span class="caret">▶</span></span>
+            </summary>
+            <div class="dbody">
+              <div class="row"><div class="k">The decision</div><div class="v">Which Huron field or structure holds the KC source key, and where the record-level crosswalk lives — one row per converted object, KC key to Huron id.</div></div>
+              <div class="row"><div class="k">Why it matters</div><div class="v">After load, the source key is the only thing tying a converted record back to KC. It re-links objects that were related in KC once Huron has assigned its own identifiers, and it is what makes reconciliation possible at all.</div></div>
+              <div class="row"><div class="k">Where BU stands</div><div class="v">That the keys must be preserved is not in question — the data contract states it as a requirement. We have not built a crosswalk, because the Huron half of every row does not exist until load.</div></div>
+            </div>
+          </details>
+
+          <details class="ditem" data-pri="high" data-obj="cross">
+            <summary class="dsum">
+              <span class="did">D-21</span>
+              <span class="dq"><span class="obj">All four objects</span>What KC history, if any, migrates alongside the current record?</span>
+              <span class="dmeta"><span class="pill high">High</span><span class="caret">▶</span></span>
+            </summary>
+            <div class="dbody">
+              <div class="row"><div class="k">The decision</div><div class="v">Current record only, current plus selected historical versions, history represented as documents or reference material, or another mechanism HRS supports.</div></div>
+              <div class="figs">
+                <div class="fig"><div class="n">282,468</div><div class="l">physical Award rows</div></div>
+                <div class="fig"><div class="n">43,202</div><div class="l">current Award records</div></div>
+                <div class="fig"><div class="n">422,120</div><div class="l">superseded rows across the three versioned objects</div></div>
+              </div>
+              <div class="row"><div class="k">Why it matters</div><div class="v">It changes the volume of the conversion, and it decides what "history" means to a BU user after go-live.</div></div>
+              <div class="row"><div class="k">Where BU stands</div><div class="v">No position, and we are not deciding it. Exposing history is not the obstacle — removing the version join does it.</div></div>
+            </div>
+          </details>
+
+          <details class="ditem" data-pri="high" data-obj="award">
+            <summary class="dsum">
+              <span class="did">D-17</span>
+              <span class="dq"><span class="obj">Award</span>What grain does HRS expect — Award family, Award/account, or both?</span>
+              <span class="dmeta"><span class="pill high">High</span><span class="caret">▶</span></span>
+            </summary>
+            <div class="dbody">
+              <div class="figs">
+                <div class="fig"><div class="n">15,729</div><div class="l">Award families</div></div>
+                <div class="fig"><div class="n">43,202</div><div class="l">Award/account records</div></div>
+                <div class="fig"><div class="n">27,472</div><div class="l">non-root Awards</div></div>
+                <div class="fig"><div class="n">199</div><div class="l">families holding a single Award</div></div>
+              </div>
+              <div class="row"><div class="k">Why it matters</div><div class="v">It sets the grain of the whole Award migration, and it determines how child awards, hierarchy relationships, account numbers and BU_GRANT_NUMBER are represented. Until it is answered, some downstream mapping decisions are premature.</div></div>
+              <div class="row"><div class="k">If the answer is family-level</div><div class="v">We would also like to agree how a family is identified — ROOT_AWARD_NUMBER, BU_GRANT_NUMBER, or an HRS identifier with both of ours kept as source identifiers. BU_GRANT_NUMBER is never ambiguous within a family (14,447 families hold exactly one value and none holds more), but 1,282 families have no value at all.</div></div>
+              <div class="row"><div class="k">Where BU stands</div><div class="v">No position. We are not proposing to derive or backfill the 1,282 missing BU_GRANT_NUMBER values — that is part of this decision.</div></div>
+            </div>
+          </details>
+
+          <details class="ditem" data-pri="high" data-obj="subaward">
+            <summary class="dsum">
+              <span class="did">D-01</span>
+              <span class="dq"><span class="obj">Subaward</span>Historical or current Award version on a funding link?</span>
+              <span class="dmeta"><span class="pill high">High</span><span class="caret">▶</span></span>
+            </summary>
+            <div class="dbody">
+              <div class="row"><div class="k">The finding</div><div class="v">SUBAWARD_FUNDING_SOURCE records the specific Award version that funded a subaward at the time.</div></div>
+              <div class="figs">
+                <div class="fig"><div class="n">5,846</div><div class="l">funding rows pointing at a superseded version</div></div>
+                <div class="fig"><div class="n">7,930</div><div class="l">funding rows on current subawards</div></div>
+                <div class="fig"><div class="n">74%</div><div class="l">of the funding links</div></div>
+              </div>
+              <div class="row"><div class="k">The decision</div><div class="v">On load, should HRS preserve the historically referenced Award version, associate the subaward with the current Award/account, or carry both?</div></div>
+              <div class="row"><div class="k">Where BU stands</div><div class="v">We preserved what KC recorded rather than silently repointing, and added FUNDING_AWARD_VERSION_IS_CURRENT and CURRENT_AWARD_ID so either reading is one column away. We have not chosen between them.</div></div>
+            </div>
+          </details>
+
+          <details class="ditem" data-pri="high" data-obj="negotiation">
+            <summary class="dsum">
+              <span class="did">D-08</span>
+              <span class="dq"><span class="obj">Negotiation</span>Is it expected that 78% of negotiations are attached to nothing?</span>
+              <span class="dmeta"><span class="pill high">High</span><span class="caret">▶</span></span>
+            </summary>
+            <div class="dbody">
+              <div class="figs">
+                <div class="fig"><div class="n">9,249</div><div class="l">unassociated negotiations</div></div>
+                <div class="fig"><div class="n">11,842</div><div class="l">negotiations total</div></div>
+              </div>
+              <div class="row"><div class="k">The decision</div><div class="v">Is that the intended business behaviour, or were these negotiations never linked back once the award arrived? They carry free-standing detail in NEGOTIATION_UNASSOC_DETAIL instead.</div></div>
+              <div class="row"><div class="k">Where BU stands</div><div class="v">The structure is legitimate — KC provides it for exactly this case — but the data cannot tell us whether it is intended. It affects how the majority of negotiations map.</div></div>
+            </div>
+          </details>
+
+          <details class="ditem" data-pri="med" data-obj="award">
+            <summary class="dsum">
+              <span class="did">D-02</span>
+              <span class="dq"><span class="obj">Award</span>Is Contracts &amp; Grants Billing in migration scope?</span>
+              <span class="dmeta"><span class="pill med">Medium</span><span class="caret">▶</span></span>
+            </summary>
+            <div class="dbody">
+              <div class="row"><div class="k">The finding</div><div class="v">AWARD_CGB holds 154,705 rows of C&amp;G Billing configuration. 7 of its 14 business fields are entirely NULL and the other 6 are 'N' on every row.</div></div>
+              <div class="row"><div class="k">Where BU stands</div><div class="v">Excluded from the Award graph on evidence rather than on the table's name — it carries no information we could map, and migrating it would hand Huron 14 fields with nothing to infer meaning from. We would like that confirmed.</div></div>
+            </div>
+          </details>
+
+          <details class="ditem" data-pri="med" data-obj="proposal">
+            <summary class="dsum">
+              <span class="did">D-03</span>
+              <span class="dq"><span class="obj">Institutional Proposal</span>Confirm Proposal Development is unused before sizing it</span>
+              <span class="dmeta"><span class="pill med">Medium</span><span class="caret">▶</span></span>
+            </summary>
+            <div class="dbody">
+              <div class="row"><div class="k">The finding</div><div class="v">EPS_PROPOSAL holds 1 row against 130,122 Institutional Proposal rows.</div></div>
+              <div class="row"><div class="k">Where BU stands</div><div class="v">It looks unused, but we would rather have it confirmed than assume. If BU never adopted KC's Proposal Development module, Huron should not size a conversion for it.</div></div>
+            </div>
+          </details>
+
+          <details class="ditem" data-pri="med" data-obj="proposal">
+            <summary class="dsum">
+              <span class="did">D-05</span>
+              <span class="dq"><span class="obj">Institutional Proposal</span>Are intake-only proposal logs in migration scope?</span>
+              <span class="dmeta"><span class="pill med">Medium</span><span class="caret">▶</span></span>
+            </summary>
+            <div class="dbody">
+              <div class="row"><div class="k">The finding</div><div class="v">1,136 PROPOSAL_LOG records never became Institutional Proposals.</div></div>
+              <div class="row"><div class="k">Where BU stands</div><div class="v">They are intake records that stopped short, not defects. We left them outside the Institutional Proposal graph and took no view on scope. If HRS has a concept for pre-proposal intake they may belong there; if not, they may not convert at all.</div></div>
+            </div>
+          </details>
+
+          <details class="ditem" data-pri="med" data-obj="subaward">
+            <summary class="dsum">
+              <span class="did">D-10</span>
+              <span class="dq"><span class="obj">Subaward</span>Are the near-empty subaward features expected HRS areas?</span>
+              <span class="dmeta"><span class="pill med">Medium</span><span class="caret">▶</span></span>
+            </summary>
+            <div class="dbody">
+              <div class="row"><div class="k">The finding</div><div class="v">SUBAWARD_AMT_RELEASED holds 2 rows in the whole table. SUBAWARD_CLOSEOUT, SUBAWARD_REPORTS and SUBAWARD_TEMPLATE_ATTACHMENTS are empty.</div></div>
+              <div class="row"><div class="k">Where BU stands</div><div class="v">Kept in the graph because the structure is useful when mapping, but they will produce almost no rows. If HRS expects invoice tracking, closeout or subaward reporting to arrive with data, it is kept somewhere else at BU and we should go looking for it.</div></div>
+            </div>
+          </details>
+
+          <details class="ditem" data-pri="med" data-obj="negotiation">
+            <summary class="dsum">
+              <span class="did">D-09</span>
+              <span class="dq"><span class="obj">Negotiation</span>So few links to Proposal and Subaward — is that right?</span>
+              <span class="dmeta"><span class="pill med">Medium</span><span class="caret">▶</span></span>
+            </summary>
+            <div class="dbody">
+              <div class="figs">
+                <div class="fig"><div class="n">3</div><div class="l">negotiations linked to an Institutional Proposal</div></div>
+                <div class="fig"><div class="n">16</div><div class="l">linked to a Subaward</div></div>
+                <div class="fig"><div class="n">11,842</div><div class="l">negotiations total</div></div>
+              </div>
+              <div class="row"><div class="k">Where BU stands</div><div class="v">No concern found in the data. If associations were recorded differently in practice, mapping those two paths on 3 and 16 records would be building on very little — we would like a sanity check with the business office before mapping.</div></div>
+            </div>
+          </details>
+
+          <details class="ditem" data-pri="low" data-obj="proposal">
+            <summary class="dsum">
+              <span class="did">D-07</span>
+              <span class="dq"><span class="obj">Institutional Proposal</span>Values on a module the attribute is not configured for</span>
+              <span class="dmeta"><span class="pill low">Low</span><span class="caret">▶</span></span>
+            </summary>
+            <div class="dbody">
+              <div class="row"><div class="k">The finding</div><div class="v">Custom attributes 1212 ("Contract") and 1213 ("Billing Agreement") hold Institutional Proposal values, but CUSTOM_ATTRIBUTE_DOCUMENT does not configure them for INPR.</div></div>
+              <div class="row"><div class="k">Where BU stands</div><div class="v">We expose the values and flag the mismatch with a NULL APPLIES_TO_DOCUMENT_TYPE, rather than dropping real values because a configuration row disagrees.</div></div>
+            </div>
+          </details>
+
+          <details class="ditem" data-pri="low" data-obj="cross">
+            <summary class="dsum">
+              <span class="did">D-11</span>
+              <span class="dq"><span class="obj">Proposal · Subaward · Negotiation</span>Configured custom attributes that were never populated</span>
+              <span class="dmeta"><span class="pill low">Low</span><span class="caret">▶</span></span>
+            </summary>
+            <div class="dbody">
+              <div class="row"><div class="k">The finding</div><div class="v">Some BU custom attributes have value rows where every value is NULL: 6 on Institutional Proposal, 2 on Negotiation, 1 on Subaward.</div></div>
+              <div class="row"><div class="k">Where BU stands</div><div class="v">Kept in the field dictionary marked NO_POPULATED_VALUES_IN_PRODUCTION, because they describe fields BU configured. We did not drop them. Whether they matter to HRS as configuration, or whether only populated fields are of interest, is the question.</div></div>
+            </div>
+          </details>
+
+        </div>
+
+        <div class="callout quiet">
+          <h4>What is deliberately not in this list</h4>
+          <p>
+            BU is handling these internally, so the list above stays about joint decisions
+            rather than data cleanup: Award hierarchy anomalies (D-13, D-14, D-15), 16
+            non-leaf awards holding an account number (D-16), a legacy proposal identifier
+            that resolves to nothing (D-06), 1,895,754 <code>EPS_PROP_RATES</code> rows whose
+            owning module is unclear (D-04), and unresolved UI labels on technical
+            <code>ORGANIZATION</code> and <code>UNIT</code> columns (D-12). If any of them turns
+            out to affect a migration decision we will move it up rather than leave it buried.
+          </p>
+        </div>
+      </section>
+
+      <!-- ===================== DELIVERY ===================== -->
+      <section id="delivery">
+        <div class="sectionhead"><h2>Delivery</h2><span class="tag">D-18 · not decided</span></div>
+        <p class="lede">
+          The logical source interface is finished. The physical delivery method is not, and
+          we would rather agree the approach than build something that turns out to be the
+          wrong shape for Huron's tooling. These are options for discussion, not a proposal.
+          One thing worth being explicit about: the SQL in the repository is a definition,
+          not a connection — reading it tells you what you would receive, not how.
+        </p>
+
+        <div class="opts">
+          <article class="opt">
+            <div class="ol">Option A</div>
+            <h4>BU runs the queries and delivers files</h4>
+            <div class="flow">KCOEUS → curated queries → CSV → secure transfer → Huron staging</div>
+            <p class="tr"><b>For:</b> the simplest security boundary — no Huron access to any BU database, and every extract is a fixed artifact that can be archived, checksummed and reconciled against later.</p>
+            <p class="tr"><b>Cost:</b> extracts are a moment in time. Every mock conversion, rehearsal and cutover needs a fresh run and a fresh transfer.</p>
+          </article>
+
+          <article class="opt">
+            <div class="ol">Option B</div>
+            <h4>Read-only database access to curated views</h4>
+            <div class="flow">KCOEUS → migration views → read-only account → approved network path</div>
+            <p class="tr"><b>For:</b> Huron queries directly, so there is no extract-and-ship cycle and the data is always current.</p>
+            <p class="tr"><b>Cost:</b> the heaviest to set up — dedicated least-privilege credentials scoped to the migration views, an approved BU network path, BU security approval, agreed audit and logging. This would never mean sharing the KCOEUS application account.</p>
+          </article>
+
+          <article class="opt">
+            <div class="ol">Option C</div>
+            <h4>A BU-controlled staging schema</h4>
+            <div class="flow">KCOEUS → BU extraction → staging schema → Huron read-only access</div>
+            <p class="tr"><b>For:</b> a middle path. Huron gets table-and-SQL access, which suits tooling that wants to query rather than parse files, but never touches the live KC application schema.</p>
+            <p class="tr"><b>Cost:</b> a database or schema to own and a refresh process to run.</p>
+          </article>
+
+          <article class="opt">
+            <div class="ol">Option D</div>
+            <h4>API or managed transfer</h4>
+            <div class="flow">KCOEUS → BU extraction → API / object storage / MFT</div>
+            <p class="tr"><b>For:</b> it may be what Huron's tooling already expects, and that would be worth knowing early.</p>
+            <p class="tr"><b>Cost:</b> we have not built any of this and are not assuming it exists.</p>
+          </article>
+        </div>
+
+        <h3 style="margin-top:34px;font-size:17px">What would help us most from Huron</h3>
+        <div class="asks">
+          <div class="ask"><span class="qn">1</span><div><div class="qt">What does the mapping tooling prefer as a source?</div><div class="qs">Files, database tables or views, API payloads, or something else it already supports well.</div></div></div>
+          <div class="ask"><span class="qn">2</span><div><div class="qt">If database connectivity is preferred, what does it need?</div><div class="qs">Supported drivers, which side initiates the connection, source IP ranges BU would need to allow, authentication methods, and whether access is persistent or only during migration windows.</div></div></div>
+          <div class="ask"><span class="qn">3</span><div><div class="qt">If files are preferred, what conventions apply?</div><div class="qs">Format, delimiter and encoding, encryption at rest and in transit, transfer method, file-size limits, and any naming or layout the tooling expects.</div></div></div>
+          <div class="ask"><span class="qn">4</span><div><div class="qt">What does Huron need over the life of the project?</div><div class="qs">Current datasets only, repeated mock-conversion extracts, the production cutover extract, or all three. The answer changes how much of this needs to be repeatable rather than one-time.</div></div></div>
+          <div class="ask"><span class="qn">5</span><div><div class="qt">Does Huron need production directly, or would a BU-owned copy meet the requirement?</div><div class="qs">This one has the largest effect on how long provisioning takes on the BU side, so an early answer helps.</div></div></div>
+        </div>
+      </section>
+
+      <!-- ===================== MAP ===================== -->
+      <section id="map">
+        <div class="sectionhead"><h2>Where it all lives</h2><span class="tag">Repository</span></div>
+        <p class="lede">
+          Five documents carry most of the meaning and they do different jobs. Everything
+          else is supporting evidence.
+        </p>
+        <div class="maplist">
+          <div class="mapitem"><div class="p">HURON_MAPPING_GUIDE.md</div><div class="d">What Huron should understand about the package — start here</div></div>
+          <div class="mapitem"><div class="p">reference/HURON_REVIEW_ITEMS.md</div><div class="d">The 13 items BU and Huron need to decide together, with the counts behind each</div></div>
+          <div class="mapitem"><div class="p">docs/WALKTHROUGH.md</div><div class="d">One real Award taken end to end — root query, children, rejoin, dictionary check. About five minutes</div></div>
+          <div class="mapitem"><div class="p">docs/DATA_CONTRACT.md</div><div class="d">Grain, keys, null semantics, date and number conventions, what is filtered out</div></div>
+          <div class="mapitem"><div class="p">docs/HURON_USAGE_GUIDE.md</div><div class="d">The expected mapping, extraction, loading and reconciliation workflow</div></div>
+          <div class="mapitem"><div class="p">reference/KUALI_FIELD_DICTIONARY.csv</div><div class="d">6,194 fields with UI label, lookup, origin, priority and confidence</div></div>
+          <div class="mapitem"><div class="p">modules/&lt;object&gt;/*_GRAPH.md</div><div class="d">The detailed evidence, decisions and exceptions behind each business object</div></div>
+          <div class="mapitem"><div class="p">modules/&lt;object&gt;/sql/</div><div class="d">The curated read-only datasets — root plus child collections, and a nested JSON proof of concept</div></div>
+          <div class="mapitem"><div class="p">docs/DECISION_REGISTER.md</div><div class="d">BU's complete internal record of decisions and anomalies, including the ones we are handling ourselves</div></div>
+          <div class="mapitem"><div class="p">discovery/</div><div class="d">The broad schema sweep — 901 tables classified, 4,074 columns documented, extraction queries</div></div>
+        </div>
+
+        <footer>
+          Counts on this page were measured against KCOEUS production on 2026-08-07 and
+          production keeps moving — Award gained four rows during a single working session
+          while we were modelling it, which is why the validation queries tolerate small
+          drift rather than treating it as a defect. <code>docs/PROVENANCE.md</code> records
+          what each number was measured against, with SHA-256 hashes for every generated
+          artifact.
+        </footer>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<script>
+(function(){
+  /* ---- scrollspy ---- */
+  var links = Array.prototype.slice.call(document.querySelectorAll('.railnav a'));
+  var sections = links.map(function(a){ return document.getElementById(a.getAttribute('href').slice(1)); });
+  function spy(){
+    var best = 0, y = window.scrollY + 140;
+    for (var i = 0; i < sections.length; i++){
+      if (sections[i] && sections[i].offsetTop <= y) best = i;
+    }
+    links.forEach(function(a, i){
+      if (i === best) a.setAttribute('aria-current','true');
+      else a.removeAttribute('aria-current');
+    });
+  }
+  var ticking = false;
+  window.addEventListener('scroll', function(){
+    if (!ticking){ ticking = true; requestAnimationFrame(function(){ spy(); ticking = false; }); }
+  }, {passive:true});
+  spy();
+
+  /* ---- decision filters ---- */
+  var state = {pri:'all', obj:'all'};
+  var items = Array.prototype.slice.call(document.querySelectorAll('.ditem'));
+  var count = document.getElementById('filtercount');
+  function apply(){
+    var shown = 0;
+    items.forEach(function(el){
+      var ok = (state.pri === 'all' || el.dataset.pri === state.pri) &&
+               (state.obj === 'all' || el.dataset.obj === state.obj);
+      el.hidden = !ok;
+      if (ok) shown++;
+    });
+    count.textContent = shown === 13 ? '13 shown' : shown + ' of 13 shown';
+  }
+  document.getElementById('filters').addEventListener('click', function(e){
+    var btn = e.target.closest('.chip');
+    if (!btn) return;
+    var f = btn.dataset.f;
+    state[f] = btn.dataset.v;
+    document.querySelectorAll('.chip[data-f="' + f + '"]').forEach(function(b){
+      b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+    });
+    apply();
+  });
+  apply();
+})();
+</script>
+</body>
+</html>

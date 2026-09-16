@@ -73,6 +73,7 @@ and the exceptions behind it.
 | If you want to | Go to |
 |---|---|
 | Talk to Huron about mapping | [HURON_MAPPING_GUIDE.md](HURON_MAPPING_GUIDE.md) · [reference/HURON_REVIEW_ITEMS.md](reference/HURON_REVIEW_ITEMS.md) |
+| Walk someone through the whole package in one sitting | [docs/OVERVIEW_DASHBOARD.html](docs/OVERVIEW_DASHBOARD.html) — one page, open it in a browser |
 | Understand how Huron will receive BU data | [docs/HURON_CONNECTIVITY.md](docs/HURON_CONNECTIVITY.md) — **not decided yet** |
 | Understand the data model | [docs/DATA_MODEL.md](docs/DATA_MODEL.md) |
 | Understand one business object | `modules/<object>/README.md` then `modules/<object>/*_GRAPH.md` |

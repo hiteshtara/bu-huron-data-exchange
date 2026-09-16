@@ -5,6 +5,7 @@ still lives under `modules/<name>/`; these documents tie it together.
 
 | Document | What it covers |
 |---|---|
+| [OVERVIEW_DASHBOARD.html](OVERVIEW_DASHBOARD.html) | One page covering the whole package — the four objects, versioning, how the datasets are shaped, what we checked and the open decisions. Built for the BU/Huron review session. Open it in a browser. It holds no new facts; the documents below stay canonical, and it does not regenerate, so a count changed there needs changing here too. |
 | [DATA_MODEL.md](DATA_MODEL.md) | How Award, Institutional Proposal, Subaward and Negotiation relate — versioning, the links between them, custom fields, and the shape every module shares. Diagrams included. |
 | [HURON_USAGE_GUIDE.md](HURON_USAGE_GUIDE.md) | How Huron can apply the repository to source-to-target mapping, decisions, extraction, transformation, loading and reconciliation. |
 | [SQL_INTERFACE.md](SQL_INTERFACE.md) | How each module's `sql/` datasets are organised — root, child collections, custom fields, validation — and the datasets listed module by module. |
