@@ -2,9 +2,10 @@
 <!--
   BU Grants Data Exchange - overview dashboard
   =============================================================================
-  A single-page view of the Huron migration source package: the four business
-  objects, how the datasets are shaped, what we verified, what we can show live,
-  and the decisions still open with Huron. Built for the BU/Huron review session.
+  A single-page view of the Huron migration source package: what Huron receives
+  and in what shape, the four business objects, how the datasets are built, what
+  we can show running, and the decisions still open. Built for the BU/Huron
+  review session.
 
   This file holds no new facts. Everything on it is taken from the Markdown in
   this repository, which stays canonical:
@@ -14,8 +15,13 @@
       docs/DATA_CONTRACT.md            grain, keys, null and date semantics
       docs/HURON_CONNECTIVITY.md       the four delivery options (D-18)
       docs/PROVENANCE.md               what each count was measured against
-      docs/demo/                       the six live demo queries
+      docs/demo/                       the eight live demo queries
+      modules/<object>/sql/json/       the nested JSON documents
       modules/<object>/README.md       per-object version rules and checks
+
+  The JSON payload shown in "What Huron receives" is the shape produced by
+  docs/demo/07_award_as_json_document.sql. Field names are BU's - HRS has not
+  told us its object model, so nothing here asserts a target schema.
 
   Counts are the 2026-08-07 production measurement. Nothing regenerates this
   file, so it will drift once those documents change - if you update a count in
@@ -124,7 +130,8 @@ code,.mono{font-family:var(--mono);font-size:.88em}
 /* ---------- shell ---------- */
 .shell{max-width:1240px;margin:0 auto;padding-inline:20px;padding-block:0 72px}
 .layout{display:grid;grid-template-columns:212px minmax(0,1fr);gap:48px;align-items:start}
-@media (max-width:1000px){.layout{grid-template-columns:1fr;gap:0}}
+.layout > main{min-width:0}
+@media (max-width:1000px){.layout{grid-template-columns:minmax(0,1fr);gap:0}}
 
 /* ---------- masthead ---------- */
 .masthead{padding-block:44px 30px;border-bottom:1px solid var(--rule)}
@@ -143,10 +150,10 @@ h1{font-size:clamp(30px,5vw,44px);line-height:1.08;margin-top:14px;font-weight:7
 .asof b{color:var(--ink);font-weight:500}
 
 /* ---------- headline stats ---------- */
-.headline{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);
+.headline{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--rule);
   border:1px solid var(--rule);border-radius:10px;overflow:hidden;margin-top:30px}
-@media (max-width:760px){.headline{grid-template-columns:repeat(2,1fr)}}
-.hstat{background:var(--surface);padding:18px 18px 16px}
+@media (max-width:760px){.headline{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.hstat{min-width:0;background:var(--surface);padding:18px 18px 16px}
 .hstat .n{font-family:var(--display);font-size:clamp(24px,3.4vw,32px);font-weight:700;
   letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
 .hstat .l{margin-top:7px;font-size:12.5px;color:var(--muted);line-height:1.4}
@@ -203,11 +210,13 @@ section:last-of-type{border-bottom:0}
 .pipe-node.target{border-color:var(--rule-strong);background:var(--surface-2)}
 
 /* ---------- cards ---------- */
-.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:28px}
-@media (max-width:820px){.cards{grid-template-columns:1fr}}
-.card{background:var(--surface);border:1px solid var(--rule);border-radius:11px;
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:28px}
+@media (max-width:820px){.cards{grid-template-columns:minmax(0,1fr)}}
+.card{min-width:0;background:var(--surface);border:1px solid var(--rule);border-radius:11px;
   padding:20px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:14px}
-.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.card-top > div{min-width:0}
+.card-top .root{overflow-wrap:anywhere}
 .card h3{font-size:18px}
 .card .root{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-top:4px}
 .pill{
@@ -219,9 +228,9 @@ section:last-of-type{border-bottom:0}
 .pill.high{background:var(--accent-soft);color:var(--accent);border-color:color-mix(in srgb,var(--accent) 32%,transparent)}
 .pill.med{background:var(--recess-soft);color:var(--recess);border-color:color-mix(in srgb,var(--recess) 34%,transparent)}
 .pill.low{background:var(--surface-2);color:var(--muted);border-color:var(--rule)}
-.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--rule);
   border:1px solid var(--rule);border-radius:8px;overflow:hidden}
-.metric{background:var(--surface-2);padding:10px 11px}
+.metric{min-width:0;background:var(--surface-2);padding:10px 11px}
 .metric .n{font-family:var(--display);font-weight:600;font-size:17px;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 .metric .l{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.3}
 .rule-note{font-size:13.5px;color:var(--ink-2);line-height:1.55}
@@ -264,6 +273,17 @@ section:last-of-type{border-bottom:0}
 .callout h4{font-size:15px;margin-bottom:8px}
 .callout p{font-size:14px;color:var(--ink-2);max-width:74ch}
 .callout.quiet{border-left-color:var(--recess)}
+
+/* ---------- payload block ---------- */
+.payload{font-family:var(--mono);font-size:12px;line-height:1.75;background:var(--surface);
+  border:1px solid var(--rule);border-radius:9px;padding:18px 20px;margin-top:20px;
+  overflow-x:auto;white-space:pre;color:var(--ink-2)}
+.payload .k{color:var(--accent)}
+.payload .s{color:var(--ink)}
+.payload .c{color:var(--muted)}
+.payload .hl{background:var(--accent-soft);border-radius:3px;padding:1px 3px}
+.twocol{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:24px}
+@media (max-width:820px){.twocol{grid-template-columns:minmax(0,1fr)}}
 
 /* ---------- hierarchy diagram ---------- */
 .tree{font-family:var(--mono);font-size:12.5px;line-height:1.85;background:var(--surface);
@@ -329,9 +349,9 @@ details[open] .caret{transform:rotate(90deg)}
 .fig .l{font-size:11.5px;color:var(--muted);margin-top:1px}
 
 /* ---------- delivery options ---------- */
-.opts{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:24px}
-@media (max-width:820px){.opts{grid-template-columns:1fr}}
-.opt{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:18px}
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:24px}
+@media (max-width:820px){.opts{grid-template-columns:minmax(0,1fr)}}
+.opt{min-width:0;background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:18px}
 .opt .ol{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--accent);text-transform:uppercase}
 .opt h4{font-size:15px;margin-top:6px}
 .opt .flow{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:10px;
@@ -346,10 +366,10 @@ details[open] .caret{transform:rotate(90deg)}
 .ask .qs{font-size:13px;color:var(--muted);margin-top:4px}
 
 /* ---------- repo map ---------- */
-.maplist{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--rule);
+.maplist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--rule);
   border:1px solid var(--rule);border-radius:10px;overflow:hidden;margin-top:24px}
-@media (max-width:760px){.maplist{grid-template-columns:1fr}}
-.mapitem{background:var(--surface);padding:15px 17px}
+@media (max-width:760px){.maplist{grid-template-columns:minmax(0,1fr)}}
+.mapitem{min-width:0;background:var(--surface);padding:15px 17px}
 .mapitem .p{font-family:var(--mono);font-size:12.5px;color:var(--ink)}
 .mapitem .d{font-size:13px;color:var(--muted);margin-top:4px;line-height:1.45}
 
@@ -392,6 +412,7 @@ footer{padding-block:34px 0;color:var(--muted);font-size:12.5px;max-width:70ch}
       <div class="railtitle">Contents</div>
       <div class="railnav">
         <a href="#overview">What we built</a>
+        <a href="#receives">What Huron receives</a>
         <a href="#objects">The four objects</a>
         <a href="#versions">Versions &amp; current record</a>
         <a href="#families">Award families</a>
@@ -458,6 +479,94 @@ footer{padding-block:34px 0;color:var(--muted);font-size:12.5px;max-width:70ch}
             being settled. Nothing in this package is marked approved for migration use
             yet, and the open items are collected further down rather than resolved
             quietly.
+          </p>
+        </div>
+      </section>
+
+      <!-- ===================== RECEIVES ===================== -->
+      <section id="receives">
+        <div class="sectionhead"><h2>What Huron receives</h2><span class="tag">Payload shape</span></div>
+        <p class="lede">
+          The datasets are not only flat extracts. The same curated SQL returns a complete
+          business object as one nested document — root fields, BU extension, hierarchy
+          placement, people, money, terms, reviews and custom fields — with no Cartesian
+          multiplication, because each collection is a correlated subquery rather than a
+          join. One Award, one document, whatever its size.
+        </p>
+
+        <div class="payload"><span class="c">// one Award, structure exact, values abbreviated</span>
+{
+  <span class="k">"sourceSystem"</span>: <span class="s">"KUALI_COEUS"</span>,
+  <span class="k">"sourceObject"</span>: <span class="s">"AWARD"</span>,
+  <span class="hl"><span class="k">"sourceKeys"</span>: {
+    <span class="k">"awardNumber"</span>: <span class="s">"207805-00001"</span>,   <span class="c">// the KC business key</span>
+    <span class="k">"awardId"</span>: …,                      <span class="c">// the version actually selected</span>
+    <span class="k">"sequenceNumber"</span>: …,
+    <span class="k">"documentNumber"</span>: …,
+    <span class="k">"selectionRule"</span>: <span class="s">"ACTIVE_STATUS"</span>   <span class="c">// which branch chose this row</span>
+  }</span>,
+  <span class="hl"><span class="k">"hierarchy"</span>: {
+    <span class="k">"rootAwardNumber"</span>: <span class="s">"207805-00001"</span>,
+    <span class="k">"parentAwardNumber"</span>: <span class="s">"000000-00000"</span>,
+    <span class="k">"isRootAward"</span>: <span class="s">"Y"</span>
+  }</span>,
+  <span class="k">"title"</span>: …, <span class="k">"sponsorCode"</span>: …, <span class="k">"sponsorName"</span>: …,
+  <span class="k">"buExtension"</span>:    { <span class="k">"grantNumber"</span>: …, <span class="k">"majorProject"</span>: … },
+  <span class="k">"persons"</span>:        [ { <span class="k">"personId"</span>: …, <span class="k">"fullName"</span>: …, <span class="k">"roleCode"</span>: … }, … ],
+  <span class="k">"amounts"</span>:        [ { <span class="k">"anticipatedTotal"</span>: …, <span class="k">"obligatedToDate"</span>: … }, … ],
+  <span class="k">"sponsorTerms"</span>:   [ … ],
+  <span class="k">"specialReviews"</span>: [ … ],
+  <span class="k">"customFields"</span>:   [ { <span class="k">"label"</span>: <span class="s">"IRB Multi-Site"</span>, <span class="k">"value"</span>: <span class="s">"Yes"</span> }, … ]
+}</div>
+
+        <div class="twocol">
+          <article class="card">
+            <div class="card-top"><div><h3>The source keys travel inside the payload</h3></div></div>
+            <p class="rule-note">
+              Everything needed to tie a loaded record back to KC, and to re-link it to the
+              objects it was related to in KC, is in the document rather than consumed by the
+              export. That is the half of <b>D-20</b> BU controls, and it is done. What is
+              left is where those keys live on the Huron side and who holds the crosswalk.
+            </p>
+          </article>
+          <article class="card">
+            <div class="card-top"><div><h3>The family structure rides along</h3></div></div>
+            <p class="rule-note">
+              <code>rootAwardNumber</code> and <code>parentAwardNumber</code> are on every
+              award, so the hierarchy survives whichever grain HRS picks. BU does not need
+              <b>D-17</b> answered to hand over data that works at either grain — the
+              document supports both readings without being rebuilt.
+            </p>
+          </article>
+          <article class="card">
+            <div class="card-top"><div><h3>One document or the whole population</h3></div></div>
+            <p class="rule-note">
+              The same query returns one row per award, each row a complete document — ready
+              to stream to a file, post to an endpoint, or land in a staging table as-is.
+              Nothing about the shape changes between one award and all 43,202.
+            </p>
+            <div class="chain">1 document ⟷ 43,202 documents · identical structure</div>
+          </article>
+          <article class="card">
+            <div class="card-top"><div><h3>Transport is a separate question</h3></div></div>
+            <p class="rule-note">
+              Whichever delivery option is chosen, this is what travels. Files, a staging
+              table or an API endpoint changes how the document moves, not what is in it.
+              That separation is deliberate — it is why <b>D-18</b> can stay open without
+              holding up the mapping conversation.
+            </p>
+          </article>
+        </div>
+
+        <div class="callout">
+          <h4>One thing to be straight about</h4>
+          <p>
+            The field names above are BU's, not Huron's. HRS has not told us its object
+            model yet, so this is the source document BU can emit — it is not a claim about
+            what HRS expects or a finished source-to-target mapping. Reshaping the query to
+            match a target schema is a day's work once there is a schema to match, and it
+            does not change what any value means. Naming the target objects and fields is
+            the next thing BU and Huron can do together.
           </p>
         </div>
       </section>
@@ -944,36 +1053,44 @@ footer{padding-block:34px 0;color:var(--muted);font-size:12.5px;max-width:70ch}
       <section id="live">
         <div class="sectionhead"><h2>Seeing it live</h2><span class="tag">Demo</span></div>
         <p class="lede">
-          Nothing above has to be taken on trust. BU can run these six read-only queries
-          against KC production in the session, in this order — they use the same tables and
-          the same version-selection rules as the datasets themselves, so what appears on
-          screen is what the interface does.
+          None of this has to be taken on trust. BU can run these eight read-only queries
+          against KC production in the session — they use the same tables and the same
+          version-selection rules as the datasets themselves, so what appears on screen is
+          what the interface does. The two in the middle are the ones that matter most.
         </p>
 
         <div class="asks">
           <div class="ask"><span class="qn">1</span><div>
             <div class="qt">The whole Grants population in one result</div>
-            <div class="qs">All four objects, physical rows against business records. The gap between those two columns is the versioning problem, measured live rather than quoted.</div>
+            <div class="qs">All four objects, physical rows against business records, measured live rather than quoted.</div>
           </div></div>
           <div class="ask"><span class="qn">2</span><div>
-            <div class="qt">Why MAX(SEQUENCE_NUMBER) is not the current award</div>
-            <div class="qs">Returns the award numbers carrying two rows at the same highest sequence, one ACTIVE and one ARCHIVED. Each one is a record where "take the latest" has to guess.</div>
+            <div class="qt"><b>One Award as a complete JSON document</b></div>
+            <div class="qs">The payload above, returned from production for a real award — its people, money, terms, reviews and BU custom fields in one document, with every KC key still inside it. This is the query to watch.</div>
           </div></div>
           <div class="ask"><span class="qn">3</span><div>
-            <div class="qt">How awards roll up into families</div>
-            <div class="qs">The family-size distribution behind the 15,729 — how many families hold one award, how many hold hundreds. This is the shape behind decision D-17.</div>
+            <div class="qt"><b>The same thing as a feed</b></div>
+            <div class="qs">One row per award, each row a complete document. Nothing about the shape changes between one award and the full population — drop the row limit and that is the conversion.</div>
           </div></div>
           <div class="ask"><span class="qn">4</span><div>
-            <div class="qt">One real award, hydrated</div>
-            <div class="qs">A single award with every child collection counted, and alongside it the row count a single flat join would have produced. This is the clearest argument for why the child collections ship separately.</div>
+            <div class="qt">One award hydrated, and what a flat join would have cost</div>
+            <div class="qs">Every child collection counted, alongside the row count a single wide join would have produced for that one award. This is why it ships as a document.</div>
           </div></div>
           <div class="ask"><span class="qn">5</span><div>
+            <div class="qt">How awards roll up into families</div>
+            <div class="qs">The family-size distribution behind the 15,729 — how many families hold one award, how many hold hundreds. The shape behind D-17.</div>
+          </div></div>
+          <div class="ask"><span class="qn">6</span><div>
             <div class="qt">Subaward funding links against Award versions</div>
             <div class="qs">How many funding rows point at an award version that has since been superseded. The answer is most of them, which is why D-01 is a decision rather than a detail.</div>
           </div></div>
-          <div class="ask"><span class="qn">6</span><div>
+          <div class="ask"><span class="qn">7</span><div>
             <div class="qt">BU custom fields, resolved</div>
-            <div class="qs">The entity-attribute-value tables turned back into BU's real field labels. The raw table is numbers against numbers — this is the part the schema alone cannot tell you.</div>
+            <div class="qs">The entity-attribute-value tables turned back into BU's real field labels — so they arrive in the document by name rather than as attribute 1542.</div>
+          </div></div>
+          <div class="ask"><span class="qn">8</span><div>
+            <div class="qt">Why the highest sequence is not the current award</div>
+            <div class="qs">Held in reserve. It answers "how do you know you picked the right row?" with the award numbers that carry two rows at the same highest sequence, one ACTIVE and one ARCHIVED.</div>
           </div></div>
         </div>
 
